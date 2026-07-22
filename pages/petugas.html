@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Petugas | SIPPAK-CIB</title>
+    
+    <meta name="theme-color" content="#1565C0">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <style>
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: var(--primary-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <header class="hero-section">
+            <h1>Akses Petugas</h1>
+            <p class="subtitle">Masukkan 6 digit PIN keamanan untuk masuk ke Dashboard SIPPAK-CIB</p>
+        </header>
+
+        <section class="menu-utama">
+            <!-- Perhatikan bagian onsubmit ini -->
+            <form class="login-form" onsubmit="cekLoginPetugas(event)">
+                <div class="form-group">
+                    <label for="pin">PIN Keamanan</label>
+                    <input type="password" id="pin" name="pin" pattern="[0-9]*" inputmode="numeric" placeholder="••••••" maxlength="6" required>
+                </div>
+                
+                <button type="submit" class="btn btn-petugas" style="width: 100%; margin-top: 8px;">
+                    <span class="icon">🔐</span> Masuk Dashboard
+                </button>
+            </form>
+            
+            <div class="btn-group" style="margin-top: 24px;">
+                <a href="../index.html" class="btn" style="background-color: #6c757d;">
+                    <span class="icon">🔙</span> Kembali ke Beranda
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Memanggil logika JS -->
+    <script src="../assets/js/auth.js"></script>
+
+</body>
+</html>

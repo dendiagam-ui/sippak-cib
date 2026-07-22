@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Petugas | SIPPAK-CIB</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <main style="padding: 20px;">
+        <h2>Dashboard Petugas</h2>
+        <a href="../index.html" style="color: red; text-decoration: none; float: right;">Log Out</a>
+        <br><br>
+
+        <!-- Fitur Filter Status -->
+        <div style="margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 5px;">
+            <label for="filterStatus"><b>Filter Status: </b></label>
+            <select id="filterStatus" onchange="ambilData()" style="padding: 8px; border-radius: 5px;">
+                <option value="Semua">Semua Permohonan</option>
+                <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+                <option value="Diproses">Diproses</option>
+                <option value="Selesai">Selesai</option>
+            </select>
+        </div>
+
+        <table border="1" width="100%" style="border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 10px;">Nomor Tiket</th>
+                    <th style="padding: 10px;">Nama Warga</th>
+                    <th style="padding: 10px;">Status</th>
+                    <th style="padding: 10px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="isiTabel">
+                <!-- Data dari Supabase otomatis masuk ke sini -->
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Library & Config Database -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+</body>
+</html>

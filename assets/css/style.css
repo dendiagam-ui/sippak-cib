@@ -1,0 +1,118 @@
+/* assets/css/style.css */
+
+/* 1. Mengimpor Font Modern (Poppins) dari Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* 2. Pengaturan Dasar */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7f6; /* Warna latar belakang abu-abu sangat muda */
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* 3. Kotak Utama (Wadah Aplikasi) */
+main {
+    background: #ffffff;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Efek bayangan lembut */
+    text-align: center; /* Menyamakan dengan struktur warga.html */
+}
+
+/* 4. Teks & Judul */
+h1, h2, h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* 5. Input Formulir & Pilihan (Dropdown) */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="file"],
+input[type="tel"],
+select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ccd1d9;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background-color: #f9f9fa;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+    outline: none;
+}
+
+/* 6. Desain Tombol Global */
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.1s, opacity 0.3s;
+}
+
+button:active {
+    transform: scale(0.98); /* Efek ditekan */
+}
+
+/* 7. Desain Tabel (Untuk Dashboard) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: left;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* 8. Responsif (Agar rapi di layar HP kecil) */
+@media (max-width: 480px) {
+    main {
+        margin: 10px auto;
+        padding: 20px;
+    }
+    table {
+        display: block;
+        overflow-x: auto; /* Tabel bisa di-scroll ke samping di HP */
+        white-space: nowrap;
+    }
+}

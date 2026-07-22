@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Permohonan | SIPPAK-CIB</title>
+    <!-- Ubah versi CSS ke 9.0 -->
+    <link rel="stylesheet" href="../assets/css/style.css?v=9.0">
+    <style>
+        .judul-seksi { background-color: #0056b3; color: white; padding: 10px 15px; border-radius: 5px; font-size: 16px; margin-top: 30px; margin-bottom: 20px; text-align: left; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .grup-input { text-align: left; margin-bottom: 15px; }
+        .grup-input label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; font-size: 14px; }
+        .grup-file { background: #e8f4fd; padding: 15px; border-radius: 8px; border: 1px solid #b8daff; margin-bottom: 15px; text-align: left; }
+        .box-anggota { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #ccc; text-align: left;}
+        
+        /* DESAIN UNTUK POPUP/MODAL RINGKASAN */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 9999;
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 500px; max-height: 85vh; border-radius: 12px;
+            padding: 25px; overflow-y: auto; text-align: left; position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-btn-grup {
+            display: flex; gap: 10px; margin-top: 20px;
+        }
+        .modal-btn-batal { background: #dc3545; color: white; flex: 1; }
+        .modal-btn-kirim { background: #28a745; color: white; flex: 1; }
+    </style>
+</head>
+<body>
+    <main>
+        <h2>Formulir Permohonan</h2>
+        <p>Isi data berikut sesuai dengan dokumen resmi Anda.</p>
+        
+        <!-- REVISI: onsubmit sekarang memanggil tampilkanRingkasan, bukan kirimPermohonan -->
+        <form onsubmit="tampilkanRingkasan(event)">
+            
+            <!-- PILIH LAYANAN -->
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba; margin-bottom: 20px; text-align: left;">
+                <label style="font-weight: bold; color: #856404; display: block; margin-bottom: 5px;">Pilih Jenis Layanan *</label>
+                <select id="jenis_layanan" required onchange="sesuaikanForm()" style="background: white;">
+                    <option value="">-- Pilih Layanan --</option>
+                    <option value="Cetak Kartu Keluarga">Cetak Kartu Keluarga</option>
+                    <option value="Cetak Ulang KTP-El">Cetak Ulang KTP-El</option>
+                    <option value="Perbaikan Data">Perbaikan Data</option>
+                    <option value="Pindah Keluar">Pindah Keluar</option>
+                </select>
+            </div>
+
+            <!-- BAGIAN 1: DATA PEMOHON -->
+            <h3 class="judul-seksi">1. DATA PEMOHON</h3>
+            <div class="grup-input"><label>Nomor Induk Kependudukan (NIK) *</label><input type="number" id="nik" placeholder="Masukkan 16 Digit NIK" required></div>
+            <div class="grup-input"><label>Nomor Kartu Keluarga *</label><input type="number" id="no_kk" placeholder="Masukkan 16 Digit Nomor KK" required></div>
+            <div class="grup-input"><label>Nama Lengkap Pemohon *</label><input type="text" id="nama" placeholder="Sesuai KTP" required></div>
+            <div class="grup-input"><label>Nomor WhatsApp Pemohon *</label><input type="tel" id="no_wa" placeholder="Otomatis berawalan 62..." required oninput="formatWA(this)"></div>
+            <div class="grup-input"><label>Email Pemohon (Opsional)</label><input type="email" id="email" placeholder="Contoh: nama@email.com"></div>
+
+            <!-- BLOK: CETAK KARTU KELUARGA -->
+            <div id="blokCetakKK" style="display: none;">
+                <h3 class="judul-seksi">2. KETERANGAN</h3>
+                <div class="grup-input"><textarea id="keterangan" placeholder="Catatan tambahan..." style="width: 100%; padding: 12px; border-radius: 8px;"></textarea></div>
+                <h3 class="judul-seksi">3. DOKUMEN PERSYARATAN</h3>
+                <div class="grup-file"><label>Kartu Keluarga / Surat Kehilangan *</label><input type="file" id="file_kk_hilang" accept="image/*, application/pdf" style="background: white;"></div>
+                <div class="grup-file"><label>Dokumen Tambahan (Opsional)</label><input type="file" id="dokumen_tambahan" accept="image/*, application/pdf" style="background: white;"></div>
+            </div>
+
+            <!-- BLOK: CETAK ULANG KTP-EL -->
+            <div id="blokCetakKTP" style="display: none;">
+                <h3 class="judul-seksi">2. DATA YANG DIAJUKAN</h3>
+                <div class="grup-input"><label>NIK *</label><input type="number" id="nik_pengajuan"></div>
+                <div class="grup-input"><label>Nama *</label><input type="text" id="nama_pengajuan"></div>
+                <h3 class="judul-seksi">3. ALASAN PENGAJUAN</h3>
+                <div class="grup-input">
+                    <select id="alasan_pengajuan" style="background: white;">
+                        <option value="">-- Pilih Alasan --</option>
+                        <option value="KTP Hilang">KTP Hilang</option>
+                        <option value="KTP Rusak">KTP Rusak</option>
+                        <option value="KTP Perubahan Data">KTP Perubahan Data</option>
+                    </select>
+                </div>
+                <h3 class="judul-seksi">4. DOKUMEN PERSYARATAN</h3>
+                <div class="grup-file"><label>KTP / Surat Kehilangan *</label><input type="file" id="file_ktp" accept="image/*, application/pdf"></div>
+                <div class="grup-file"><label>Kartu Keluarga / Surat Kehilangan *</label><input type="file" id="file_kk" accept="image/*, application/pdf"></div>
+            </div>
+
+            <!-- BLOK: PERBAIKAN DATA -->
+            <div id="blokPerbaikan" style="display: none;">
+                <h3 class="judul-seksi">2. DATA YANG DIAJUKAN</h3>
+                <div class="grup-input"><label>NIK *</label><input type="number" id="nik_perbaikan"></div>
+                <div class="grup-input"><label>Nama *</label><input type="text" id="nama_perbaikan"></div>
+                <div class="grup-input"><label>Keterangan Perbaikan *</label><textarea id="keterangan_perbaikan" placeholder="Contoh: Merubah Pekerjaan..." style="width: 100%; padding: 12px; border-radius: 8px;"></textarea></div>
+                <h3 class="judul-seksi">3. DOKUMEN PERSYARATAN</h3>
+                <div class="grup-file"><label>Formulir F1.06 *</label><input type="file" id="file_f106" accept="image/*, application/pdf"></div>
+                <div class="grup-file"><label>Dokumen Tambahan *</label><input type="file" id="dokumen_tambahan_perbaikan" accept="image/*, application/pdf"></div>
+            </div>
+
+            <!-- BLOK: PINDAH KELUAR -->
+            <div id="blokPindah" style="display: none;">
+                <h3 class="judul-seksi">2. DATA PINDAH</h3>
+                <div class="grup-input"><label>Alamat Asal *</label><textarea id="alamat_asal" style="width: 100%; padding: 12px; border-radius: 8px;"></textarea></div>
+                <div class="grup-input"><label>Alamat Tujuan *</label><textarea id="alamat_tujuan" style="width: 100%; padding: 12px; border-radius: 8px;"></textarea></div>
+                <div class="grup-input"><label>Alasan Pindah *</label><input type="text" id="alasan_pindah"></div>
+
+                <h3 class="judul-seksi">3. BIODATA YANG AKAN PINDAH</h3>
+                <div class="grup-input">
+                    <label>Jumlah Yang Akan Pindah *</label>
+                    <select id="jumlah_pindah" style="background: white;" onchange="generateAnggotaPindah()">
+                        <option value="0">0 Orang (Tidak Ada)</option>
+                        <option value="1">1 Orang</option>
+                        <option value="2">2 Orang</option>
+                        <option value="3">3 Orang</option>
+                        <option value="4">4 Orang</option>
+                    </select>
+                </div>
+                <div id="wadahAnggotaPindah"></div>
+
+                <h3 class="judul-seksi">4. DOKUMEN PERSYARATAN</h3>
+                <div class="grup-file"><label>Kartu Keluarga *</label><input type="file" id="file_kk_pindah" accept="image/*, application/pdf"></div>
+                <div class="grup-file"><label>KTP-el Pemohon *</label><input type="file" id="file_ktp_pindah" accept="image/*, application/pdf"></div>
+            </div>
+
+            <button type="submit" id="btnUtama" style="background: #007bff; color: white; margin-top: 20px;">
+                Cek Ringkasan Data
+            </button>
+        </form>
+        <br><a href="warga.html" style="color: red; text-decoration: none;">⬅ Batal & Kembali</a>
+    </main>
+
+    <!-- WADAH POPUP/MODAL RINGKASAN -->
+    <div id="modalRingkasan" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: #0056b3; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">🔍 Validasi Data</h3>
+            <p style="font-size: 13px; color: #555;">Harap periksa kembali data di bawah ini. Pastikan tidak ada salah ketik sebelum dikirim.</p>
+            
+            <!-- Tempat data akan dimunculkan oleh JavaScript -->
+            <div id="isiRingkasan" style="background: #f4f7f6; padding: 15px; border-radius: 8px; font-size: 14px; line-height: 1.6; max-height: 40vh; overflow-y: auto; border: 1px solid #ddd;">
+            </div>
+
+            <div class="modal-btn-grup">
+                <button type="button" class="modal-btn-batal" onclick="tutupModal()">Batal/Edit</button>
+                <button type="button" class="modal-btn-kirim" id="btnKonfirmasi" onclick="prosesKirimAkhir()">✅ Ya, Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/warga.js"></script>
+    
+    <script>
+        function formatWA(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.startsWith('0')) input.value = '62' + input.value.substring(1);
+        }
+
+        function generateAnggotaPindah() {
+            const jumlah = document.getElementById('jumlah_pindah').value;
+            const wadah = document.getElementById('wadahAnggotaPindah');
+            wadah.innerHTML = ''; 
+            for(let i = 1; i <= jumlah; i++) {
+                wadah.innerHTML += `
+                    <div class="box-anggota">
+                        <h4 style="color:#0056b3; margin-top:0; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Anggota ke-${i}</h4>
+                        <label style="font-size:12px; font-weight:bold;">NIK</label>
+                        <input type="number" id="nik_anggota_${i}" style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px;" required>
+                        <label style="font-size:12px; font-weight:bold;">Nama Lengkap</label>
+                        <input type="text" id="nama_anggota_${i}" style="width:100%; padding:8px; margin-bottom:10px; border-radius:5px;" required>
+                        <label style="font-size:12px; font-weight:bold;">Status Hubungan</label>
+                        <select id="status_anggota_${i}" style="width:100%; padding:8px; border-radius:5px; background: white;" required>
+                            <option value="">-- Pilih Status --</option>
+                            <option value="Kepala Keluarga">Kepala Keluarga</option>
+                            <option value="Suami">Suami</option><option value="Istri">Istri</option><option value="Anak">Anak</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                `;
+            }
+        }
+
+        function sesuaikanForm() {
+            const layanan = document.getElementById('jenis_layanan').value;
+            const bKK = document.getElementById('blokCetakKK'), bKTP = document.getElementById('blokCetakKTP'), bPerbaikan = document.getElementById('blokPerbaikan'), bPindah = document.getElementById('blokPindah');
+            
+            bKK.style.display = 'none'; bKTP.style.display = 'none'; bPerbaikan.style.display = 'none'; bPindah.style.display = 'none';
+            
+            document.getElementById('alamat_asal').required = false; document.getElementById('alamat_tujuan').required = false; document.getElementById('alasan_pindah').required = false; document.getElementById('file_kk_pindah').required = false; document.getElementById('file_ktp_pindah').required = false;
+
+            if (layanan === 'Cetak Kartu Keluarga') { bKK.style.display = 'block'; } 
+            else if (layanan === 'Cetak Ulang KTP-El') { bKTP.style.display = 'block'; }
+            else if (layanan === 'Perbaikan Data') { bPerbaikan.style.display = 'block'; }
+            else if (layanan === 'Pindah Keluar') { 
+                bPindah.style.display = 'block'; 
+                document.getElementById('alamat_asal').required = true; document.getElementById('alamat_tujuan').required = true; document.getElementById('alasan_pindah').required = true; document.getElementById('file_kk_pindah').required = true; document.getElementById('file_ktp_pindah').required = true;
+            }
+        }
+    </script>
+</body>
+</html>

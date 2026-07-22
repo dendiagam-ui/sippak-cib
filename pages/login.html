@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Petugas | SIPPAK-CIB</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <main style="text-align: center; padding: 50px 20px;">
+        <h2>Masuk Sebagai Petugas</h2>
+        <p>Masukkan PIN rahasia untuk mengakses Dashboard</p>
+        <br>
+
+        <!-- Formulir Login PIN -->
+        <form id="formLogin" onsubmit="validasiLogin(event)" style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+            <input type="password" id="pinPetugas" placeholder="Masukkan 6 Digit PIN" required maxlength="6" style="padding: 10px; font-size: 18px; text-align: center; width: 80%; border-radius: 5px; border: 1px solid #ccc;">
+            
+            <button type="submit" style="padding: 15px 30px; background: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                🔓 Masuk Dashboard
+            </button>
+        </form>
+
+        <br><br>
+        <a href="../index.html" style="color: red; text-decoration: none;">⬅ Kembali ke Halaman Utama</a>
+    </main>
+
+    <!-- Logika Validasi PIN -->
+    <script>
+        function validasiLogin(event) {
+            event.preventDefault(); // Mencegah reload halaman
+            
+            const pin = document.getElementById('pinPetugas').value;
+            const pinBenar = "123456"; // Anda bisa mengganti angka ini dengan PIN rahasia Anda sendiri
+
+            if (pin === pinBenar) {
+                alert("Login Berhasil!");
+                window.location.href = "dashboard.html"; // Arahkan ke dashboard petugas
+            } else {
+                alert("PIN Salah! Akses Ditolak.");
+                document.getElementById('pinPetugas').value = ''; // Kosongkan input agar bisa diisi ulang
+            }
+        }
+    </script>
+</body>
+</html>

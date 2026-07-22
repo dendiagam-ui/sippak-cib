@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Permohonan | SIPPAK-CIB</title>
+    <link rel="stylesheet" href="../assets/css/style.css?v=10.0">
+    <style>
+        .tombol-dok {
+            display: inline-block;
+            background: #17a2b8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 10px;
+            margin-right: 5px;
+            border: 1px solid #117a8b;
+        }
+    </style>
+</head>
+<body>
+    <main style="padding: 20px; max-width: 600px; margin: auto;">
+        <h2>Detail Permohonan</h2>
+        <a href="dashboard.html" style="color: blue; text-decoration: none; font-weight: bold;">⬅ Kembali ke Dashboard</a>
+        <br><br>
+
+        <!-- Tempat menampilkan data warga -->
+        <div id="infoData" style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #ddd; line-height: 1.8; text-align: left;">
+            <p><i>Memuat data...</i></p>
+        </div>
+
+        <!-- Tempat menampilkan dokumen warga -->
+        <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border: 1px solid #b8daff; text-align: left; margin-top: 15px;">
+            <h3 style="color: #004085; margin-bottom: 10px; font-size: 16px;">Dokumen Terlampir:</h3>
+            <div id="infoDokumen">
+                <p><i>Memuat dokumen...</i></p>
+            </div>
+        </div>
+
+        <br>
+        <!-- Panel Tindakan Petugas -->
+        <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: left;">
+            <h3 style="margin-bottom: 15px;">Tindakan Petugas</h3>
+            
+            <label><b>Ubah Status:</b></label><br>
+            <select id="statusDropdown" onchange="cekStatusTolak()" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; background: white;">
+                <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
+                <option value="Diproses">Diproses</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Ditolak">Ditolak</option>
+            </select>
+
+            <!-- Kotak Alasan Penolakan -->
+            <div id="grupTolak" style="display: none; margin-bottom: 15px;">
+                <label style="color: red;"><b>Alasan Penolakan *</b></label><br>
+                <textarea id="inputAlasanTolak" placeholder="Tulis alasan penolakan untuk warga..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid red; min-height: 80px;"></textarea>
+            </div>
+
+            <!-- Kotak Dokumen Selesai -->
+            <div id="grupDokumenSelesai" style="display: none; margin-bottom: 15px;">
+                <label><b>Link Dokumen Hasil (Opsional):</b></label><br>
+                <input type="text" id="inputDokumen" placeholder="Contoh: https://drive.google.com/..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
+
+            <!-- Tombol Simpan Perubahan -->
+            <button onclick="simpanPerubahan()" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">
+                💾 Simpan Perubahan
+            </button>
+
+            <!-- Tombol Hapus Permanen (Fitur Baru) -->
+            <button onclick="hapusPermohonan()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
+                🗑️ Hapus Permanen Data & File
+            </button>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/detail.js"></script>
+</body>
+</html>

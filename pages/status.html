@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cek Status | SIPPAK-CIB</title>
+    <!-- Ubah versi CSS ke 9.0 untuk jaga-jaga -->
+    <link rel="stylesheet" href="../assets/css/style.css?v=9.0">
+</head>
+<body>
+    <main style="text-align: center; padding: 40px 20px; max-width: 500px; margin: auto;">
+        <h2>Lacak Status Permohonan</h2>
+        <p>Masukkan 16 Digit NIK Anda untuk melihat riwayat dan status permohonan.</p>
+        <br>
+
+        <!-- Form Pencarian dengan NIK -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="number" id="inputNik" placeholder="Masukkan NIK Anda di sini..." style="padding: 15px; text-align: center; font-size: 16px; border-radius: 8px; border: 1px solid #ccc;">
+            <button onclick="cekStatus()" style="background: #ffc107; color: black; font-weight: bold; padding: 15px; border-radius: 8px; border: none;">
+                🔍 Cari Dokumen
+            </button>
+        </div>
+
+        <!-- Area Hasil Pencarian (Bisa memunculkan lebih dari 1 kotak) -->
+        <div id="hasil" style="margin-top: 30px;"></div>
+        
+        <br><br>
+        <a href="warga.html" style="color: blue; text-decoration: none; font-weight: bold;">⬅ Kembali ke Menu Warga</a>
+    </main>
+
+    <!-- Script Database Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config.js"></script>
+    
+    <script>
+        async function cekStatus() {
+            const nik = document.getElementById('inputNik').value;
+            const hasilDiv = document.getElementById('hasil');
+            
+            if (!nik) { 
+                hasilDiv.innerHTML = "<p style='color:red;'>Silakan masukkan NIK terlebih dahulu.</p>"; 
+                return; 
+            }
+
+            hasilDiv.innerHTML = "<i>Mencari data permohonan...</i>";
+
+            // Ambil SEMUA data dari Supabase berdasarkan NIK (Bukan nomor tiket lagi)
+            // Diurutkan dari yang terbaru (menggunakan ID descending)
+            const { data, error } = await supabase
+                .from('permohonan')
+                .select('nomor_tiket, nama_pemohon, jenis_layanan, status, link_dokumen, alasan_penolakan')
+                .eq('nik', nik)
+                .order('id', { ascending: false });
+
+            // Jika error atau NIK tidak ditemukan / belum pernah daftar
+            if (error || !data || data.length === 0) {
+                hasilDiv.innerHTML = "<p style='color:red;'>Data tidak ditemukan. Pastikan NIK yang dimasukkan benar dan sudah pernah membuat permohonan.</p>";
+                return;
+            }
+
+            // Jika NIK ditemukan, buat tampilan daftarnya
+            let tampilan = `<p style="text-align: left; color: green; font-weight: bold; margin-bottom: 15px;">Ditemukan ${data.length} riwayat permohonan:</p>`;
+            
+            // Lakukan perulangan (Looping) untuk mencetak semua kotak permohonan
+            data.forEach(item => {
+                let warnaStatus = 'black';
+                if(item.status === 'Menunggu Verifikasi') warnaStatus = 'orange';
+                if(item.status === 'Diproses') warnaStatus = 'blue';
+                if(item.status === 'Selesai') warnaStatus = 'green';
+                if(item.status === 'Ditolak') warnaStatus = 'red';
+
+                tampilan += `
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd; text-align: left; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <p style="margin: 0 0 10px 0; font-size: 12px; color: #666; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                            <strong>No. Tiket:</strong> ${item.nomor_tiket}
+                        </p>
+                        <p style="margin: 5px 0;"><strong>Pemohon:</strong> ${item.nama_pemohon}</p>
+                        <p style="margin: 5px 0;"><strong>Layanan:</strong> ${item.jenis_layanan}</p>
+                        <p style="margin: 15px 0 5px 0;"><strong>Status:</strong> <span style="font-size: 16px; font-weight: bold; color: ${warnaStatus};">${item.status}</span></p>
+                `;
+
+                // Jika statusnya DITOLAK
+                if (item.status === 'Ditolak') {
+                    tampilan += `
+                        <div style="background: #f8d7da; padding: 12px; border-radius: 5px; border: 1px solid #f5c6cb; margin-top: 15px;">
+                            <h4 style="color: #721c24; margin-bottom: 5px; font-size: 14px;">Alasan Penolakan:</h4>
+                            <p style="color: #721c24; margin: 0; font-size: 13px;">${item.alasan_penolakan}</p>
+                        </div>
+                    `;
+                }
+                // Jika statusnya SELESAI dan ada link dokumen
+                else if (item.status === 'Selesai' && item.link_dokumen) {
+                    tampilan += `
+                        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
+                        <a href="${item.link_dokumen}" target="_blank" style="display: block; text-align: center; padding: 12px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">
+                            📥 Unduh Dokumen Hasil
+                        </a>
+                    `;
+                }
+
+                tampilan += `</div>`; // Tutup kotak permohonan
+            });
+
+            // Masukkan seluruh kotak tadi ke dalam HTML
+            hasilDiv.innerHTML = tampilan;
+        }
+    </script>
+</body>
+</html>
