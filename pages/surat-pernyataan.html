@@ -3,131 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Surat Pernyataan | SIPPAK-CIB</title>
-    <!-- ========================================== -->
-    <!-- 🚀 TEKNOLOGI PRE-CACHE (MEMPERCEPAT LOADING) -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://ufplggwklwopzhhwrdqk.supabase.co" crossorigin> <!-- Opsional: Ganti dengan URL Supabase Anda -->
-    
-    <!-- Memaksa browser menyimpan Mesin Supabase & Ikon ke RAM -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
-    <!-- ========================================== -->
-    <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
+    <title>Generate Surat | SIPPAK-CIB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <style>
-        /* 🚀 TAMBAHKAN KODE INI UNTUK TRANSISI HALUS */
-        body { 
-            animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
-            /* Sembunyikan scrollbar yang sering bikin patah-patah */
-            overflow-x: hidden; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+        :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
 
-        @keyframes fadeInPage {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+        body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
+
+        /* WADAH UTAMA APLIKASI (Untuk disembunyikan saat cetak PDF) */
+        #appLayout { display: flex; width: 100%; height: 100%; transition: 0.3s; }
+
+        /* SIDEBAR MODERN */
+        .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; gap: 10px; }
+        .sidebar-header i { color: #3b82f6; }
+        .menu-list { list-style: none; padding: 20px 0; flex-grow: 1; overflow-y: auto; }
+        .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 16px 30px; color: #94a3b8; text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; border-left: 4px solid transparent; }
+        .menu-list li a:hover, .menu-list li a.active { background-color: rgba(255,255,255,0.05); color: #fff; border-left: 4px solid #3b82f6; }
+
+        /* MAIN CONTENT */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 280px); }
+        .topbar { background-color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
+        .toggle-btn { font-size: 24px; cursor: pointer; color: var(--teks-gelap); display: none; }
+        
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
+
+        .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
+        .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
+        .btn-kembali { background: #fff; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; color: #475569; text-decoration: none; font-weight: bold; transition: 0.2s; }
+        .btn-kembali:hover { background: #f1f5f9; color: var(--teks-gelap); }
+
+        /* KARTU FORMULIR */
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 35px; max-width: 800px; margin: 0 auto; }
+        .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .grid-form { grid-template-columns: 1fr; } }
+
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        .btn-submit { background: #10b981; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-submit:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2); }
+
         /* ========================================== */
-        .grup-input { text-align: left; margin-bottom: 15px; }
-        .grup-input label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; font-size: 14px; }
-        
-        /* DESAIN KERTAS SURAT YANG DIPERBAIKI */
-        #kertasSurat {
-            display: none; 
-            padding: 20px 40px; /* Padding dikurangi agar tidak tumpah */
-            font-family: Arial, Helvetica, sans-serif; 
-            color: black;
-            line-height: 1.6;
-            font-size: 14px; 
-            background: white;
-        }
-        
-        .kop-surat { 
-            text-align: center; 
-            font-weight: bold; 
-            font-size: 16px; 
-            margin-bottom: 30px; 
-        }
-        
-        /* Tabel Biodata */
-        .tabel-biodata { 
-            margin-bottom: 20px; 
-            width: 100%; 
-            border-collapse: collapse; 
-        }
-        .tabel-biodata td { 
-            padding: 5px 0; 
-            vertical-align: top; 
-            border: none; /* Menghilangkan garis samar jika ada */
-        }
+        /* DESAIN KERTAS SURAT (TERSEMBUNYI DI WEB) */
+        /* ========================================== */
+        #kertasSurat { display: none; padding: 40px 60px; font-family: 'Times New Roman', Times, serif; color: black; line-height: 1.5; font-size: 16px; background: white; width: 100%; max-width: 210mm; margin: 0 auto; }
+        .kop-surat { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin-bottom: 30px; letter-spacing: 1px; }
+        .tabel-biodata { margin-bottom: 25px; width: 100%; border-collapse: collapse; }
+        .tabel-biodata td { padding: 6px 0; vertical-align: top; border: none; }
         .kolom-label { width: 35%; }
         .kolom-titikdua { width: 3%; text-align: center; }
+        .teks-paragraf { text-indent: 50px; text-align: justify; margin-bottom: 15px; }
         
-        /* Teks Paragraf */
-        .teks-paragraf {
-            text-indent: 40px; 
-            text-align: justify;
-            margin-bottom: 10px;
-        }
+        /* Area Tanda Tangan & Gambar Materai */
+        .area-ttd { width: 100%; margin-top: 50px; }
+        .area-ttd td { vertical-align: top; }
+        .img-materai { width: 80px; height: auto; margin: 15px 0; display: block; opacity: 0.9; }
 
-        /* Area Tanda Tangan */
-        .area-ttd {
-            width: 100%;
-            margin-top: 30px;
-        }
-        .area-ttd td {
-            vertical-align: top;
-        }
-        .kotak-materai {
-            width: 70px;
-            height: 35px; 
-            border: 1px solid black;
-            font-size: 10px;
-            text-align: center;
-            padding-top: 15px; 
-            margin: 15px 0 15px 15px; 
+        /* OVERLAY MOBILE */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
+        .overlay.active { display: block; }
+        @media (max-width: 900px) {
+            .sidebar { position: fixed; left: -280px; height: 100%; } 
+            .sidebar.active { left: 0; } 
+            .main-content { width: 100%; }
+            .toggle-btn { display: block; } 
+            .content-area { padding: 20px; }
+            .topbar { padding: 15px 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- WADAH FORMULIR -->
-    <main id="wadahForm" style="max-width: 600px; margin: auto;">
-        <h2>Generator Surat Pernyataan</h2>
-        <p>Isi formulir di bawah ini untuk membuat Surat Pernyataan secara otomatis.</p>
-        
-        <form id="formSurat" onsubmit="generatePDF(event)">
-            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
-                <div class="grup-input"><label>Nama Lengkap *</label><input type="text" id="inNama" required></div>
-                <div class="grup-input"><label>NIK *</label><input type="number" id="inNik" required></div>
-                <div class="grup-input">
-                    <label>Jenis Kelamin *</label>
-                    <select id="inJk" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; background: white;" required>
-                        <option value="">-- Pilih --</option>
-                        <option value="Laki-laki">Laki-laki</option>
-                        <option value="Perempuan">Perempuan</option>
-                    </select>
+
+    <!-- WADAH APLIKASI UTAMA -->
+    <div id="appLayout">
+        <div class="overlay" id="overlay"></div>
+
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
+            <ul class="menu-list" id="menuDinamis"></ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <div class="user-profile">
+                    <div style="text-align: right;">
+                        <div style="font-size: 15px; font-weight: 700;" id="namaUser">Petugas</div>
+                        <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600; text-transform: uppercase;" id="roleUser">PETUGAS</div>
+                    </div>
+                    <div class="user-avatar"><i class="fas fa-user-tie"></i></div>
                 </div>
-                <div class="grup-input"><label>Tempat, Tgl. Lahir *</label><input type="text" id="inTTL" placeholder="Contoh: Cimahi, 17 Agustus 1990" required></div>
-                <div class="grup-input"><label>Pekerjaan *</label><input type="text" id="inPekerjaan" placeholder="Contoh: Mengurus Rumah Tangga" required></div>
-                <div class="grup-input"><label>Jumlah Tanggungan (Opsional)</label><input type="number" id="inTanggungan" placeholder="Contoh: 3"></div>
-                <div class="grup-input"><label>No. Tlp./Handphone (Opsional)</label><input type="tel" id="inHp"></div>
-                <div class="grup-input"><label>Alamat Lengkap *</label><textarea id="inAlamat" rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc;" required></textarea></div>
+            </header>
+
+            <div class="content-area">
+                <div class="page-title">
+                    <a href="dashboard-master.html" class="btn-kembali"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
+                    <h2>Generator Surat Warga</h2>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-file-invoice" style="color: #2563eb;"></i> Form Cetak Surat Pernyataan Belum Bekerja</div>
+                    
+                    <form id="formSurat" onsubmit="generatePDF(event)">
+                        <div class="grid-form">
+                            <div class="form-group">
+                                <label>Nama Lengkap *</label>
+                                <input type="text" id="inNama" placeholder="Sesuai KTP" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nomor Induk Kependudukan (NIK) *</label>
+                                <input type="number" id="inNik" placeholder="16 Digit NIK" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jenis Kelamin *</label>
+                                <select id="inJk" required>
+                                    <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Tempat, Tanggal Lahir *</label>
+                                <input type="text" id="inTTL" placeholder="Contoh: Cimahi, 17 Agustus 1990" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Pekerjaan Saat Ini *</label>
+                                <input type="text" id="inPekerjaan" placeholder="Contoh: Mengurus Rumah Tangga" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jumlah Tanggungan (Opsional)</label>
+                                <input type="number" id="inTanggungan" placeholder="Contoh: 3">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Nomor Telepon / WhatsApp (Opsional)</label>
+                                <input type="tel" id="inHp" placeholder="Mulai dengan 08...">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Alamat Lengkap *</label>
+                                <textarea id="inAlamat" placeholder="Tuliskan alamat domisili lengkap beserta RT/RW..." required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" id="btnDownload" class="btn-submit"><i class="fas fa-print"></i> Generate & Unduh Dokumen PDF</button>
+                    </form>
+                </div>
             </div>
+        </main>
+    </div>
 
-            <button type="submit" id="btnDownload" style="background: #28a745; color: white; margin-top: 20px; width: 100%; padding: 15px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer;">
-                📥 Cetak & Unduh PDF
-            </button>
-        </form>
-        <br><a href="warga.html" style="color: blue; text-decoration: none; font-weight: bold;">⬅ Kembali ke Menu Utama</a>
-    </main>
-
-    <!-- TEMPLATE SURAT -->
+    <!-- TEMPLATE SURAT (HANYA MUNCUL SAAT DIRENDER PDF) -->
     <div id="kertasSurat">
         <div class="kop-surat">SURAT PERNYATAAN</div>
         
-        <div style="margin-bottom: 15px;">Yang bertandatangan dibawah ini :</div>
+        <div style="margin-bottom: 20px;">Yang bertandatangan dibawah ini :</div>
         
         <table class="tabel-biodata">
             <tr><td class="kolom-label">Nama</td><td class="kolom-titikdua">:</td><td id="outNama"></td></tr>
@@ -144,7 +182,6 @@
         
         <div class="teks-paragraf">Demikian surat pernyataan ini saya buat dengan sebenar-benarnya dalam keadaan sehat jasmani dan rohani tanpa ada paksaan dari pihak manapun dan siap bertanggung jawab mutlak apabila pernyataan ini tidak sesuai dengan keadaan yang sebenarnya saya bersedia dituntut sesuai dengan hukum yang berlaku.</div>
 
-        <!-- AREA TANDA TANGAN (Kanan) -->
         <table class="area-ttd">
             <tr>
                 <td style="width: 55%;"></td> 
@@ -152,9 +189,8 @@
                     <div style="margin-bottom: 5px;">Cimahi, <span id="outTanggal"></span></div>
                     <div>Yang membuat pernyataan</div>
                     
-                    <div class="kotak-materai">
-                        MATERAI<br>10.000
-                    </div>
+                    <!-- GAMBAR MATERAI DARI ASSETS -->
+                    <img src="../assets/img/meterai.png" alt="Materai 10000" class="img-materai">
                     
                     <div><strong><span style="text-decoration: underline;" id="outNamaTtd"></span></strong></div>
                 </td>
@@ -162,20 +198,47 @@
         </table>
     </div>
 
-    <!-- SKRIP LOGIKA -->
+    <!-- SKRIP SISTEM -->
     <script>
+        // INISIALISASI HALAMAN DAN MENU SIDEBAR
+        document.addEventListener("DOMContentLoaded", function() {
+            const roleSaatIni = localStorage.getItem('user_role');
+            if(!roleSaatIni) { window.location.href = "login.html"; return; } 
+            
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
+            document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
+
+            const menuList = document.getElementById('menuDinamis');
+            if (roleSaatIni === 'superadmin') {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+                    <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf / Petugas</a></li>
+                    <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
+            } else {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+                    <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
+            }
+        });
+
+        // FUNGSI RENDER PDF
         function generatePDF(event) {
             event.preventDefault(); 
 
             const btn = document.getElementById('btnDownload');
             const teksAsli = btn.innerHTML;
-            btn.innerHTML = "⏳ Memproses PDF...";
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses Dokumen...";
             btn.disabled = true;
 
             const tgl = new Date();
             const bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
             const tanggalCetak = tgl.getDate() + ' ' + bulanIndo[tgl.getMonth()] + ' ' + tgl.getFullYear();
 
+            // Pindahkan data Input ke dalam template Kertas Surat
             const nama = document.getElementById('inNama').value;
             document.getElementById('outNama').innerText = nama;
             document.getElementById('outNamaTtd').innerText = nama.toUpperCase(); 
@@ -188,40 +251,45 @@
             document.getElementById('outAlamat').innerText = document.getElementById('inAlamat').value;
             document.getElementById('outTanggal').innerText = tanggalCetak;
 
-            const wadahForm = document.getElementById('wadahForm');
+            const appLayout = document.getElementById('appLayout');
             const elemenSurat = document.getElementById('kertasSurat');
 
-            // --- PERBAIKAN BUG RUANG KOSONG ---
-            // 1. Paksa gulir layar ke paling atas sebelum direkam
+            // Gulir ke atas dan ubah tampilan secara live
             window.scrollTo(0, 0); 
-            
-            // 2. Ganti Tampilan
-            wadahForm.style.display = 'none';
+            appLayout.style.display = 'none';
             elemenSurat.style.display = 'block';
 
-            // 3. Tunggu 0.3 detik agar sistem merekam posisi layar baru
+            // Jeda sejenak untuk membiarkan browser me-render tampilan baru
             setTimeout(() => {
                 const opsiPDF = {
-                    margin:       [15, 10, 15, 10], // Margin (Atas, Kiri, Bawah, Kanan)
+                    margin:       [15, 10, 15, 10], 
                     filename:     'Surat_Pernyataan_' + nama.replace(/\s+/g, '_') + '.pdf',
                     image:        { type: 'jpeg', quality: 1 },
-                    // PENAMBAHAN scrollY: 0 AGAR SISTEM TIDAK MEMBACA POSISI SCROLL LAMA
                     html2canvas:  { scale: 2, useCORS: true, scrollY: 0 }, 
                     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
                 html2pdf().set(opsiPDF).from(elemenSurat).save().then(() => {
+                    // Kembalikan ke tampilan sistem
                     elemenSurat.style.display = 'none';
-                    wadahForm.style.display = 'block'; 
+                    appLayout.style.display = 'flex'; 
                     btn.innerHTML = teksAsli;
                     btn.disabled = false;
-                    
-                    setTimeout(() => {
-                        alert('✅ Berhasil! Surat Pernyataan Anda telah terunduh.');
-                    }, 500);
                 });
-            }, 300); // Waktu tunda 300 milidetik
+            }, 400); 
         }
+
+        // FUNGSI SIDEBAR MOBILE
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('overlay').classList.toggle('active'); 
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay');
+            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btn.contains(e.target)) {
+                sidebar.classList.remove('active'); overlay.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>
