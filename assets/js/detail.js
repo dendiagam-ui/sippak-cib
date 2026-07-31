@@ -1,186 +1,213 @@
-// assets/js/detail.js
-
-const urlParams = new URLSearchParams(window.location.search);
-const idPermohonan = urlParams.get('id');
-
-let nomorWaWarga = "";
-let namaWarga = "";
-let jenisLayananWarga = "";
-let dataPermohonanGlobal = null; // Menyimpan data lengkap untuk keperluan hapus file
-
-async function muatDetail() {
-    try {
-        if (!idPermohonan) {
-            document.getElementById('infoData').innerHTML = "<p style='color:red;'>Akses Tidak Valid! Harap buka detail permohonan melalui tabel di halaman Dashboard Petugas.</p>";
-            document.getElementById('infoDokumen').innerHTML = "";
-            return;
-        }
-
-        const { data, error } = await supabase.from('permohonan').select('*').eq('id', idPermohonan).single();
-
-        if (error) throw error;
-
-        dataPermohonanGlobal = data; // Simpan ke variabel global
-        nomorWaWarga = data.no_wa;
-        namaWarga = data.nama_pemohon;
-        jenisLayananWarga = data.jenis_layanan;
-
-        // 1. TAMPILKAN DATA TEKS PEMOHON
-        let htmlData = `
-            <strong>Nomor Tiket:</strong> ${data.nomor_tiket} <br>
-            <strong>Layanan:</strong> ${data.jenis_layanan} <br><br>
-            <strong>DATA PEMOHON:</strong><br>
-            - NIK: ${data.nik} <br>
-            - No KK: ${data.no_kk || '-'} <br>
-            - Nama: ${data.nama_pemohon} <br>
-            - WhatsApp: ${data.no_wa} <br>
-            - Email: ${data.email || '-'} <br>
-        `;
-
-        if(data.keterangan) {
-            htmlData += `<br><strong>Keterangan:</strong> ${data.keterangan}<br>`;
-        }
-        if(data.nik_pengajuan) {
-            htmlData += `<br><strong>DATA PENGAJUAN:</strong><br>- NIK: ${data.nik_pengajuan}<br>- Nama: ${data.nama_pengajuan}<br>- Alasan: ${data.alasan_pengajuan || '-'}<br>`;
-        }
-        if(data.alamat_asal) {
-            htmlData += `<br><strong>DATA PINDAH:</strong><br>- Alamat Asal: ${data.alamat_asal}<br>- Alamat Tujuan: ${data.alamat_tujuan}<br>- Alasan: ${data.alasan_pindah}<br><br>`;
-            if (data.data_pindah_keluarga) {
-                let daftarKeluarga = data.data_pindah_keluarga.replace(/\n/g, '<br>');
-                htmlData += `<strong>ANGGOTA YANG PINDAH:</strong><br><span style="font-size:13px; line-height:1.4;">${daftarKeluarga}</span><br>`;
-            }
-        }
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Permohonan | SIPPAK-CIB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #f4f7f6; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; }
         
-        htmlData += `<br><strong>Status Saat Ini:</strong> <span style="color: blue; font-weight: bold;">${data.status}</span>`;
-        document.getElementById('infoData').innerHTML = htmlData;
-
-        // 2. TAMPILKAN TOMBOL DOKUMEN YANG DI UPLOAD WARGA
-        let htmlDok = '';
-        if(data.dokumen_tambahan) htmlDok += `<a href="${data.dokumen_tambahan}" target="_blank" class="tombol-dok">📄 Dok. Tambahan</a> `;
-        if(data.file_kk_hilang) htmlDok += `<a href="${data.file_kk_hilang}" target="_blank" class="tombol-dok">📄 Surat Kehilangan</a> `;
-        if(data.file_ktp) htmlDok += `<a href="${data.file_ktp}" target="_blank" class="tombol-dok">📄 KTP (Pemohon/Hilang)</a> `;
-        if(data.file_kk) htmlDok += `<a href="${data.file_kk}" target="_blank" class="tombol-dok">📄 Kartu Keluarga</a> `;
-        if(data.file_f106) htmlDok += `<a href="${data.file_f106}" target="_blank" class="tombol-dok">📄 Formulir F1.06</a> `;
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-back { text-decoration: none; color: #0056b3; font-weight: bold; font-size: 16px; }
+        .btn-back:hover { text-decoration: underline; }
         
-        if(htmlDok === '') htmlDok = '<i>Tidak ada lampiran dokumen.</i>';
-        document.getElementById('infoDokumen').innerHTML = htmlDok;
-
-        // 3. SET NILAI AWAL FORM TINDAKAN
-        document.getElementById('statusDropdown').value = data.status;
-        document.getElementById('inputDokumen').value = data.link_dokumen || "";
-        document.getElementById('inputAlasanTolak').value = data.alasan_penolakan || "";
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card h3 { border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; color: #0056b3; }
         
-        cekStatusTolak();
-
-    } catch (err) {
-        document.getElementById('infoData').innerHTML = `<p style='color:red;'>Terjadi kesalahan saat memuat data: ${err.message}</p>`;
-        document.getElementById('infoDokumen').innerHTML = `<i>Gagal memuat dokumen.</i>`;
-    }
-}
-
-function cekStatusTolak() {
-    const stat = document.getElementById('statusDropdown').value;
-    document.getElementById('grupTolak').style.display = (stat === 'Ditolak') ? 'block' : 'none';
-    document.getElementById('grupDokumenSelesai').style.display = (stat === 'Selesai') ? 'block' : 'none';
-}
-
-async function simpanPerubahan() {
-    const statusBaru = document.getElementById('statusDropdown').value;
-    const dokumenBaru = document.getElementById('inputDokumen').value;
-    const alasanBaru = document.getElementById('inputAlasanTolak').value;
-
-    if (statusBaru === 'Ditolak' && !alasanBaru) {
-        alert("Harap isi alasan penolakan terlebih dahulu!");
-        return;
-    }
-
-    const { error } = await supabase.from('permohonan').update({ 
-        status: statusBaru,
-        link_dokumen: dokumenBaru,
-        alasan_penolakan: (statusBaru === 'Ditolak') ? alasanBaru : null
-    }).eq('id', idPermohonan);
-
-    if (error) {
-        alert("Gagal menyimpan: " + error.message);
-    } else {
-        alert("Data permohonan berhasil diperbarui!");
+        .info-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px 10px; font-size: 15px; }
+        .info-label { font-weight: bold; color: #666; }
+        .info-value { color: #111; }
         
-        let pesan = '';
-        if (statusBaru === 'Selesai') {
-            pesan = `Halo ${namaWarga}, permohonan Anda (${jenisLayananWarga}) telah berstatus SELESAI. Silakan cek aplikasi untuk informasi atau dokumen hasil.`;
-        } else if (statusBaru === 'Ditolak') {
-            pesan = `Halo ${namaWarga}, mohon maaf permohonan Anda (${jenisLayananWarga}) DITOLAK.\n\nAlasan: ${alasanBaru}\n\nSilakan cek aplikasi untuk melakukan perbaikan.`;
+        .badge { padding: 8px 12px; border-radius: 5px; font-size: 14px; font-weight: bold; display: inline-block; }
+        .badge-menunggu { background: #ffc107; color: #856404; }
+        .badge-proses { background: #17a2b8; color: white; }
+        .badge-selesai { background: #28a745; color: white; }
+        .badge-ditolak { background: #dc3545; color: white; }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { padding: 12px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; font-size: 14px; flex: 1; min-width: 150px; text-align: center; }
+        .btn-proses { background: #17a2b8; }
+        .btn-selesai { background: #28a745; }
+        .btn-tolak { background: #dc3545; }
+        
+        /* Gaya Khusus untuk Tombol Dokumen */
+        .dokumen-list { display: flex; flex-direction: column; gap: 10px; }
+        .btn-dokumen { 
+            display: inline-flex; align-items: center; gap: 8px; background: #e8f4fd; 
+            color: #0056b3; padding: 12px 20px; border-radius: 8px; text-decoration: none; 
+            font-weight: bold; border: 1px solid #b8daff; transition: 0.3s;
         }
-        
-        if (pesan !== '') {
-            window.open(`https://wa.me/${nomorWaWarga}?text=${encodeURIComponent(pesan)}`, '_blank');
-        } else {
-            window.location.href = "dashboard.html";
-        }
-    }
-}
+        .btn-dokumen:hover { background: #0056b3; color: white; }
+    </style>
+</head>
+<body>
 
-// --- FITUR BARU: HAPUS PERMANEN (BERSIHKAN STORAGE & DATABASE) ---
-async function hapusPermohonan() {
-    // Konfirmasi ganda agar petugas tidak salah klik
-    const konfirmasi = confirm("⚠️ PERINGATAN KERAS!\n\nApakah Anda yakin ingin menghapus permohonan ini secara permanen?\nData teks dan seluruh file dokumen yang diunggah warga di Storage akan ikut musnah dan tidak dapat dikembalikan.");
-    
-    if (!konfirmasi) return;
+    <div class="container">
+        <div class="header">
+            <a href="dashboard-master.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
+        </div>
 
-    try {
-        if (!dataPermohonanGlobal) {
-            alert("Data belum dimuat sempurna.");
-            return;
-        }
+        <div id="loader" style="text-align: center; margin-top: 50px; font-size: 18px; color: #666;">
+            <i class="fas fa-spinner fa-spin"></i> Sedang mengambil data permohonan...
+        </div>
 
-        // 1. KUMPULKAN NAMA FILE DARI URL SUPABASE STORAGE
-        // URL Supabase biasanya berformat: .../storage/v1/object/public/syarat_permohonan/NAMA_FILE
-        let daftarFileYangDihapus = [];
-        
-        const kumpulLink = [
-            dataPermohonanGlobal.dokumen_tambahan,
-            dataPermohonanGlobal.file_kk_hilang,
-            dataPermohonanGlobal.file_ktp,
-            dataPermohonanGlobal.file_kk,
-            dataPermohonanGlobal.file_f106
-        ];
+        <div id="kontenDetail" style="display: none;">
+            <!-- Status & Aksi -->
+            <div class="card">
+                <h3>Status Permohonan</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <span class="info-label" style="display: block; margin-bottom: 5px;">Nomor Tiket:</span>
+                        <strong style="font-size: 18px;" id="valTiket">...</strong>
+                    </div>
+                    <div id="wadahBadge"></div>
+                </div>
 
-        kumpulLink.forEach(link => {
-            if (link && link.includes('syarat_permohonan/')) {
-                // Ambil string setelah folder 'syarat_permohonan/'
-                let namaFile = link.split('syarat_permohonan/')[1];
-                if (namaFile) {
-                    daftarFileYangDihapus.push(namaFile);
+                <div class="btn-group" id="wadahAksi">
+                    <button class="btn btn-proses" onclick="ubahStatus('Diproses')"><i class="fas fa-cog"></i> Proses Berkas</button>
+                    <button class="btn btn-selesai" onclick="ubahStatus('Selesai')"><i class="fas fa-check-circle"></i> Tandai Selesai</button>
+                    <button class="btn btn-tolak" onclick="ubahStatus('Ditolak')"><i class="fas fa-times-circle"></i> Tolak/Berkas Kurang</button>
+                </div>
+            </div>
+
+            <!-- Biodata -->
+            <div class="card">
+                <h3>Biodata Pemohon</h3>
+                <div class="info-grid">
+                    <div class="info-label">NIK</div><div class="info-value" id="valNik">...</div>
+                    <div class="info-label">Nama Lengkap</div><div class="info-value" id="valNama">...</div>
+                    <div class="info-label">Nomor KK</div><div class="info-value" id="valKK">...</div>
+                    <div class="info-label">No. WhatsApp</div><div class="info-value" id="valWa">...</div>
+                    <div class="info-label">Email</div><div class="info-value" id="valEmail">...</div>
+                    <div class="info-label">Waktu Pengajuan</div><div class="info-value" id="valTanggal">...</div>
+                </div>
+            </div>
+
+            <!-- Detail Layanan -->
+            <div class="card">
+                <h3>Detail Layanan</h3>
+                <div class="info-grid">
+                    <div class="info-label">Jenis Layanan</div>
+                    <div class="info-value"><strong id="valLayanan" style="color: #0056b3;">...</strong></div>
+                    <div class="info-label">Keterangan / Alasan</div>
+                    <div class="info-value" id="valKeterangan">...</div>
+                </div>
+            </div>
+
+            <!-- DOKUMEN LAMPIRAN (FITUR BARU) -->
+            <div class="card">
+                <h3><i class="fas fa-folder-open"></i> Dokumen Persyaratan</h3>
+                <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Klik tombol di bawah untuk melihat file yang diunggah warga.</p>
+                
+                <div class="dokumen-list" id="valDokumen">
+                    <!-- Tombol dokumen akan muncul di sini otomatis -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panggil Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config.js"></script>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const permohonanId = urlParams.get('id');
+
+        async function muatDetail() {
+            const loader = document.getElementById('loader');
+            
+            try {
+                // Cek Sesi
+                const { data: { session } } = await supabase.auth.getSession();
+                const role = localStorage.getItem('user_role');
+                
+                if (!session || (role !== 'petugas' && role !== 'superadmin')) {
+                    throw new Error("Akses ditolak. Silakan login sebagai Petugas.");
                 }
-            }
-        });
 
-        // 2. HAPUS FILE FISIK DARI STORAGE SUPABASE (Jika ada)
-        if (daftarFileYangDihapus.length > 0) {
-            const { error: errorStorage } = await supabase.storage
-                .from('syarat_permohonan')
-                .remove(daftarFileYangDihapus);
+                if (!permohonanId) {
+                    throw new Error("ID Permohonan tidak valid.");
+                }
 
-            if (errorStorage) {
-                console.warn("Catatan: Gagal menghapus file fisik di storage, tapi proses database akan dilanjutkan:", errorStorage.message);
+                // Ambil data
+                const { data, error } = await supabase.from('permohonan').select('*').eq('id', permohonanId).single();
+
+                if (error) throw error;
+
+                // Masukkan teks ke HTML
+                document.getElementById('valTiket').innerText = data.nomor_tiket || '-';
+                document.getElementById('valNik').innerText = data.nik || '-';
+                document.getElementById('valNama').innerText = data.nama_pemohon || '-';
+                document.getElementById('valKK').innerText = data.no_kk || '-';
+                document.getElementById('valWa').innerText = data.no_wa || '-';
+                document.getElementById('valEmail').innerText = data.email || '-';
+                document.getElementById('valLayanan').innerText = data.jenis_layanan || '-';
+                document.getElementById('valKeterangan').innerText = data.keterangan || data.alasan_pindah || '-';
+                document.getElementById('valTanggal').innerText = data.created_at ? new Date(data.created_at).toLocaleString('id-ID') : '-';
+
+                aturBadgeStatus(data.status || 'Menunggu');
+
+                // --- LOGIKA MENAMPILKAN TOMBOL DOKUMEN ---
+                const wadahDokumen = document.getElementById('valDokumen');
+                wadahDokumen.innerHTML = ''; // Kosongkan dulu
+                let adaDokumen = false;
+
+                if (data.file_lampiran) {
+                    wadahDokumen.innerHTML += `
+                        <a href="${data.file_lampiran}" target="_blank" class="btn-dokumen">
+                            <i class="fas fa-file-pdf"></i> Lihat Lampiran Utama (KTP/KK)
+                        </a>`;
+                    adaDokumen = true;
+                }
+                
+                if (data.file_lampiran_2) {
+                    wadahDokumen.innerHTML += `
+                        <a href="${data.file_lampiran_2}" target="_blank" class="btn-dokumen">
+                            <i class="fas fa-file-alt"></i> Lihat Dokumen Tambahan
+                        </a>`;
+                    adaDokumen = true;
+                }
+
+                // Jika warga tidak mengunggah apa pun
+                if (!adaDokumen) {
+                    wadahDokumen.innerHTML = `<div style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; border: 1px solid #ffeeba;">Warga tidak melampirkan dokumen apa pun pada permohonan ini.</div>`;
+                }
+
+                // Tampilkan layar
+                loader.style.display = 'none';
+                document.getElementById('kontenDetail').style.display = 'block';
+
+            } catch (err) {
+                loader.innerHTML = `<div style="color:red;">Gagal memuat data: ${err.message}</div>`;
             }
         }
 
-        // 3. HAPUS BARIS DATA DARI TABEL 'permohonan'
-        const { error: errorDb } = await supabase
-            .from('permohonan')
-            .delete()
-            .eq('id', idPermohonan);
+        function aturBadgeStatus(status) {
+            let kelas = 'badge-menunggu';
+            if (status === 'Diproses') kelas = 'badge-proses';
+            else if (status === 'Selesai') kelas = 'badge-selesai';
+            else if (status === 'Ditolak') kelas = 'badge-ditolak';
+            document.getElementById('wadahBadge').innerHTML = `<span class="badge ${kelas}"><i class="fas fa-info-circle"></i> Status: ${status}</span>`;
+        }
 
-        if (errorDb) throw errorDb;
+        async function ubahStatus(statusBaru) {
+            const konfirmasi = confirm(`Ubah status menjadi: ${statusBaru}?`);
+            if (!konfirmasi) return;
+            try {
+                const { error } = await supabase.from('permohonan').update({ status: statusBaru }).eq('id', permohonanId);
+                if (error) throw error;
+                aturBadgeStatus(statusBaru); 
+                alert(`Status diperbarui menjadi: ${statusBaru}`);
+            } catch (err) {
+                alert("Gagal mengubah status.");
+            }
+        }
 
-        alert("🗑️ Data dan seluruh file dokumen berhasil dihapus permanen! Space database & storage telah dibersihkan.");
-        window.location.href = "dashboard.html";
-
-    } catch (err) {
-        alert("Gagal menghapus permohonan: " + err.message);
-    }
-}
-
-// Jalankan saat file terbuka
-muatDetail();
+        muatDetail();
+    </script>
+</body>
+</html>
