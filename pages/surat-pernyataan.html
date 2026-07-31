@@ -58,7 +58,9 @@
         .btn-submit { background: #10b981; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-submit:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2); }
 
-        /* KERTAS SURAT (TERSEMBUNYI) */
+        /* ========================================== */
+        /* DESAIN KERTAS SURAT (TERSEMBUNYI DI WEB) */
+        /* ========================================== */
         #kertasSurat { display: none; padding: 40px 60px; font-family: 'Times New Roman', Times, serif; color: black; line-height: 1.5; font-size: 16px; background: white; width: 100%; max-width: 210mm; margin: 0 auto; }
         .kop-surat { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin-bottom: 30px; letter-spacing: 1px; }
         .tabel-biodata { margin-bottom: 25px; width: 100%; border-collapse: collapse; }
@@ -69,8 +71,35 @@
         
         .area-ttd { width: 100%; margin-top: 50px; }
         .area-ttd td { vertical-align: top; }
-        .img-materai { width: 80px; height: auto; display: block; opacity: 0.9; }
-        .img-ttd-hasil { height: 80px; width: auto; max-width: 150px; display: none; object-fit: contain; }
+        
+        /* PENGATURAN POSISI TANDA TANGAN MENIMPA MATERAI */
+        .wadah-ttd-materai { 
+            position: relative; 
+            width: 220px; 
+            height: 90px; 
+            margin: 15px 0; 
+        }
+        .img-materai { 
+            position: absolute; 
+            left: 0; 
+            bottom: 0; 
+            width: 80px; 
+            height: auto; 
+            z-index: 1; /* Materai berada di layer bawah */
+        }
+        .img-ttd-hasil { 
+            position: absolute; 
+            /* Digeser ke kanan menimpa setengah materai */
+            left: 35px; 
+            /* Posisinya sedikit diturunkan dari tengah gambar */
+            bottom: -15px; 
+            height: 100px; 
+            width: auto; 
+            max-width: 180px; 
+            z-index: 2; /* TTD berada di layer atas materai */
+            display: none; 
+            object-fit: contain; 
+        }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
         .overlay.active { display: block; }
@@ -155,7 +184,7 @@
                                 <textarea id="inAlamat" placeholder="Tuliskan alamat domisili lengkap beserta RT/RW..." required></textarea>
                             </div>
 
-                            <!-- INPUT TANDA TANGAN (BARU) -->
+                            <!-- INPUT TANDA TANGAN -->
                             <div class="form-group full-width">
                                 <label>Tanda Tangan Pemohon *</label>
                                 <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Gunakan mouse atau sentuh layar HP Anda untuk menandatangani di dalam kotak di bawah ini.</p>
@@ -195,7 +224,6 @@
         
         <div class="teks-paragraf">Demikian surat pernyataan ini saya buat dengan sebenar-benarnya dalam keadaan sehat jasmani dan rohani tanpa ada paksaan dari pihak manapun dan siap bertanggung jawab mutlak apabila pernyataan ini tidak sesuai dengan keadaan yang sebenarnya saya bersedia dituntut sesuai dengan hukum yang berlaku.</div>
 
-        <!-- POSISI MATERAI DAN TANDA TANGAN BERSEBELAHAN -->
         <table class="area-ttd">
             <tr>
                 <td style="width: 50%;"></td> 
@@ -203,16 +231,11 @@
                     <div style="margin-bottom: 5px;">Cimahi, <span id="outTanggal"></span></div>
                     <div>Yang membuat pernyataan</div>
                     
-                    <table style="margin: 10px 0;">
-                        <tr>
-                            <td style="vertical-align: middle; padding-right: 10px;">
-                                <img src="../assets/img/meterai.png" alt="Materai 10000" class="img-materai">
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <img id="outTtdImage" src="" alt="Tanda Tangan" class="img-ttd-hasil">
-                            </td>
-                        </tr>
-                    </table>
+                    <!-- WADAH BARU UNTUK EFEK TTD MENIMPA MATERAI -->
+                    <div class="wadah-ttd-materai">
+                        <img src="../assets/img/meterai.png" alt="Materai 10000" class="img-materai">
+                        <img id="outTtdImage" src="" alt="Tanda Tangan" class="img-ttd-hasil">
+                    </div>
                     
                     <div><strong><span style="text-decoration: underline;" id="outNamaTtd"></span></strong></div>
                 </td>
@@ -222,7 +245,6 @@
 
     <!-- SKRIP SISTEM & KANVAS TANDA TANGAN -->
     <script>
-        // INISIALISASI HALAMAN
         document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
             if(!roleSaatIni) { window.location.href = "login.html"; return; } 
@@ -249,25 +271,20 @@
             initSignaturePad();
         });
 
-        // ==========================================
-        // LOGIKA KANVAS TANDA TANGAN (MOUSE & TOUCH)
-        // ==========================================
         const canvas = document.getElementById('canvasTtd');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
-        let hasDrawn = false; // Deteksi apakah kanvas sudah diisi
+        let hasDrawn = false; 
 
         function initSignaturePad() {
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
             
-            // Mouse Events
             canvas.addEventListener('mousedown', startDrawing);
             canvas.addEventListener('mousemove', draw);
             canvas.addEventListener('mouseup', stopDrawing);
             canvas.addEventListener('mouseout', stopDrawing);
             
-            // Touch Events (Untuk Layar HP)
             canvas.addEventListener('touchstart', startDrawing, { passive: false });
             canvas.addEventListener('touchmove', draw, { passive: false });
             canvas.addEventListener('touchend', stopDrawing);
@@ -294,7 +311,7 @@
 
         function draw(e) {
             if (!isDrawing) return;
-            e.preventDefault(); // Cegah scrolling saat menggambar di HP
+            e.preventDefault(); 
             
             let clientX, clientY;
             if (e.type.includes('touch')) {
@@ -312,7 +329,7 @@
             ctx.lineWidth = 3;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            ctx.strokeStyle = '#0f172a'; // Warna tinta gelap
+            ctx.strokeStyle = '#1e293b'; 
             
             ctx.lineTo(x, y);
             ctx.stroke();
@@ -325,9 +342,6 @@
             hasDrawn = false;
         }
 
-        // ==========================================
-        // LOGIKA RENDER PDF
-        // ==========================================
         function generatePDF(event) {
             event.preventDefault(); 
 
@@ -345,7 +359,6 @@
             const bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
             const tanggalCetak = tgl.getDate() + ' ' + bulanIndo[tgl.getMonth()] + ' ' + tgl.getFullYear();
 
-            // Pindahkan teks
             const nama = document.getElementById('inNama').value;
             document.getElementById('outNama').innerText = nama;
             document.getElementById('outNamaTtd').innerText = nama.toUpperCase(); 
@@ -358,7 +371,6 @@
             document.getElementById('outAlamat').innerText = document.getElementById('inAlamat').value;
             document.getElementById('outTanggal').innerText = tanggalCetak;
 
-            // PINDAHKAN GAMBAR TANDA TANGAN DARI KANVAS KE KERTAS SURAT
             const imgTtd = document.getElementById('outTtdImage');
             imgTtd.src = canvas.toDataURL('image/png'); 
             imgTtd.style.display = 'block';
