@@ -12,10 +12,9 @@
 
         body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
 
-        /* WADAH UTAMA APLIKASI (Untuk disembunyikan saat cetak PDF) */
         #appLayout { display: flex; width: 100%; height: 100%; transition: 0.3s; }
 
-        /* SIDEBAR MODERN */
+        /* SIDEBAR */
         .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
         .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; gap: 10px; }
         .sidebar-header i { color: #3b82f6; }
@@ -37,7 +36,7 @@
         .btn-kembali { background: #fff; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; color: #475569; text-decoration: none; font-weight: bold; transition: 0.2s; }
         .btn-kembali:hover { background: #f1f5f9; color: var(--teks-gelap); }
 
-        /* KARTU FORMULIR */
+        /* FORMULIR */
         .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 35px; max-width: 800px; margin: 0 auto; }
         .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
         
@@ -51,12 +50,15 @@
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
         .form-group textarea { resize: vertical; min-height: 100px; }
 
+        /* KOTAK TANDA TANGAN */
+        #canvasTtd { border: 2px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; width: 100%; height: 180px; touch-action: none; cursor: crosshair; }
+        .btn-hapus-ttd { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .btn-hapus-ttd:hover { background: #ef4444; color: white; }
+
         .btn-submit { background: #10b981; color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-submit:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2); }
 
-        /* ========================================== */
-        /* DESAIN KERTAS SURAT (TERSEMBUNYI DI WEB) */
-        /* ========================================== */
+        /* KERTAS SURAT (TERSEMBUNYI) */
         #kertasSurat { display: none; padding: 40px 60px; font-family: 'Times New Roman', Times, serif; color: black; line-height: 1.5; font-size: 16px; background: white; width: 100%; max-width: 210mm; margin: 0 auto; }
         .kop-surat { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin-bottom: 30px; letter-spacing: 1px; }
         .tabel-biodata { margin-bottom: 25px; width: 100%; border-collapse: collapse; }
@@ -65,12 +67,11 @@
         .kolom-titikdua { width: 3%; text-align: center; }
         .teks-paragraf { text-indent: 50px; text-align: justify; margin-bottom: 15px; }
         
-        /* Area Tanda Tangan & Gambar Materai */
         .area-ttd { width: 100%; margin-top: 50px; }
         .area-ttd td { vertical-align: top; }
-        .img-materai { width: 80px; height: auto; margin: 15px 0; display: block; opacity: 0.9; }
+        .img-materai { width: 80px; height: auto; display: block; opacity: 0.9; }
+        .img-ttd-hasil { height: 80px; width: auto; max-width: 150px; display: none; object-fit: contain; }
 
-        /* OVERLAY MOBILE */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
         .overlay.active { display: block; }
         @media (max-width: 900px) {
@@ -153,6 +154,18 @@
                                 <label>Alamat Lengkap *</label>
                                 <textarea id="inAlamat" placeholder="Tuliskan alamat domisili lengkap beserta RT/RW..." required></textarea>
                             </div>
+
+                            <!-- INPUT TANDA TANGAN (BARU) -->
+                            <div class="form-group full-width">
+                                <label>Tanda Tangan Pemohon *</label>
+                                <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Gunakan mouse atau sentuh layar HP Anda untuk menandatangani di dalam kotak di bawah ini.</p>
+                                
+                                <canvas id="canvasTtd"></canvas>
+                                
+                                <button type="button" class="btn-hapus-ttd" onclick="hapusTandaTangan()">
+                                    <i class="fas fa-eraser"></i> Bersihkan Tanda Tangan
+                                </button>
+                            </div>
                         </div>
                         <button type="submit" id="btnDownload" class="btn-submit"><i class="fas fa-print"></i> Generate & Unduh Dokumen PDF</button>
                     </form>
@@ -161,7 +174,7 @@
         </main>
     </div>
 
-    <!-- TEMPLATE SURAT (HANYA MUNCUL SAAT DIRENDER PDF) -->
+    <!-- TEMPLATE SURAT PDF (TERSEMBUNYI) -->
     <div id="kertasSurat">
         <div class="kop-surat">SURAT PERNYATAAN</div>
         
@@ -182,15 +195,24 @@
         
         <div class="teks-paragraf">Demikian surat pernyataan ini saya buat dengan sebenar-benarnya dalam keadaan sehat jasmani dan rohani tanpa ada paksaan dari pihak manapun dan siap bertanggung jawab mutlak apabila pernyataan ini tidak sesuai dengan keadaan yang sebenarnya saya bersedia dituntut sesuai dengan hukum yang berlaku.</div>
 
+        <!-- POSISI MATERAI DAN TANDA TANGAN BERSEBELAHAN -->
         <table class="area-ttd">
             <tr>
-                <td style="width: 55%;"></td> 
-                <td style="width: 45%; text-align: left; padding-left: 20px;">
+                <td style="width: 50%;"></td> 
+                <td style="width: 50%; text-align: left; padding-left: 20px;">
                     <div style="margin-bottom: 5px;">Cimahi, <span id="outTanggal"></span></div>
                     <div>Yang membuat pernyataan</div>
                     
-                    <!-- GAMBAR MATERAI DARI ASSETS -->
-                    <img src="../assets/img/meterai.png" alt="Materai 10000" class="img-materai">
+                    <table style="margin: 10px 0;">
+                        <tr>
+                            <td style="vertical-align: middle; padding-right: 10px;">
+                                <img src="../assets/img/meterai.png" alt="Materai 10000" class="img-materai">
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <img id="outTtdImage" src="" alt="Tanda Tangan" class="img-ttd-hasil">
+                            </td>
+                        </tr>
+                    </table>
                     
                     <div><strong><span style="text-decoration: underline;" id="outNamaTtd"></span></strong></div>
                 </td>
@@ -198,9 +220,9 @@
         </table>
     </div>
 
-    <!-- SKRIP SISTEM -->
+    <!-- SKRIP SISTEM & KANVAS TANDA TANGAN -->
     <script>
-        // INISIALISASI HALAMAN DAN MENU SIDEBAR
+        // INISIALISASI HALAMAN
         document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
             if(!roleSaatIni) { window.location.href = "login.html"; return; } 
@@ -223,11 +245,96 @@
                     <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
                 `;
             }
+
+            initSignaturePad();
         });
 
-        // FUNGSI RENDER PDF
+        // ==========================================
+        // LOGIKA KANVAS TANDA TANGAN (MOUSE & TOUCH)
+        // ==========================================
+        const canvas = document.getElementById('canvasTtd');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let hasDrawn = false; // Deteksi apakah kanvas sudah diisi
+
+        function initSignaturePad() {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Mouse Events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch Events (Untuk Layar HP)
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            ctx.scale(ratio, ratio);
+            hasDrawn = false;
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            hasDrawn = true;
+            draw(e);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); // Cegah scrolling saat menggambar di HP
+            
+            let clientX, clientY;
+            if (e.type.includes('touch')) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#0f172a'; // Warna tinta gelap
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function hapusTandaTangan() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasDrawn = false;
+        }
+
+        // ==========================================
+        // LOGIKA RENDER PDF
+        // ==========================================
         function generatePDF(event) {
             event.preventDefault(); 
+
+            if (!hasDrawn) {
+                alert("Mohon isi tanda tangan terlebih dahulu di dalam kotak yang disediakan!");
+                return;
+            }
 
             const btn = document.getElementById('btnDownload');
             const teksAsli = btn.innerHTML;
@@ -238,7 +345,7 @@
             const bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
             const tanggalCetak = tgl.getDate() + ' ' + bulanIndo[tgl.getMonth()] + ' ' + tgl.getFullYear();
 
-            // Pindahkan data Input ke dalam template Kertas Surat
+            // Pindahkan teks
             const nama = document.getElementById('inNama').value;
             document.getElementById('outNama').innerText = nama;
             document.getElementById('outNamaTtd').innerText = nama.toUpperCase(); 
@@ -251,15 +358,18 @@
             document.getElementById('outAlamat').innerText = document.getElementById('inAlamat').value;
             document.getElementById('outTanggal').innerText = tanggalCetak;
 
+            // PINDAHKAN GAMBAR TANDA TANGAN DARI KANVAS KE KERTAS SURAT
+            const imgTtd = document.getElementById('outTtdImage');
+            imgTtd.src = canvas.toDataURL('image/png'); 
+            imgTtd.style.display = 'block';
+
             const appLayout = document.getElementById('appLayout');
             const elemenSurat = document.getElementById('kertasSurat');
 
-            // Gulir ke atas dan ubah tampilan secara live
             window.scrollTo(0, 0); 
             appLayout.style.display = 'none';
             elemenSurat.style.display = 'block';
 
-            // Jeda sejenak untuk membiarkan browser me-render tampilan baru
             setTimeout(() => {
                 const opsiPDF = {
                     margin:       [15, 10, 15, 10], 
@@ -270,7 +380,6 @@
                 };
 
                 html2pdf().set(opsiPDF).from(elemenSurat).save().then(() => {
-                    // Kembalikan ke tampilan sistem
                     elemenSurat.style.display = 'none';
                     appLayout.style.display = 'flex'; 
                     btn.innerHTML = teksAsli;
@@ -279,7 +388,6 @@
             }, 400); 
         }
 
-        // FUNGSI SIDEBAR MOBILE
         function toggleSidebar() { 
             document.getElementById('sidebar').classList.toggle('active'); 
             document.getElementById('overlay').classList.toggle('active'); 
