@@ -3,107 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cek Status | SIPPAK-CIB</title>
-    <!-- Ubah versi CSS ke 9.0 untuk jaga-jaga -->
-    <link rel="stylesheet" href="../assets/css/style.css?v=9.0">
+    <title>Lacak Status | SIPPAK-CIB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+        body { background-color: #f8fafc; padding: 20px; color: #334155; }
+        .container { max-width: 650px; margin: 30px auto; background: #ffffff; padding: 35px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: center; }
+        .btn-back { text-decoration: none; color: #64748b; font-weight: 600; margin-bottom: 25px; display: inline-block; font-size: 15px; text-align: left; width: 100%; transition: 0.2s; }
+        .btn-back:hover { color: #f59e0b; transform: translateX(-3px); }
+        h2 { color: #0f172a; margin-bottom: 15px; }
+        
+        .form-group input { width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; transition: 0.3s; }
+        .form-group input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
+        
+        .btn-submit { background: #f59e0b; color: white; border: none; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-submit:hover { background: #d97706; transform: translateY(-2px); }
+        
+        .hasil-lacak { margin-top: 30px; display: none; text-align: left; }
+        .kartu-riwayat { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: 0.3s; position: relative; overflow: hidden; }
+        .kartu-riwayat:hover { border-color: #cbd5e1; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
+        .kartu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 12px; margin-bottom: 12px; }
+        .kartu-header .tiket { color: #2563eb; font-weight: 800; font-size: 15px; }
+        .kartu-header .tanggal { font-size: 12px; color: #64748b; }
+        .kartu-body p { margin-bottom: 6px; font-size: 14px; color: #475569; }
+        
+        .status-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-Menunggu { background: #fef3c7; color: #d97706; }
+        .status-Diproses { background: #e0f2fe; color: #0284c7; }
+        .status-Selesai { background: #dcfce7; color: #16a34a; }
+        .status-Ditolak { background: #fee2e2; color: #dc2626; }
+
+        /* TOMBOL DOWNLOAD PDF */
+        .btn-download { display: inline-block; background: #10b981; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: bold; text-decoration: none; margin-top: 15px; transition: 0.3s; }
+        .btn-download:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+    </style>
 </head>
 <body>
-    <main style="text-align: center; padding: 40px 20px; max-width: 500px; margin: auto;">
-        <h2>Lacak Status Permohonan</h2>
-        <p>Masukkan 16 Digit NIK Anda untuk melihat riwayat dan status permohonan.</p>
-        <br>
-
-        <!-- Form Pencarian dengan NIK -->
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <input type="number" id="inputNik" placeholder="Masukkan NIK Anda di sini..." style="padding: 15px; text-align: center; font-size: 16px; border-radius: 8px; border: 1px solid #ccc;">
-            <button onclick="cekStatus()" style="background: #ffc107; color: black; font-weight: bold; padding: 15px; border-radius: 8px; border: none;">
-                🔍 Cari Dokumen
-            </button>
-        </div>
-
-        <!-- Area Hasil Pencarian (Bisa memunculkan lebih dari 1 kotak) -->
-        <div id="hasil" style="margin-top: 30px;"></div>
+    <div class="container">
+        <a href="../index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
         
-        <br><br>
-        <a href="warga.html" style="color: blue; text-decoration: none; font-weight: bold;">⬅ Kembali ke Menu Warga</a>
-    </main>
+        <div style="font-size: 45px; color: #f59e0b; margin-bottom: 15px;"><i class="fas fa-fingerprint"></i></div>
+        <h2>Lacak Riwayat Berkas</h2>
+        <p style="color: #64748b; margin-bottom: 25px; font-size: 15px;">Masukkan 16 Digit NIK Anda untuk melihat seluruh perkembangan permohonan.</p>
 
-    <!-- Script Database Supabase -->
+        <form onsubmit="lacakNik(event)">
+            <div class="form-group">
+                <input type="number" id="inpNik" required placeholder="Ketik 16 Digit NIK Anda" pattern="[0-9]{16}">
+            </div>
+            <button type="submit" class="btn-submit" id="btnCari"><i class="fas fa-search"></i> Lacak Sekarang</button>
+        </form>
+        
+        <div id="hasilLacak" class="hasil-lacak"></div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../assets/js/config.js"></script>
-    
     <script>
-        async function cekStatus() {
-            const nik = document.getElementById('inputNik').value;
-            const hasilDiv = document.getElementById('hasil');
-            
-            if (!nik) { 
-                hasilDiv.innerHTML = "<p style='color:red;'>Silakan masukkan NIK terlebih dahulu.</p>"; 
-                return; 
-            }
+      const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
+    const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
+    const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-            hasilDiv.innerHTML = "<i>Mencari data permohonan...</i>";
+    async function lacakNik(event) {
+        event.preventDefault();
+        const btn = document.getElementById('btnCari');
+        const kotakHasil = document.getElementById('hasilLacak');
+        const nomorNik = document.getElementById('inpNik').value.trim();
+        const teksAsli = btn.innerHTML;
 
-            // Ambil SEMUA data dari Supabase berdasarkan NIK (Bukan nomor tiket lagi)
-            // Diurutkan dari yang terbaru (menggunakan ID descending)
-            const { data, error } = await supabase
+        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari Data...";
+        btn.disabled = true;
+        kotakHasil.style.display = 'none';
+
+        try {
+            const { data, error } = await supabaseClient
                 .from('permohonan')
-                .select('nomor_tiket, nama_pemohon, jenis_layanan, status, link_dokumen, alasan_penolakan')
-                .eq('nik', nik)
-                .order('id', { ascending: false });
+                .select('nomor_tiket, nama_pemohon, jenis_layanan, status, created_at, dokumen_hasil')
+                .eq('nik', nomorNik)
+                .order('created_at', { ascending: false });
 
-            // Jika error atau NIK tidak ditemukan / belum pernah daftar
-            if (error || !data || data.length === 0) {
-                hasilDiv.innerHTML = "<p style='color:red;'>Data tidak ditemukan. Pastikan NIK yang dimasukkan benar dan sudah pernah membuat permohonan.</p>";
-                return;
-            }
+            if (error) throw error;
+            if (!data || data.length === 0) throw new Error(`Tidak ada riwayat permohonan untuk NIK: ${nomorNik}`);
 
-            // Jika NIK ditemukan, buat tampilan daftarnya
-            let tampilan = `<p style="text-align: left; color: green; font-weight: bold; margin-bottom: 15px;">Ditemukan ${data.length} riwayat permohonan:</p>`;
+            let htmlList = `<h3 style="color: #1e293b; margin-bottom: 20px; font-size: 18px;"><i class="fas fa-list-check"></i> Riwayat Ditemukan (${data.length})</h3>`;
             
-            // Lakukan perulangan (Looping) untuk mencetak semua kotak permohonan
             data.forEach(item => {
-                let warnaStatus = 'black';
-                if(item.status === 'Menunggu Verifikasi') warnaStatus = 'orange';
-                if(item.status === 'Diproses') warnaStatus = 'blue';
-                if(item.status === 'Selesai') warnaStatus = 'green';
-                if(item.status === 'Ditolak') warnaStatus = 'red';
+                const tgl = new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                const statusLengkap = item.status || 'Menunggu';
+                
+                // CEK JIKA STATUS SELESAI DAN ADA FILE DOKUMEN HASIL
+                let tombolDownload = '';
+                if (statusLengkap === 'Selesai' && item.dokumen_hasil) {
+                    
+                    // PERBAIKAN: Memaksa browser untuk langsung mendownload file 
+                    // dengan menambahkan atribut bawaan dari Supabase
+                    const namaFileDownload = `Hasil_${item.nomor_tiket}.pdf`;
+                    const linkLangsungDownload = `${item.dokumen_hasil}?download=${namaFileDownload}`;
+                    
+                    tombolDownload = `<a href="${linkLangsungDownload}" class="btn-download"><i class="fas fa-file-download"></i> Unduh Dokumen (PDF)</a>`;
+                }
 
-                tampilan += `
-                    <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd; text-align: left; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                        <p style="margin: 0 0 10px 0; font-size: 12px; color: #666; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
-                            <strong>No. Tiket:</strong> ${item.nomor_tiket}
-                        </p>
-                        <p style="margin: 5px 0;"><strong>Pemohon:</strong> ${item.nama_pemohon}</p>
-                        <p style="margin: 5px 0;"><strong>Layanan:</strong> ${item.jenis_layanan}</p>
-                        <p style="margin: 15px 0 5px 0;"><strong>Status:</strong> <span style="font-size: 16px; font-weight: bold; color: ${warnaStatus};">${item.status}</span></p>
-                `;
-
-                // Jika statusnya DITOLAK
-                if (item.status === 'Ditolak') {
-                    tampilan += `
-                        <div style="background: #f8d7da; padding: 12px; border-radius: 5px; border: 1px solid #f5c6cb; margin-top: 15px;">
-                            <h4 style="color: #721c24; margin-bottom: 5px; font-size: 14px;">Alasan Penolakan:</h4>
-                            <p style="color: #721c24; margin: 0; font-size: 13px;">${item.alasan_penolakan}</p>
+                htmlList += `
+                    <div class="kartu-riwayat">
+                        <div class="kartu-header">
+                            <span class="tiket"><i class="fas fa-ticket-alt"></i> ${item.nomor_tiket}</span>
+                            <span class="tanggal">${tgl}</span>
                         </div>
-                    `;
-                }
-                // Jika statusnya SELESAI dan ada link dokumen
-                else if (item.status === 'Selesai' && item.link_dokumen) {
-                    tampilan += `
-                        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ccc;">
-                        <a href="${item.link_dokumen}" target="_blank" style="display: block; text-align: center; padding: 12px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;">
-                            📥 Unduh Dokumen Hasil
-                        </a>
-                    `;
-                }
-
-                tampilan += `</div>`; // Tutup kotak permohonan
+                        <div class="kartu-body">
+                            <p><strong>Pemohon:</strong> ${item.nama_pemohon}</p>
+                            <p><strong>Layanan:</strong> ${item.jenis_layanan}</p>
+                            <div>
+                                <span class="status-badge status-${statusLengkap}">${statusLengkap}</span>
+                            </div>
+                            ${tombolDownload} 
+                        </div>
+                    </div>
+                `;
             });
 
-            // Masukkan seluruh kotak tadi ke dalam HTML
-            hasilDiv.innerHTML = tampilan;
+            kotakHasil.innerHTML = htmlList;
+            kotakHasil.style.display = 'block';
+
+        } catch (err) {
+            kotakHasil.innerHTML = `<div style="background: #fee2e2; border: 1px solid #f87171; border-radius: 10px; padding: 20px; text-align: center; color: #dc2626;"><i class="fas fa-times-circle" style="font-size: 35px; margin-bottom: 12px;"></i><h4 style="margin-bottom: 5px;">Pencarian Gagal</h4><p style="font-size: 14px;">${err.message}</p></div>`;
+            kotakHasil.style.display = 'block';
+        } finally {
+            btn.innerHTML = teksAsli;
+            btn.disabled = false;
         }
+    }
     </script>
 </body>
 </html>

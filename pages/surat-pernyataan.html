@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Surat Pernyataan | SIPPAK-CIB</title>
+    <!-- ========================================== -->
+    <!-- 🚀 TEKNOLOGI PRE-CACHE (MEMPERCEPAT LOADING) -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://ufplggwklwopzhhwrdqk.supabase.co" crossorigin> <!-- Opsional: Ganti dengan URL Supabase Anda -->
+    
+    <!-- Memaksa browser menyimpan Mesin Supabase & Ikon ke RAM -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
+    <!-- ========================================== -->
+    <link rel="stylesheet" href="../assets/css/style.css?v=14.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* 🚀 TAMBAHKAN KODE INI UNTUK TRANSISI HALUS */
+        body { 
+            animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+            /* Sembunyikan scrollbar yang sering bikin patah-patah */
+            overflow-x: hidden; 
+        }
+
+        @keyframes fadeInPage {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        /* ========================================== */
+        .grup-input { text-align: left; margin-bottom: 15px; }
+        .grup-input label { display: block; margin-bottom: 5px; font-weight: bold; color: #333; font-size: 14px; }
+        
+        /* DESAIN KERTAS SURAT YANG DIPERBAIKI */
+        #kertasSurat {
+            display: none; 
+            padding: 20px 40px; /* Padding dikurangi agar tidak tumpah */
+            font-family: Arial, Helvetica, sans-serif; 
+            color: black;
+            line-height: 1.6;
+            font-size: 14px; 
+            background: white;
+        }
+        
+        .kop-surat { 
+            text-align: center; 
+            font-weight: bold; 
+            font-size: 16px; 
+            margin-bottom: 30px; 
+        }
+        
+        /* Tabel Biodata */
+        .tabel-biodata { 
+            margin-bottom: 20px; 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+        .tabel-biodata td { 
+            padding: 5px 0; 
+            vertical-align: top; 
+            border: none; /* Menghilangkan garis samar jika ada */
+        }
+        .kolom-label { width: 35%; }
+        .kolom-titikdua { width: 3%; text-align: center; }
+        
+        /* Teks Paragraf */
+        .teks-paragraf {
+            text-indent: 40px; 
+            text-align: justify;
+            margin-bottom: 10px;
+        }
+
+        /* Area Tanda Tangan */
+        .area-ttd {
+            width: 100%;
+            margin-top: 30px;
+        }
+        .area-ttd td {
+            vertical-align: top;
+        }
+        .kotak-materai {
+            width: 70px;
+            height: 35px; 
+            border: 1px solid black;
+            font-size: 10px;
+            text-align: center;
+            padding-top: 15px; 
+            margin: 15px 0 15px 15px; 
+        }
+    </style>
+</head>
+<body>
+    <!-- WADAH FORMULIR -->
+    <main id="wadahForm" style="max-width: 600px; margin: auto;">
+        <h2>Generator Surat Pernyataan</h2>
+        <p>Isi formulir di bawah ini untuk membuat Surat Pernyataan secara otomatis.</p>
+        
+        <form id="formSurat" onsubmit="generatePDF(event)">
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+                <div class="grup-input"><label>Nama Lengkap *</label><input type="text" id="inNama" required></div>
+                <div class="grup-input"><label>NIK *</label><input type="number" id="inNik" required></div>
+                <div class="grup-input">
+                    <label>Jenis Kelamin *</label>
+                    <select id="inJk" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc; background: white;" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                </div>
+                <div class="grup-input"><label>Tempat, Tgl. Lahir *</label><input type="text" id="inTTL" placeholder="Contoh: Cimahi, 17 Agustus 1990" required></div>
+                <div class="grup-input"><label>Pekerjaan *</label><input type="text" id="inPekerjaan" placeholder="Contoh: Mengurus Rumah Tangga" required></div>
+                <div class="grup-input"><label>Jumlah Tanggungan (Opsional)</label><input type="number" id="inTanggungan" placeholder="Contoh: 3"></div>
+                <div class="grup-input"><label>No. Tlp./Handphone (Opsional)</label><input type="tel" id="inHp"></div>
+                <div class="grup-input"><label>Alamat Lengkap *</label><textarea id="inAlamat" rows="3" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ccc;" required></textarea></div>
+            </div>
+
+            <button type="submit" id="btnDownload" style="background: #28a745; color: white; margin-top: 20px; width: 100%; padding: 15px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer;">
+                📥 Cetak & Unduh PDF
+            </button>
+        </form>
+        <br><a href="warga.html" style="color: blue; text-decoration: none; font-weight: bold;">⬅ Kembali ke Menu Utama</a>
+    </main>
+
+    <!-- TEMPLATE SURAT -->
+    <div id="kertasSurat">
+        <div class="kop-surat">SURAT PERNYATAAN</div>
+        
+        <div style="margin-bottom: 15px;">Yang bertandatangan dibawah ini :</div>
+        
+        <table class="tabel-biodata">
+            <tr><td class="kolom-label">Nama</td><td class="kolom-titikdua">:</td><td id="outNama"></td></tr>
+            <tr><td class="kolom-label">NIK</td><td class="kolom-titikdua">:</td><td id="outNik"></td></tr>
+            <tr><td class="kolom-label">Jenis Kelamin</td><td class="kolom-titikdua">:</td><td id="outJk"></td></tr>
+            <tr><td class="kolom-label">Tempat Tgl. Lahir</td><td class="kolom-titikdua">:</td><td id="outTTL"></td></tr>
+            <tr><td class="kolom-label">Pekerjaan</td><td class="kolom-titikdua">:</td><td id="outPekerjaan"></td></tr>
+            <tr><td class="kolom-label">Jumlah Tanggungan</td><td class="kolom-titikdua">:</td><td id="outTanggungan"></td></tr>
+            <tr><td class="kolom-label">No. Tlp./No. Handphone</td><td class="kolom-titikdua">:</td><td id="outHp"></td></tr>
+            <tr><td class="kolom-label">Alamat</td><td class="kolom-titikdua">:</td><td id="outAlamat"></td></tr>
+        </table>
+
+        <div class="teks-paragraf">Dengan ini menyatakan bahwa saya tidak bekerja dan tidak memiliki penghasilan.</div>
+        
+        <div class="teks-paragraf">Demikian surat pernyataan ini saya buat dengan sebenar-benarnya dalam keadaan sehat jasmani dan rohani tanpa ada paksaan dari pihak manapun dan siap bertanggung jawab mutlak apabila pernyataan ini tidak sesuai dengan keadaan yang sebenarnya saya bersedia dituntut sesuai dengan hukum yang berlaku.</div>
+
+        <!-- AREA TANDA TANGAN (Kanan) -->
+        <table class="area-ttd">
+            <tr>
+                <td style="width: 55%;"></td> 
+                <td style="width: 45%; text-align: left; padding-left: 20px;">
+                    <div style="margin-bottom: 5px;">Cimahi, <span id="outTanggal"></span></div>
+                    <div>Yang membuat pernyataan</div>
+                    
+                    <div class="kotak-materai">
+                        MATERAI<br>10.000
+                    </div>
+                    
+                    <div><strong><span style="text-decoration: underline;" id="outNamaTtd"></span></strong></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- SKRIP LOGIKA -->
+    <script>
+        function generatePDF(event) {
+            event.preventDefault(); 
+
+            const btn = document.getElementById('btnDownload');
+            const teksAsli = btn.innerHTML;
+            btn.innerHTML = "⏳ Memproses PDF...";
+            btn.disabled = true;
+
+            const tgl = new Date();
+            const bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const tanggalCetak = tgl.getDate() + ' ' + bulanIndo[tgl.getMonth()] + ' ' + tgl.getFullYear();
+
+            const nama = document.getElementById('inNama').value;
+            document.getElementById('outNama').innerText = nama;
+            document.getElementById('outNamaTtd').innerText = nama.toUpperCase(); 
+            document.getElementById('outNik').innerText = document.getElementById('inNik').value;
+            document.getElementById('outJk').innerText = document.getElementById('inJk').value;
+            document.getElementById('outTTL').innerText = document.getElementById('inTTL').value;
+            document.getElementById('outPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+            document.getElementById('outTanggungan').innerText = document.getElementById('inTanggungan').value || '-';
+            document.getElementById('outHp').innerText = document.getElementById('inHp').value || '-';
+            document.getElementById('outAlamat').innerText = document.getElementById('inAlamat').value;
+            document.getElementById('outTanggal').innerText = tanggalCetak;
+
+            const wadahForm = document.getElementById('wadahForm');
+            const elemenSurat = document.getElementById('kertasSurat');
+
+            // --- PERBAIKAN BUG RUANG KOSONG ---
+            // 1. Paksa gulir layar ke paling atas sebelum direkam
+            window.scrollTo(0, 0); 
+            
+            // 2. Ganti Tampilan
+            wadahForm.style.display = 'none';
+            elemenSurat.style.display = 'block';
+
+            // 3. Tunggu 0.3 detik agar sistem merekam posisi layar baru
+            setTimeout(() => {
+                const opsiPDF = {
+                    margin:       [15, 10, 15, 10], // Margin (Atas, Kiri, Bawah, Kanan)
+                    filename:     'Surat_Pernyataan_' + nama.replace(/\s+/g, '_') + '.pdf',
+                    image:        { type: 'jpeg', quality: 1 },
+                    // PENAMBAHAN scrollY: 0 AGAR SISTEM TIDAK MEMBACA POSISI SCROLL LAMA
+                    html2canvas:  { scale: 2, useCORS: true, scrollY: 0 }, 
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opsiPDF).from(elemenSurat).save().then(() => {
+                    elemenSurat.style.display = 'none';
+                    wadahForm.style.display = 'block'; 
+                    btn.innerHTML = teksAsli;
+                    btn.disabled = false;
+                    
+                    setTimeout(() => {
+                        alert('✅ Berhasil! Surat Pernyataan Anda telah terunduh.');
+                    }, 500);
+                });
+            }, 300); // Waktu tunda 300 milidetik
+        }
+    </script>
+</body>
+</html>

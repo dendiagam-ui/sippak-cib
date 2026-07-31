@@ -4,80 +4,368 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detail Permohonan | SIPPAK-CIB</title>
-    <link rel="stylesheet" href="../assets/css/style.css?v=10.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .tombol-dok {
-            display: inline-block;
-            background: #17a2b8;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 14px;
-            margin-bottom: 10px;
-            margin-right: 5px;
-            border: 1px solid #117a8b;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+        :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
+
+        body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
+
+        /* SIDEBAR MODERN */
+        .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; gap: 10px; }
+        .sidebar-header i { color: #3b82f6; }
+        .menu-list { list-style: none; padding: 20px 0; flex-grow: 1; overflow-y: auto; }
+        .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 16px 30px; color: #94a3b8; text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; border-left: 4px solid transparent; }
+        .menu-list li a:hover, .menu-list li a.active { background-color: rgba(255,255,255,0.05); color: #fff; border-left: 4px solid #3b82f6; }
+
+        /* MAIN CONTENT */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 280px); }
+        .topbar { background-color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
+        .toggle-btn { font-size: 24px; cursor: pointer; color: var(--teks-gelap); display: none; }
+        
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
+
+        .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
+        .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
+        .btn-kembali { background: #fff; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; color: #475569; text-decoration: none; font-weight: bold; transition: 0.2s; }
+        .btn-kembali:hover { background: #f1f5f9; color: var(--teks-gelap); }
+
+        .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+        @media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; margin-bottom: 25px; }
+        .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+        
+        .info-table { width: 100%; border-collapse: collapse; }
+        .info-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 15px; }
+        .info-table td:first-child { font-weight: 700; color: #475569; width: 35%; background: #f8fafc; border-right: 1px solid #f1f5f9; border-radius: 8px 0 0 8px; }
+        
+        .btn-lampiran { background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; margin-right: 10px; margin-bottom: 10px; transition: 0.2s; }
+        .btn-lampiran:hover { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; transform: translateY(-2px); }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        .form-group select, .form-group input[type="file"], .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; background: white; }
+        
+        .btn-submit { background: #10b981; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-submit:hover { background: #059669; transform: translateY(-2px); }
+
+        /* Tombol Hapus */
+        .btn-hapus { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-hapus:hover { background: #ef4444; color: white; }
+
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 800; display: inline-block; text-transform: uppercase; }
+        .badge-menunggu { background: #fef3c7; color: #d97706; }
+        .badge-proses { background: #e0f2fe; color: #0284c7; }
+        .badge-selesai { background: #dcfce7; color: #16a34a; }
+        .badge-ditolak { background: #fee2e2; color: #dc2626; }
+
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; color: #2563eb; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
+        .overlay.active { display: block; }
+        @media (max-width: 900px) {
+            .sidebar { position: fixed; left: -280px; height: 100%; } 
+            .sidebar.active { left: 0; } 
+            .main-content { width: 100%; }
+            .toggle-btn { display: block; } 
+            .content-area { padding: 20px; }
+            .topbar { padding: 15px 20px; }
         }
     </style>
 </head>
 <body>
-    <main style="padding: 20px; max-width: 600px; margin: auto;">
-        <h2>Detail Permohonan</h2>
-        <a href="dashboard.html" style="color: blue; text-decoration: none; font-weight: bold;">⬅ Kembali ke Dashboard</a>
-        <br><br>
 
-        <!-- Tempat menampilkan data warga -->
-        <div id="infoData" style="background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #ddd; line-height: 1.8; text-align: left;">
-            <p><i>Memuat data...</i></p>
-        </div>
+    <div id="loadingOverlay">
+        <i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px;"></i> Memuat Data Berkas...
+    </div>
 
-        <!-- Tempat menampilkan dokumen warga -->
-        <div style="background: #e8f4fd; padding: 15px; border-radius: 8px; border: 1px solid #b8daff; text-align: left; margin-top: 15px;">
-            <h3 style="color: #004085; margin-bottom: 10px; font-size: 16px;">Dokumen Terlampir:</h3>
-            <div id="infoDokumen">
-                <p><i>Memuat dokumen...</i></p>
+    <div class="overlay" id="overlay"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
+        <ul class="menu-list" id="menuDinamis"></ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <div class="user-profile">
+                <div style="text-align: right;">
+                    <div style="font-size: 15px; font-weight: 700;" id="namaUser">Petugas</div>
+                    <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600; text-transform: uppercase;" id="roleUser">PETUGAS</div>
+                </div>
+                <div class="user-avatar"><i class="fas fa-user-tie"></i></div>
             </div>
-        </div>
+        </header>
 
-        <br>
-        <!-- Panel Tindakan Petugas -->
-        <div style="background: #e9ecef; padding: 15px; border-radius: 8px; text-align: left;">
-            <h3 style="margin-bottom: 15px;">Tindakan Petugas</h3>
-            
-            <label><b>Ubah Status:</b></label><br>
-            <select id="statusDropdown" onchange="cekStatusTolak()" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; background: white;">
-                <option value="Menunggu Verifikasi">Menunggu Verifikasi</option>
-                <option value="Diproses">Diproses</option>
-                <option value="Selesai">Selesai</option>
-                <option value="Ditolak">Ditolak</option>
-            </select>
-
-            <!-- Kotak Alasan Penolakan -->
-            <div id="grupTolak" style="display: none; margin-bottom: 15px;">
-                <label style="color: red;"><b>Alasan Penolakan *</b></label><br>
-                <textarea id="inputAlasanTolak" placeholder="Tulis alasan penolakan untuk warga..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid red; min-height: 80px;"></textarea>
+        <div class="content-area">
+            <div class="page-title">
+                <a href="dashboard-master.html" class="btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a>
+                <h2>Detail Permohonan Warga</h2>
             </div>
 
-            <!-- Kotak Dokumen Selesai -->
-            <div id="grupDokumenSelesai" style="display: none; margin-bottom: 15px;">
-                <label><b>Link Dokumen Hasil (Opsional):</b></label><br>
-                <input type="text" id="inputDokumen" placeholder="Contoh: https://drive.google.com/..." style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+            <div class="grid-layout">
+                <!-- KOLOM KIRI: DATA PEMOHON -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <span><i class="fas fa-file-alt" style="color: #2563eb;"></i> Informasi Berkas Warga</span>
+                        </div>
+                        <table class="info-table" id="tabelInfo"></table>
+                        <div style="margin-top: 30px;">
+                            <h4 style="color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px;">
+                                <i class="fas fa-paperclip" style="color: #64748b;"></i> Dokumen Lampiran Pemohon
+                            </h4>
+                            <div id="wadahLampiran"></div>
+                        </div>
+                    </div>
+
+                    <!-- TOMBOL HAPUS DATA (DITAMPILKAN JIKA STATUS SELESAI/DITOLAK) -->
+                    <div id="wadahHapus" style="display: none;">
+                        <button class="btn-hapus" onclick="hapusPermohonan()"><i class="fas fa-trash-alt"></i> Hapus Permohonan & Kosongkan Storage Server</button>
+                        <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 10px;">Lakukan ini jika berkas fisik sudah diserahkan ke warga.</p>
+                    </div>
+                </div>
+
+                <!-- KOLOM KANAN: UPDATE STATUS -->
+                <div class="card" style="height: fit-content;">
+                    <div class="card-header"><i class="fas fa-edit" style="color: #f59e0b;"></i> Tindak Lanjut Petugas</div>
+                    
+                    <form onsubmit="updateStatus(event)">
+                        <div class="form-group">
+                            <label>Ubah Status Permohonan</label>
+                            <select id="inpStatus" required>
+                                <option value="Menunggu">Menunggu</option>
+                                <option value="Diproses">Diproses</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Ditolak">Ditolak</option>
+                            </select>
+                        </div>
+
+                        <!-- Blok Catatan Petugas -->
+                        <div class="form-group" id="blokCatatan" style="display: none;">
+                            <label style="color: #f59e0b;"><i class="fas fa-comment-dots"></i> Catatan Petugas (Otomatis Kirim ke WA)</label>
+                            <textarea id="inpCatatan" placeholder="Contoh: Berkas Anda sudah dicetak, silakan ambil di loket 2..."></textarea>
+                        </div>
+
+                        <!-- Blok Upload PDF Hasil -->
+                        <div class="form-group" id="blokUpload" style="display: none; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px dashed #93c5fd;">
+                            <label style="color: #1e40af;"><i class="fas fa-file-upload"></i> Unggah Dokumen Hasil (PDF)</label>
+                            <p style="font-size: 12px; color: #475569; margin-bottom: 10px;">Wajib diunggah saat status diubah menjadi Selesai.</p>
+                            <input type="file" id="inpFileHasil" accept="application/pdf">
+                        </div>
+
+                        <button type="submit" id="btnUpdate" class="btn-submit"><i class="fas fa-save"></i> Simpan & Beri Tahu Warga</button>
+                    </form>
+                </div>
             </div>
-
-            <!-- Tombol Simpan Perubahan -->
-            <button onclick="simpanPerubahan()" style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">
-                💾 Simpan Perubahan
-            </button>
-
-            <!-- Tombol Hapus Permanen (Fitur Baru) -->
-            <button onclick="hapusPermohonan()" style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">
-                🗑️ Hapus Permanen Data & File
-            </button>
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../assets/js/config.js"></script>
-    <script src="../assets/js/detail.js"></script>
+    <script>
+        const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
+        const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
+        const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const idPermohonan = urlParams.get('id');
+        let dataPermohonan = null;
+
+        // Logika Tampil/Sembunyi Form Catatan & Upload
+        document.getElementById('inpStatus').addEventListener('change', function() {
+            const val = this.value;
+            document.getElementById('blokUpload').style.display = (val === 'Selesai') ? 'block' : 'none';
+            document.getElementById('blokCatatan').style.display = (val === 'Selesai' || val === 'Ditolak') ? 'block' : 'none';
+        });
+
+        async function muatDataDetail() {
+            try {
+                if(!idPermohonan) throw new Error("ID Permohonan tidak ditemukan!");
+
+                const { data, error } = await supabaseClient.from('permohonan').select('*').eq('id', idPermohonan).single();
+                if (error) throw error;
+                dataPermohonan = data; 
+
+                const stat = data.status || 'Menunggu';
+                let kelasBadge = (stat === 'Diproses') ? 'badge-proses' : (stat === 'Selesai') ? 'badge-selesai' : (stat === 'Ditolak') ? 'badge-ditolak' : 'badge-menunggu';
+                const tgl = new Date(data.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+
+                let tabelHTML = `
+                    <tr><td>Nomor Tiket</td><td style="font-weight:bold; color: #2563eb;">${data.nomor_tiket}</td></tr>
+                    <tr><td>Waktu Pengajuan</td><td>${tgl} WIB</td></tr>
+                    <tr><td>Status Saat Ini</td><td><span class="badge ${kelasBadge}">${stat}</span></td></tr>
+                    <tr><td>Jenis Layanan</td><td style="font-weight:bold;">${data.jenis_layanan}</td></tr>
+                    <tr><td>Nama Pemohon</td><td>${data.nama_pemohon}</td></tr>
+                    <tr><td>NIK</td><td>${data.nik}</td></tr>
+                    <tr><td>No. HP/WA</td><td><a href="https://wa.me/${data.no_wa}" target="_blank" style="color:#10b981; font-weight:bold; text-decoration:none;"><i class="fab fa-whatsapp"></i> ${data.no_wa || '-'}</a></td></tr>
+                `;
+
+                // Render Dokumen URL
+                let htmlLampiran = '';
+                const kolomAbaikan = ['id', 'created_at', 'nomor_tiket', 'status', 'jenis_layanan', 'nama_pemohon', 'nik', 'dokumen_hasil', 'catatan_petugas'];
+
+                for (const [key, value] of Object.entries(data)) {
+                    if (!kolomAbaikan.includes(key) && value !== null && value !== '') {
+                        const label = key.replace(/_/g, ' ').toUpperCase();
+                        if (typeof value === 'string' && (value.startsWith('http') || value.startsWith('https'))) {
+                            htmlLampiran += `<a href="${value}?download=${label}.pdf" class="btn-lampiran"><i class="fas fa-file-download"></i> Unduh ${label}</a>`;
+                        } else {
+                            tabelHTML += `<tr><td>${label}</td><td style="white-space: pre-wrap;">${value}</td></tr>`;
+                        }
+                    }
+                }
+
+                document.getElementById('tabelInfo').innerHTML = tabelHTML;
+                document.getElementById('wadahLampiran').innerHTML = htmlLampiran || '<p style="color: #94a3b8; font-size: 14px; font-style: italic;">Tidak ada dokumen lampiran pendukung dari warga.</p>';
+
+                // Set Form Awal
+                document.getElementById('inpStatus').value = stat;
+                document.getElementById('inpCatatan').value = data.catatan_petugas || '';
+                
+                if(stat === 'Selesai') document.getElementById('blokUpload').style.display = 'block';
+                if(stat === 'Selesai' || stat === 'Ditolak') {
+                    document.getElementById('blokCatatan').style.display = 'block';
+                    document.getElementById('wadahHapus').style.display = 'block'; // Tampilkan Tombol Hapus Server
+                }
+
+            } catch (err) {
+                alert("Gagal menarik data: " + err.message);
+                window.location.href = "dashboard-master.html";
+            } finally {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        // UPDATE STATUS & KIRIM WA
+        async function updateStatus(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btnUpdate');
+            const teksAsli = btn.innerHTML;
+            const statusBaru = document.getElementById('inpStatus').value;
+            const catatanBaru = document.getElementById('inpCatatan').value;
+            const fileUpload = document.getElementById('inpFileHasil').files[0];
+
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses...";
+            btn.disabled = true;
+
+            try {
+                let linkDokumen = dataPermohonan.dokumen_hasil || null;
+
+                if (statusBaru === 'Selesai' && fileUpload) {
+                    const namaFileUnik = `hasil_${dataPermohonan.nomor_tiket}_${Date.now()}.pdf`;
+                    const { error: uploadError } = await supabaseClient.storage.from('dokumen').upload(namaFileUnik, fileUpload);
+                    if (uploadError) throw new Error("Gagal unggah PDF: " + uploadError.message);
+                    
+                    const { data: publicUrlData } = supabaseClient.storage.from('dokumen').getPublicUrl(namaFileUnik);
+                    linkDokumen = publicUrlData.publicUrl;
+                }
+
+                if (statusBaru === 'Selesai' && !linkDokumen) throw new Error("Anda WAJIB mengunggah Dokumen Hasil (PDF) jika status diubah menjadi Selesai.");
+
+                // Simpan ke DB
+                const { error: updateError } = await supabaseClient.from('permohonan').update({ 
+                    status: statusBaru, 
+                    catatan_petugas: catatanBaru,
+                    dokumen_hasil: linkDokumen 
+                }).eq('id', idPermohonan);
+
+                if (updateError) throw updateError;
+
+                // FITUR REDIRECT WHATSAPP
+                if ((statusBaru === 'Selesai' || statusBaru === 'Ditolak') && dataPermohonan.no_wa) {
+                    const pesanWA = `Halo ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* dengan Nomor Tiket *${dataPermohonan.nomor_tiket}* telah *${statusBaru.toUpperCase()}*.\n\n*Catatan Petugas:*\n"${catatanBaru}"\n\nSilakan cek portal SIPPAK-CIB untuk melihat detailnya. Terima kasih.`;
+                    
+                    const urlWA = `https://wa.me/${dataPermohonan.no_wa}?text=${encodeURIComponent(pesanWA)}`;
+                    window.open(urlWA, '_blank'); // Buka tab baru ke WhatsApp
+                }
+
+                alert(`✅ BERHASIL!\nData tersimpan.`);
+                window.location.reload(); 
+
+            } catch (err) {
+                alert("⚠️ GAGAL:\n" + err.message);
+                btn.innerHTML = teksAsli;
+                btn.disabled = false;
+            }
+        }
+
+        // FITUR HAPUS DATA PERMANEN & BERSIHKAN STORAGE
+        async function hapusPermohonan() {
+            if(!confirm("⚠️ YAKIN INGIN MENGHAPUS PERMANEN?\n\nSemua data pemohon dan File Dokumen yang menempel pada permohonan ini akan dihapus seutuhnya dari Database dan Storage Server.")) return;
+
+            document.getElementById('loadingOverlay').innerHTML = "<i class='fas fa-trash-alt fa-spin' style='font-size:40px; color:#dc2626; margin-bottom:15px;'></i> Menghancurkan Data & File...";
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            try {
+                // 1. Kumpulkan semua jalur file dari URL yang tersimpan di DB
+                let fileYangDihapus = [];
+                const semuaKolomFile = ['file_kk_hilang', 'file_ktp', 'file_kk', 'file_f106', 'dokumen_tambahan_perbaikan', 'file_kk_pindah', 'file_ktp_pindah', 'dokumen_hasil'];
+
+                semuaKolomFile.forEach(kolom => {
+                    if (dataPermohonan[kolom] && dataPermohonan[kolom].includes('/dokumen/')) {
+                        // Memotong URL untuk hanya mengambil nama file aslinya
+                        const ekstrakNamaFile = dataPermohonan[kolom].split('/dokumen/')[1].split('?')[0]; 
+                        fileYangDihapus.push(ekstrakNamaFile);
+                    }
+                });
+
+                // 2. Hapus file dari Supabase Storage jika ada
+                if (fileYangDihapus.length > 0) {
+                    const { error: errStorage } = await supabaseClient.storage.from('dokumen').remove(fileYangDihapus);
+                    if (errStorage) console.error("Beberapa file mungkin gagal dihapus dari storage:", errStorage);
+                }
+
+                // 3. Hapus baris data dari Database
+                const { error: errDB } = await supabaseClient.from('permohonan').delete().eq('id', idPermohonan);
+                if (errDB) throw errDB;
+
+                alert("🗑️ PEMBERSIHAN BERHASIL!\n\nData dan file dokumen terkait telah dihapus permanen dari server.");
+                window.location.href = "dashboard-master.html";
+
+            } catch(err) {
+                alert("Gagal menghapus data: " + err.message);
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const roleSaatIni = localStorage.getItem('user_role');
+            if(!roleSaatIni) { window.location.href = "login.html"; return; } 
+            
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Petugas';
+            document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
+
+            const menuList = document.getElementById('menuDinamis');
+            if (roleSaatIni === 'superadmin') {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+                    <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+                    <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
+            } else {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+                    <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
+            }
+
+            muatDataDetail();
+        });
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay');
+            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btn.contains(e.target)) { sidebar.classList.remove('active'); overlay.classList.remove('active'); }
+        });
+    </script>
 </body>
 </html>
