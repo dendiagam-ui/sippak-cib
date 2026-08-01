@@ -246,8 +246,49 @@
                 return; 
             }
 
+            // 🚀 PERBAIKAN: MENANGKAP SEMUA INPUTAN DINAMIS WARGA
+            let rincian = "";
+            if (layanan === 'Cetak Kartu Keluarga') {
+                rincian += "Keterangan Warga: " + (document.getElementById('keterangan').value || "-");
+            } 
+            else if (layanan === 'Cetak Ulang KTP-El') {
+                rincian += "NIK Diajukan: " + document.getElementById('nik_pengajuan').value + "\n";
+                rincian += "Nama Diajukan: " + document.getElementById('nama_pengajuan').value + "\n";
+                rincian += "Alasan: " + document.getElementById('alasan_pengajuan').value;
+            } 
+            else if (layanan === 'Perbaikan Data') {
+                rincian += "NIK Perbaikan: " + document.getElementById('nik_perbaikan').value + "\n";
+                rincian += "Nama Perbaikan: " + document.getElementById('nama_perbaikan').value + "\n";
+                rincian += "Keterangan Perbaikan: " + document.getElementById('keterangan_perbaikan').value;
+            } 
+            else if (layanan === 'Pindah Keluar') {
+                rincian += "Alamat Asal: " + document.getElementById('alamat_asal').value + "\n";
+                rincian += "Alamat Tujuan: " + document.getElementById('alamat_tujuan').value + "\n";
+                rincian += "Alasan Pindah: " + document.getElementById('alasan_pindah').value + "\n";
+                
+                const jumlahPindah = parseInt(document.getElementById('jumlah_pindah').value);
+                if(jumlahPindah > 0) {
+                    rincian += "\n--- ANGGOTA KELUARGA YANG PINDAH ---\n";
+                    for(let i = 1; i <= jumlahPindah; i++) {
+                        let n = document.getElementById('nik_anggota_'+i).value;
+                        let nm = document.getElementById('nama_anggota_'+i).value;
+                        let st = document.getElementById('status_anggota_'+i).value;
+                        rincian += `${i}. NIK: ${n} | Nama: ${nm} (${st})\n`;
+                    }
+                }
+            }
+
             const tiketAcak = 'TKT-' + Math.floor(100000 + Math.random() * 900000);
-            dataDraft = { nik, no_kk, nama, no_wa, email, layanan, tiket: tiketAcak };
+            dataDraft = { 
+                nik: nik, 
+                no_kk: no_kk, 
+                nama: nama, 
+                no_wa: no_wa, 
+                email: email, 
+                layanan: layanan, 
+                tiket: tiketAcak, 
+                rincian_data: rincian // <-- Menyimpan rincian ke draft
+            };
             
             tampilkanRingkasan();
 
@@ -275,7 +316,6 @@
         document.getElementById('modalRingkasan').style.display = 'none';
     }
 
-    // FUNGSI BANTUAN UNTUK UPLOAD FILE KE SUPABASE STORAGE
     async function uploadDokumenWarga(inputId, namaKolom) {
         const fileInput = document.getElementById(inputId);
         if (fileInput && fileInput.files.length > 0) {
@@ -283,12 +323,11 @@
             const ekstensi = file.name.split('.').pop();
             const namaFileUnik = `warga_${dataDraft.tiket}_${namaKolom}_${Date.now()}.${ekstensi}`;
 
-            // Menggunakan bucket 'dokumen' yang sama dengan milik petugas
             const { error: uploadError } = await supabaseClient.storage.from('dokumen').upload(namaFileUnik, file);
             if (uploadError) throw new Error(`Gagal mengunggah ${namaKolom}: ` + uploadError.message);
 
             const { data: publicUrlData } = supabaseClient.storage.from('dokumen').getPublicUrl(namaFileUnik);
-            return publicUrlData.publicUrl; // Mengembalikan link URL
+            return publicUrlData.publicUrl; 
         }
         return null;
     }
@@ -305,7 +344,6 @@
         try {
             let dataUploadUrls = {};
 
-            // DETEKSI DAN UPLOAD FILE BERDASARKAN LAYANAN YANG DIPILIH
             if (dataDraft.layanan === 'Cetak Kartu Keluarga') {
                 const urlKKHilang = await uploadDokumenWarga('file_kk_hilang', 'file_kk_hilang');
                 if(urlKKHilang) dataUploadUrls.file_kk_hilang = urlKKHilang;
@@ -331,7 +369,7 @@
 
             btnKirim.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Menyimpan ke Database...";
 
-            // GABUNGKAN DATA TEKS DAN LINK DOKUMEN
+            // 🚀 PERBAIKAN: Mengirimkan rincian_data ke Supabase
             const dataFinalInsert = {
                 nomor_tiket: dataDraft.tiket,
                 nik: dataDraft.nik,
@@ -341,7 +379,8 @@
                 nama_pemohon: dataDraft.nama,
                 jenis_layanan: dataDraft.layanan,
                 status: 'Menunggu',
-                ...dataUploadUrls // Memasukkan semua link URL ke tabel
+                rincian_data: dataDraft.rincian_data, // Akan dibaca otomatis oleh dasbor petugas
+                ...dataUploadUrls 
             };
 
             const { error } = await supabaseClient.from('permohonan').insert([dataFinalInsert]);
@@ -352,8 +391,8 @@
                 <div style="text-align: center; padding: 10px;">
                     <i class="fas fa-check-circle" style="color: #10b981; font-size: 65px; margin-bottom: 15px;"></i>
                     <h2 style="color: #1e293b; margin-bottom: 10px;">Berkas Terkirim!</h2>
-                    <p style="color: #64748b; font-size: 15px; margin-bottom: 25px;">
-                        Permohonan berhasil masuk dengan Nomor Tiket:<br>
+                    <p style="color: #64748b; font-size: 15px; margin-bottom: 25px; line-height: 1.5;">
+                        Permohonan Anda berhasil masuk ke antrean petugas dengan Nomor Tiket:<br>
                         <strong style="color: #2563eb; font-size: 18px;">${dataDraft.tiket}</strong>
                     </p>
                     <p style="font-size: 12px; font-weight: bold; color: #f59e0b; margin-bottom: 8px;">

@@ -61,44 +61,40 @@
         /* ========================================== */
         /* DESAIN KERTAS SURAT (TERSEMBUNYI DI WEB) */
         /* ========================================== */
-        #kertasSurat { display: none; padding: 40px 60px; font-family: 'Times New Roman', Times, serif; color: black; line-height: 1.5; font-size: 16px; background: white; width: 100%; max-width: 210mm; margin: 0 auto; }
-        .kop-surat { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin-bottom: 30px; letter-spacing: 1px; }
-        .tabel-biodata { margin-bottom: 25px; width: 100%; border-collapse: collapse; }
-        .tabel-biodata td { padding: 6px 0; vertical-align: top; border: none; }
+        #kertasSurat { display: none; padding: 30px 60px; font-family: 'Times New Roman', Times, serif; color: black; line-height: 1.5; font-size: 16px; background: white; width: 100%; max-width: 210mm; margin: 0 auto; }
+        .kop-surat { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin-bottom: 25px; letter-spacing: 1px; }
+        .tabel-biodata { margin-bottom: 20px; width: 100%; border-collapse: collapse; }
+        .tabel-biodata td { padding: 5px 0; vertical-align: top; border: none; }
         .kolom-label { width: 35%; }
         .kolom-titikdua { width: 3%; text-align: center; }
-        .teks-paragraf { text-indent: 50px; text-align: justify; margin-bottom: 15px; }
+        .teks-paragraf { text-indent: 50px; text-align: justify; margin-bottom: 12px; }
         
-        .area-ttd { width: 100%; margin-top: 50px; }
+        /* Area Tanda Tangan Dirapatkan & Diperbesar Materainya */
+        .area-ttd { width: 100%; margin-top: 25px; }
         .area-ttd td { vertical-align: top; }
         
-        /* PENGATURAN POSISI TANDA TANGAN MENIMPA MATERAI */
         .wadah-ttd-materai { 
-            position: relative; 
-            width: 220px; 
-            height: 90px; 
-            margin: 15px 0; 
+            margin: 5px 0; /* Ruang kosong atas-bawah sangat dirapatkan */
+            white-space: nowrap; 
         }
         .img-materai { 
-            position: absolute; 
-            left: 0; 
-            bottom: 0; 
-            width: 80px; 
+            width: 95px; /* Ukuran materai diperbesar sedikit */
             height: auto; 
-            z-index: 1; /* Materai berada di layer bawah */
+            display: inline-block;
+            vertical-align: middle; 
+            position: relative;
+            z-index: 1; 
         }
         .img-ttd-hasil { 
-            position: absolute; 
-            /* Digeser ke kanan menimpa setengah materai */
-            left: 35px; 
-            /* Posisinya sedikit diturunkan dari tengah gambar */
-            bottom: -15px; 
-            height: 100px; 
+            display: none; 
+            height: 95px; 
             width: auto; 
             max-width: 180px; 
-            z-index: 2; /* TTD berada di layer atas materai */
-            display: none; 
-            object-fit: contain; 
+            vertical-align: middle; 
+            position: relative;
+            z-index: 2; 
+            margin-left: -55px; /* Ditarik lebih jauh ke kiri agar pas menimpa materai */
+            margin-bottom: 2px;
         }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
@@ -207,7 +203,7 @@
     <div id="kertasSurat">
         <div class="kop-surat">SURAT PERNYATAAN</div>
         
-        <div style="margin-bottom: 20px;">Yang bertandatangan dibawah ini :</div>
+        <div style="margin-bottom: 15px;">Yang bertandatangan dibawah ini :</div>
         
         <table class="tabel-biodata">
             <tr><td class="kolom-label">Nama</td><td class="kolom-titikdua">:</td><td id="outNama"></td></tr>
@@ -228,10 +224,10 @@
             <tr>
                 <td style="width: 50%;"></td> 
                 <td style="width: 50%; text-align: left; padding-left: 20px;">
-                    <div style="margin-bottom: 5px;">Cimahi, <span id="outTanggal"></span></div>
-                    <div>Yang membuat pernyataan</div>
+                    <div style="margin-bottom: 2px;">Cimahi, <span id="outTanggal"></span></div>
+                    <div style="margin-bottom: 2px;">Yang membuat pernyataan</div>
                     
-                    <!-- WADAH BARU UNTUK EFEK TTD MENIMPA MATERAI -->
+                    <!-- WADAH TTD & MATERAI YANG DIRAPATKAN -->
                     <div class="wadah-ttd-materai">
                         <img src="../assets/img/meterai.png" alt="Materai 10000" class="img-materai">
                         <img id="outTtdImage" src="" alt="Tanda Tangan" class="img-ttd-hasil">
@@ -373,7 +369,7 @@
 
             const imgTtd = document.getElementById('outTtdImage');
             imgTtd.src = canvas.toDataURL('image/png'); 
-            imgTtd.style.display = 'block';
+            imgTtd.style.display = 'inline-block';
 
             const appLayout = document.getElementById('appLayout');
             const elemenSurat = document.getElementById('kertasSurat');

@@ -39,12 +39,18 @@
         .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; margin-bottom: 25px; }
         .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
         
-        .info-table { width: 100%; border-collapse: collapse; }
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px;}
         .info-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 15px; }
         .info-table td:first-child { font-weight: 700; color: #475569; width: 35%; background: #f8fafc; border-right: 1px solid #f1f5f9; border-radius: 8px 0 0 8px; }
         
-        .btn-lampiran { background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; margin-right: 10px; margin-bottom: 10px; transition: 0.2s; }
+        .btn-lampiran { background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-lampiran:hover { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; transform: translateY(-2px); }
+
+        /* WADAH PREVIEW DOKUMEN */
+        .preview-box { border: 1px solid #e2e8f0; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 25px; }
+        .preview-header { font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 12px; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .preview-image { width: 100%; max-height: 450px; object-fit: contain; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; margin-bottom: 10px; }
+        .preview-pdf { width: 100%; height: 350px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; margin-bottom: 10px; }
 
         .form-group { margin-bottom: 20px; text-align: left; }
         .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #475569; }
@@ -55,7 +61,6 @@
         .btn-submit { background: #10b981; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-submit:hover { background: #059669; transform: translateY(-2px); }
 
-        /* Tombol Hapus */
         .btn-hapus { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-hapus:hover { background: #ef4444; color: white; }
 
@@ -113,23 +118,24 @@
             <div class="grid-layout">
                 <!-- KOLOM KIRI: DATA PEMOHON -->
                 <div>
-                    <div class="card">
+                    <div class="card" style="padding-bottom: 10px;">
                         <div class="card-header">
                             <span><i class="fas fa-file-alt" style="color: #2563eb;"></i> Informasi Berkas Warga</span>
                         </div>
                         <table class="info-table" id="tabelInfo"></table>
-                        <div style="margin-top: 30px;">
-                            <h4 style="color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 15px;">
-                                <i class="fas fa-paperclip" style="color: #64748b;"></i> Dokumen Lampiran Pemohon
-                            </h4>
-                            <div id="wadahLampiran"></div>
-                        </div>
                     </div>
 
-                    <!-- TOMBOL HAPUS DATA (DITAMPILKAN JIKA STATUS SELESAI/DITOLAK) -->
+                    <!-- WADAH BARU UNTUK LAMPIRAN DENGAN FITUR PREVIEW -->
+                    <div class="card">
+                        <div class="card-header">
+                            <span><i class="fas fa-paperclip" style="color: #64748b;"></i> Preview Dokumen Lampiran</span>
+                        </div>
+                        <div id="wadahLampiran"></div>
+                    </div>
+
                     <div id="wadahHapus" style="display: none;">
-                        <button class="btn-hapus" onclick="hapusPermohonan()"><i class="fas fa-trash-alt"></i> Hapus Permohonan & Kosongkan Storage Server</button>
-                        <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 10px;">Lakukan ini jika berkas fisik sudah diserahkan ke warga.</p>
+                        <button class="btn-hapus" onclick="hapusPermohonan()"><i class="fas fa-trash-alt"></i> Hapus Permohonan Permanen</button>
+                        <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 10px;">Fitur khusus Super Admin: Menghapus data dan membersihkan file dari Storage.</p>
                     </div>
                 </div>
 
@@ -178,7 +184,6 @@
         const idPermohonan = urlParams.get('id');
         let dataPermohonan = null;
 
-        // Logika Tampil/Sembunyi Form Catatan & Upload
         document.getElementById('inpStatus').addEventListener('change', function() {
             const val = this.value;
             document.getElementById('blokUpload').style.display = (val === 'Selesai') ? 'block' : 'none';
@@ -207,32 +212,62 @@
                     <tr><td>No. HP/WA</td><td><a href="https://wa.me/${data.no_wa}" target="_blank" style="color:#10b981; font-weight:bold; text-decoration:none;"><i class="fab fa-whatsapp"></i> ${data.no_wa || '-'}</a></td></tr>
                 `;
 
-                // Render Dokumen URL
+                // 🚀 SISTEM CERDAS DETEKSI FILE EXTENSION UNTUK PREVIEW
                 let htmlLampiran = '';
                 const kolomAbaikan = ['id', 'created_at', 'nomor_tiket', 'status', 'jenis_layanan', 'nama_pemohon', 'nik', 'dokumen_hasil', 'catatan_petugas'];
 
                 for (const [key, value] of Object.entries(data)) {
                     if (!kolomAbaikan.includes(key) && value !== null && value !== '') {
                         const label = key.replace(/_/g, ' ').toUpperCase();
+                        
                         if (typeof value === 'string' && (value.startsWith('http') || value.startsWith('https'))) {
-                            htmlLampiran += `<a href="${value}?download=${label}.pdf" class="btn-lampiran"><i class="fas fa-file-download"></i> Unduh ${label}</a>`;
+                            // Cek ekstensi file (mengambil kata terakhir setelah titik)
+                            const ekstensi = value.split('.').pop().toLowerCase().split('?')[0]; 
+                            const isImage = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ekstensi);
+
+                            // Jika file adalah Gambar, render sebagai <img>
+                            if (isImage) {
+                                htmlLampiran += `
+                                <div class="preview-box">
+                                    <div class="preview-header">
+                                        <span><i class="fas fa-image" style="color: #3b82f6;"></i> GAMBAR: ${label}</span>
+                                        <a href="${value}?download=${label}.${ekstensi}" class="btn-lampiran" style="margin: 0;"><i class="fas fa-download"></i> Unduh File</a>
+                                    </div>
+                                    <img src="${value}" alt="${label}" class="preview-image">
+                                </div>`;
+                            } 
+                            // Jika file adalah dokumen lain (seperti PDF), render sebagai <iframe>
+                            else {
+                                htmlLampiran += `
+                                <div class="preview-box">
+                                    <div class="preview-header">
+                                        <span><i class="fas fa-file-pdf" style="color: #ef4444;"></i> DOKUMEN: ${label}</span>
+                                        <a href="${value}?download=${label}.${ekstensi}" class="btn-lampiran" style="margin: 0;"><i class="fas fa-download"></i> Unduh File</a>
+                                    </div>
+                                    <iframe src="${value}" class="preview-pdf"></iframe>
+                                </div>`;
+                            }
                         } else {
-                            tabelHTML += `<tr><td>${label}</td><td style="white-space: pre-wrap;">${value}</td></tr>`;
+                            tabelHTML += `<tr><td>${label}</td><td style="white-space: pre-wrap; line-height: 1.6;">${value}</td></tr>`;
                         }
                     }
                 }
 
                 document.getElementById('tabelInfo').innerHTML = tabelHTML;
-                document.getElementById('wadahLampiran').innerHTML = htmlLampiran || '<p style="color: #94a3b8; font-size: 14px; font-style: italic;">Tidak ada dokumen lampiran pendukung dari warga.</p>';
+                document.getElementById('wadahLampiran').innerHTML = htmlLampiran || '<p style="color: #94a3b8; font-size: 14px; font-style: italic; text-align: center; padding: 20px;">Tidak ada dokumen lampiran yang diunggah warga.</p>';
 
-                // Set Form Awal
                 document.getElementById('inpStatus').value = stat;
                 document.getElementById('inpCatatan').value = data.catatan_petugas || '';
                 
                 if(stat === 'Selesai') document.getElementById('blokUpload').style.display = 'block';
+                
                 if(stat === 'Selesai' || stat === 'Ditolak') {
                     document.getElementById('blokCatatan').style.display = 'block';
-                    document.getElementById('wadahHapus').style.display = 'block'; // Tampilkan Tombol Hapus Server
+                    
+                    const roleSaatIni = localStorage.getItem('user_role');
+                    if (roleSaatIni === 'superadmin') {
+                        document.getElementById('wadahHapus').style.display = 'block';
+                    }
                 }
 
             } catch (err) {
@@ -243,7 +278,6 @@
             }
         }
 
-        // UPDATE STATUS & KIRIM WA
         async function updateStatus(event) {
             event.preventDefault();
             const btn = document.getElementById('btnUpdate');
@@ -269,7 +303,6 @@
 
                 if (statusBaru === 'Selesai' && !linkDokumen) throw new Error("Anda WAJIB mengunggah Dokumen Hasil (PDF) jika status diubah menjadi Selesai.");
 
-                // Simpan ke DB
                 const { error: updateError } = await supabaseClient.from('permohonan').update({ 
                     status: statusBaru, 
                     catatan_petugas: catatanBaru,
@@ -278,12 +311,10 @@
 
                 if (updateError) throw updateError;
 
-                // FITUR REDIRECT WHATSAPP
                 if ((statusBaru === 'Selesai' || statusBaru === 'Ditolak') && dataPermohonan.no_wa) {
                     const pesanWA = `Halo ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* dengan Nomor Tiket *${dataPermohonan.nomor_tiket}* telah *${statusBaru.toUpperCase()}*.\n\n*Catatan Petugas:*\n"${catatanBaru}"\n\nSilakan cek portal SIPPAK-CIB untuk melihat detailnya. Terima kasih.`;
-                    
                     const urlWA = `https://wa.me/${dataPermohonan.no_wa}?text=${encodeURIComponent(pesanWA)}`;
-                    window.open(urlWA, '_blank'); // Buka tab baru ke WhatsApp
+                    window.open(urlWA, '_blank'); 
                 }
 
                 alert(`✅ BERHASIL!\nData tersimpan.`);
@@ -296,33 +327,34 @@
             }
         }
 
-        // FITUR HAPUS DATA PERMANEN & BERSIHKAN STORAGE
         async function hapusPermohonan() {
+            const roleSaatIni = localStorage.getItem('user_role');
+            if (roleSaatIni !== 'superadmin') {
+                alert("⛔ AKSES DITOLAK!\n\nHanya akun Super Admin yang diizinkan menghapus data secara permanen.");
+                return;
+            }
+
             if(!confirm("⚠️ YAKIN INGIN MENGHAPUS PERMANEN?\n\nSemua data pemohon dan File Dokumen yang menempel pada permohonan ini akan dihapus seutuhnya dari Database dan Storage Server.")) return;
 
             document.getElementById('loadingOverlay').innerHTML = "<i class='fas fa-trash-alt fa-spin' style='font-size:40px; color:#dc2626; margin-bottom:15px;'></i> Menghancurkan Data & File...";
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             try {
-                // 1. Kumpulkan semua jalur file dari URL yang tersimpan di DB
                 let fileYangDihapus = [];
                 const semuaKolomFile = ['file_kk_hilang', 'file_ktp', 'file_kk', 'file_f106', 'dokumen_tambahan_perbaikan', 'file_kk_pindah', 'file_ktp_pindah', 'dokumen_hasil'];
 
                 semuaKolomFile.forEach(kolom => {
                     if (dataPermohonan[kolom] && dataPermohonan[kolom].includes('/dokumen/')) {
-                        // Memotong URL untuk hanya mengambil nama file aslinya
                         const ekstrakNamaFile = dataPermohonan[kolom].split('/dokumen/')[1].split('?')[0]; 
                         fileYangDihapus.push(ekstrakNamaFile);
                     }
                 });
 
-                // 2. Hapus file dari Supabase Storage jika ada
                 if (fileYangDihapus.length > 0) {
                     const { error: errStorage } = await supabaseClient.storage.from('dokumen').remove(fileYangDihapus);
                     if (errStorage) console.error("Beberapa file mungkin gagal dihapus dari storage:", errStorage);
                 }
 
-                // 3. Hapus baris data dari Database
                 const { error: errDB } = await supabaseClient.from('permohonan').delete().eq('id', idPermohonan);
                 if (errDB) throw errDB;
 
