@@ -311,14 +311,25 @@
 
                 if (updateError) throw updateError;
 
-                if ((statusBaru === 'Selesai' || statusBaru === 'Ditolak') && dataPermohonan.no_wa) {
-                    const pesanWA = `Halo ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* dengan Nomor Tiket *${dataPermohonan.nomor_tiket}* telah *${statusBaru.toUpperCase()}*.\n\n*Catatan Petugas:*\n"${catatanBaru}"\n\nSilakan cek portal SIPPAK-CIB untuk melihat detailnya. Terima kasih.`;
+                                // FITUR REDIRECT WHATSAPP
+                if ((statusBaru === 'Selesai' || statusBaru === 'Ditolak' || statusBaru === 'Diproses') && dataPermohonan.no_wa) {
+                    let pesanWA = "";
+                    // Membuat tautan dinamis yang mengarah ke halaman status portal web Anda
+                    let linkPelacakan = window.location.origin + "/pages/status.html";
+                    
+                    if (statusBaru === 'Diproses') {
+                        pesanWA = `Halo ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* dengan Nomor Tiket *${dataPermohonan.nomor_tiket}* saat ini sedang *DIPROSES* oleh petugas kami.\n\nAnda dapat memantau status perkembangan dokumen Anda secara berkala melalui tautan berikut:\n${linkPelacakan}\n\nTerima kasih.`;
+                    } else {
+                        pesanWA = `Halo ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* dengan Nomor Tiket *${dataPermohonan.nomor_tiket}* telah *${statusBaru.toUpperCase()}*.\n\n*Catatan Petugas:*\n"${catatanBaru}"\n\nSilakan cek portal SIPPAK-CIB melalui tautan berikut:\n${linkPelacakan}\n\nTerima kasih.`;
+                    }
+                    
                     const urlWA = `https://wa.me/${dataPermohonan.no_wa}?text=${encodeURIComponent(pesanWA)}`;
                     window.open(urlWA, '_blank'); 
                 }
 
                 alert(`✅ BERHASIL!\nData tersimpan.`);
                 window.location.reload(); 
+
 
             } catch (err) {
                 alert("⚠️ GAGAL:\n" + err.message);

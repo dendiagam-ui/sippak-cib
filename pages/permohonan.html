@@ -3,418 +3,494 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat Permohonan | SIPPAK-CIB</title>
+    <title>Formulir Permohonan | SIPPAK-CIB</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        body { background-color: #f0f4f8; padding: 20px; color: #334155; animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; overflow-x: hidden; }
-        @keyframes fadeInPage { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        body { background: #f8fafc; padding: 15px; color: #1e293b; }
+        
+        .wadah-form { max-width: 600px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
+        
+        /* Desain Header Layanan (Seperti di Gambar Anda) */
+        .box-layanan { background: #eff6ff; border: 1px solid #bfdbfe; padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align: center; }
+        .box-layanan label { display: block; font-weight: 800; color: #1e40af; margin-bottom: 10px; font-size: 15px; }
+        .box-layanan select { width: 100%; max-width: 300px; padding: 12px; border-radius: 8px; border: 1px solid #93c5fd; font-weight: bold; color: #1e293b; text-align: center; font-size: 15px; outline: none; }
+        .box-layanan select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
 
-        .container { max-width: 750px; margin: 20px auto; background: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .btn-back { text-decoration: none; color: #64748b; font-weight: 600; margin-bottom: 25px; display: inline-block; font-size: 15px; transition: 0.2s; }
-        .btn-back:hover { color: #2563eb; transform: translateX(-3px); }
-        .header-title h2 { color: #0f172a; margin-bottom: 8px; font-size: 26px; }
-        .header-title p { color: #64748b; font-size: 15px; margin-bottom: 30px; line-height: 1.5; }
+        /* Desain Judul Bagian */
+        .section-title { font-size: 16px; font-weight: 800; color: #1e293b; margin: 25px 0 20px 0; padding: 12px 15px; background: #f8fafc; border-left: 5px solid #2563eb; border-radius: 4px 8px 8px 4px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
 
-        .highlight-box { background: #eff6ff; padding: 25px; border-radius: 12px; border: 1px solid #bfdbfe; margin-bottom: 35px; }
-        .highlight-box label { color: #1e40af; font-size: 15px; display: block; font-weight: 700; margin-bottom: 10px; }
-        .judul-seksi { background: #f8fafc; color: #1e293b; padding: 12px 18px; border-radius: 8px; font-size: 16px; margin: 35px 0 20px 0; font-weight: 700; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb; }
-
+        /* Form Group */
         .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #475569; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .form-group textarea { resize: vertical; min-height: 100px; }
-
-        .grup-file { background: #f8fafc; padding: 20px; border-radius: 10px; border: 2px dashed #cbd5e1; margin-bottom: 20px; transition: 0.3s; }
-        .grup-file label { display: block; font-weight: 600; margin-bottom: 12px; color: #334155; font-size: 14px; }
-        .grup-file input[type="file"] { background: white; padding: 10px; width: 100%; border-radius: 6px; border: 1px solid #cbd5e1; }
+        .form-group label { display: block; font-weight: 700; margin-bottom: 8px; color: #475569; font-size: 13px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #fff; transition: 0.3s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
         
-        .box-anggota { background: #ffffff; padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        .box-anggota h4 { color: #2563eb; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; font-size: 16px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 500px) { .grid-2 { grid-template-columns: 1fr; } }
 
-        .btn-submit { background: #2563eb; color: white; border: none; padding: 16px 25px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .btn-submit:hover { background: #1d4ed8; }
-
-        /* MODAL KHUSUS */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(4px); }
-        .modal-content { background: white; width: 90%; max-width: 400px; max-height: 85vh; border-radius: 16px; padding: 30px; overflow-y: auto; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-        .modal-content h3 { color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        .btn-submit { background: #2563eb; color: white; padding: 16px; width: 100%; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 30px; box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
+        .btn-submit:hover { background: #1d4ed8; transform: translateY(-2px); }
         
-        .modal-btn-grup { display: flex; gap: 12px; margin-top: 25px; }
-        .modal-btn-batal { background: #f1f5f9; color: #475569; border: none; padding: 14px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;}
-        .modal-btn-batal:hover { background: #e2e8f0; }
-        .modal-btn-kirim { background: #10b981; color: white; border: none; padding: 14px; border-radius: 8px; flex: 1; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;}
-        .modal-btn-kirim:hover { background: #059669; }
-        .modal-btn-kirim:disabled { background: #94a3b8; cursor: not-allowed; }
-
-        /* ANIMASI LOADING BAR SUKSES */
-        @keyframes loadingBar { from { width: 0%; } to { width: 100%; } }
+        /* Modal Konfirmasi */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(3px); }
+        .modal-box { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 450px; text-align: center; }
+        .btn-konfirmasi { background: #10b981; color: white; padding: 14px; width: 100%; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 20px; cursor: pointer; }
+        .btn-batal { background: #f1f5f9; color: #475569; padding: 14px; width: 100%; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
-        
-        <div class="header-title">
-            <h2><i class="fas fa-file-signature" style="color: #2563eb;"></i> Formulir Permohonan Warga</h2>
-            <p>Silakan isi data berikut dengan lengkap sesuai dengan dokumen resmi Anda.</p>
-        </div>
-        
-        <!-- FORMULIR (Memanggil validasiDuplikat saat diklik Submit) -->
-        <form onsubmit="validasiDuplikat(event)">
+
+    <div class="wadah-form">
+        <form id="formPengajuan" onsubmit="validasiDuplikat(event)">
             
-            <div class="highlight-box">
+            <!-- DROPDOWN PILIHAN LAYANAN (WAJIB MEMILIKI ONCHANGE) -->
+            <div class="box-layanan">
                 <label><i class="fas fa-list-check"></i> Pilih Jenis Layanan *</label>
-                <select id="jenis_layanan" required onchange="sesuaikanForm()" class="form-group">
-                    <option value="" disabled selected>-- Silakan Pilih Layanan --</option>
-                    <option value="Cetak Kartu Keluarga">Cetak Kartu Keluarga</option>
-                    <option value="Cetak Ulang KTP-El">Cetak Ulang KTP-El</option>
-                    <option value="Perbaikan Data">Perbaikan Data</option>
-                    <option value="Pindah Keluar">Pindah Keluar</option>
+                <select id="jenis_layanan" onchange="sesuaikanForm()" required>
+                    <option value="" disabled selected>-- Ketuk untuk memilih --</option>
+                    <option value="Cetak Kartu Keluarga">Cetak Kartu Keluarga (KK)</option>
+                    <option value="Cetak Ulang KTP-El">Cetak Ulang KTP-El (Hilang/Rusak)</option>
+                    <option value="Perbaikan Data">Perbaikan Data Kependudukan</option>
+                    <option value="Pindah Keluar">Pindah Keluar Daerah</option>
+                    <option value="Akta Kelahiran Tanpa NIK">Akta Kelahiran Tanpa NIK</option>
                 </select>
             </div>
 
-            <h3 class="judul-seksi"><i class="fas fa-user-circle"></i> 1. DATA PEMOHON</h3>
-            <div class="form-group"><label>Nomor Induk Kependudukan (NIK) *</label><input type="number" id="nik" placeholder="Masukkan 16 Digit NIK" required></div>
-            <div class="form-group"><label>Nomor Kartu Keluarga *</label><input type="number" id="no_kk" placeholder="Masukkan 16 Digit Nomor KK" required></div>
-            <div class="form-group"><label>Nama Lengkap Pemohon *</label><input type="text" id="nama" placeholder="Sesuai KTP" required></div>
-            <div class="form-group"><label>Nomor WhatsApp *</label><input type="tel" id="no_wa" placeholder="Awalan 62..." required oninput="formatWA(this)"></div>
-            <div class="form-group"><label>Email (Opsional)</label><input type="email" id="email" placeholder="Contoh: nama@email.com"></div>
-
-            <div id="blokCetakKK" style="display: none;">
-                <h3 class="judul-seksi"><i class="fas fa-align-left"></i> 2. KETERANGAN</h3>
-                <div class="form-group"><textarea id="keterangan" placeholder="Catatan tambahan (opsional)..."></textarea></div>
-                <h3 class="judul-seksi"><i class="fas fa-folder-open"></i> 3. DOKUMEN</h3>
-                <div class="grup-file"><label>Unggah KK / Surat Kehilangan *</label><input type="file" id="file_kk_hilang" accept="image/*, application/pdf"></div>
+            <!-- DATA PEMOHON UMUM -->
+            <div class="section-title"><i class="fas fa-user-circle"></i> 1. DATA PEMOHON</div>
+            
+            <div class="form-group">
+                <label>Nomor Induk Kependudukan (NIK) *</label>
+                <input type="number" id="nik" placeholder="Masukkan 16 Digit NIK" required>
+            </div>
+            <div class="form-group">
+                <label>Nomor Kartu Keluarga *</label>
+                <input type="number" id="no_kk" placeholder="Masukkan 16 Digit Nomor KK" required>
+            </div>
+            <div class="form-group">
+                <label>Nama Lengkap Pemohon *</label>
+                <input type="text" id="nama" placeholder="Sesuai KTP" required style="text-transform: uppercase;">
+            </div>
+            <div class="form-group">
+                <label>Nomor WhatsApp *</label>
+                <input type="text" id="no_wa" placeholder="Awalan 62..." onkeyup="formatWA(this)" required>
+            </div>
+            <div class="form-group">
+                <label>Email (Opsional)</label>
+                <input type="email" id="email" placeholder="Contoh: nama@email.com">
             </div>
 
+            <!-- ========================================== -->
+            <!-- BLOK LAYANAN DINAMIS (AWALNYA TERSEMBUNYI) -->
+            <!-- ========================================== -->
+
+            <!-- 1. BLOK CETAK KK -->
+            <div id="blokCetakKK" style="display: none;">
+                <div class="section-title"><i class="fas fa-file-alt"></i> 2. PERSYARATAN CETAK KK</div>
+                <div class="form-group"><label>Surat Kehilangan Kepolisian (Jika KK Hilang)</label><input type="file" id="file_kk_hilang"></div>
+                <div class="form-group"><label>Dokumen Pendukung (Opsional)</label><input type="file" id="dokumen_pendukung_kk"></div>
+                <div class="form-group"><label>Keterangan Tambahan</label><textarea id="keterangan" placeholder="Tuliskan keterangan jika ada..."></textarea></div>
+            </div>
+
+            <!-- 2. BLOK CETAK KTP -->
             <div id="blokCetakKTP" style="display: none;">
-                <h3 class="judul-seksi"><i class="fas fa-id-card"></i> 2. DATA PENGAJUAN</h3>
-                <div class="form-group"><label>NIK Yang Diajukan *</label><input type="number" id="nik_pengajuan"></div>
-                <div class="form-group"><label>Nama Sesuai KTP *</label><input type="text" id="nama_pengajuan"></div>
-                <h3 class="judul-seksi"><i class="fas fa-question-circle"></i> 3. ALASAN</h3>
+                <div class="section-title"><i class="fas fa-id-card"></i> 2. PERSYARATAN CETAK KTP</div>
+                <div class="form-group"><label>NIK KTP yang diajukan *</label><input type="number" id="nik_pengajuan"></div>
+                <div class="form-group"><label>Nama KTP yang diajukan *</label><input type="text" id="nama_pengajuan"></div>
                 <div class="form-group">
+                    <label>Alasan Cetak Ulang *</label>
                     <select id="alasan_pengajuan">
-                        <option value="">-- Pilih Alasan --</option>
-                        <option value="KTP Hilang">KTP Hilang</option>
-                        <option value="KTP Rusak">KTP Rusak</option>
+                        <option value="Hilang">KTP Hilang</option>
+                        <option value="Rusak">KTP Rusak / Patah</option>
                     </select>
                 </div>
-                <h3 class="judul-seksi"><i class="fas fa-folder-open"></i> 4. DOKUMEN</h3>
-                <div class="grup-file"><label>Foto KTP Rusak / Surat Kehilangan *</label><input type="file" id="file_ktp" accept="image/*, application/pdf"></div>
-                <div class="grup-file"><label>Foto Kartu Keluarga *</label><input type="file" id="file_kk" accept="image/*, application/pdf"></div>
+                <div class="form-group"><label>Upload Surat Kehilangan / KTP Rusak *</label><input type="file" id="file_ktp"></div>
+                <div class="form-group"><label>Upload Kartu Keluarga (KK) Asli *</label><input type="file" id="file_kk"></div>
             </div>
 
+            <!-- 3. BLOK PERBAIKAN DATA -->
             <div id="blokPerbaikan" style="display: none;">
-                <h3 class="judul-seksi"><i class="fas fa-edit"></i> 2. DATA PENGAJUAN</h3>
-                <div class="form-group"><label>NIK *</label><input type="number" id="nik_perbaikan"></div>
-                <div class="form-group"><label>Nama *</label><input type="text" id="nama_perbaikan"></div>
-                <div class="form-group"><label>Keterangan *</label><textarea id="keterangan_perbaikan" placeholder="Contoh: Merubah Status..."></textarea></div>
-                <h3 class="judul-seksi"><i class="fas fa-folder-open"></i> 3. DOKUMEN</h3>
-                <div class="grup-file"><label>Formulir F1.06 *</label><input type="file" id="file_f106" accept="image/*, application/pdf"></div>
-                <div class="grup-file"><label>Dokumen Pendukung *</label><input type="file" id="dokumen_tambahan_perbaikan" accept="image/*, application/pdf"></div>
+                <div class="section-title"><i class="fas fa-user-edit"></i> 2. FORMULIR PERBAIKAN DATA</div>
+                <div class="form-group"><label>NIK yang diperbaiki *</label><input type="number" id="nik_perbaikan"></div>
+                <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="nama_perbaikan"></div>
+                <div class="form-group"><label>Penjelasan Perbaikan (Contoh: Ubah Status Kawin) *</label><textarea id="keterangan_perbaikan"></textarea></div>
+                <div class="form-group"><label>Upload Formulir F1.06 (Bermaterai) *</label><input type="file" id="file_f106"></div>
+                <div class="form-group"><label>Upload Dokumen Bukti Perbaikan *</label><input type="file" id="dokumen_tambahan_perbaikan"></div>
+                <div class="form-group"><label>Dokumen Pendukung 1 (Opsional)</label><input type="file" id="dokumen_pendukung_1"></div>
+                <div class="form-group"><label>Dokumen Pendukung 2 (Opsional)</label><input type="file" id="dokumen_pendukung_2"></div>
             </div>
 
+            <!-- 4. BLOK PINDAH KELUAR -->
             <div id="blokPindah" style="display: none;">
-                <h3 class="judul-seksi"><i class="fas fa-truck-moving"></i> 2. DATA PINDAH</h3>
-                <div class="form-group"><label>Alamat Asal *</label><textarea id="alamat_asal"></textarea></div>
-                <div class="form-group"><label>Alamat Tujuan *</label><textarea id="alamat_tujuan"></textarea></div>
-                <div class="form-group"><label>Alasan Pindah *</label><input type="text" id="alasan_pindah"></div>
-                <h3 class="judul-seksi"><i class="fas fa-users"></i> 3. ANGGOTA KELUARGA</h3>
+                <div class="section-title"><i class="fas fa-truck-moving"></i> 2. FORMULIR PINDAH KELUAR</div>
+                <div class="form-group"><label>Alamat Asal (Lengkap) *</label><textarea id="alamat_asal"></textarea></div>
+                <div class="form-group"><label>Alamat Tujuan Pindah (Lengkap) *</label><textarea id="alamat_tujuan"></textarea></div>
                 <div class="form-group">
-                    <label>Jumlah Yang Pindah *</label>
-                    <select id="jumlah_pindah" onchange="generateAnggotaPindah()">
-                        <option value="0">0 Orang (Hanya Pemohon)</option>
-                        <option value="1">1 Orang</option><option value="2">2 Orang</option>
+                    <label>Alasan Pindah *</label>
+                    <select id="alasan_pindah">
+                        <option value="Pekerjaan">Pekerjaan</option>
+                        <option value="Pendidikan">Pendidikan</option>
+                        <option value="Keluarga">Keluarga</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Upload Kartu Keluarga (KK) Asli *</label><input type="file" id="file_kk_pindah"></div>
+                <div class="form-group"><label>Upload KTP Asli *</label><input type="file" id="file_ktp_pindah"></div>
+                
+                <h4 style="margin: 25px 0 10px 0; color: #1e40af; font-size: 14px;">Anggota Keluarga Yang Pindah</h4>
+                <div class="form-group">
+                    <label>Pilih Jumlah Anggota</label>
+                    <select id="jumlah_pindah" onchange="generateAnggotaPindah()" style="background: #eff6ff;">
+                        <option value="0" selected>Tidak ada (Hanya Pemohon)</option>
+                        <option value="1">1 Orang</option><option value="2">2 Orang</option><option value="3">3 Orang</option>
+                        <option value="4">4 Orang</option><option value="5">5 Orang</option><option value="6">6 Orang</option>
+                        <option value="7">7 Orang</option><option value="8">8 Orang</option><option value="9">9 Orang</option>
+                        <option value="10">10 Orang</option>
                     </select>
                 </div>
                 <div id="wadahAnggotaPindah"></div>
-                <h3 class="judul-seksi"><i class="fas fa-folder-open"></i> 4. DOKUMEN</h3>
-                <div class="grup-file"><label>KK Asli *</label><input type="file" id="file_kk_pindah" accept="image/*, application/pdf"></div>
-                <div class="grup-file"><label>KTP-el Pemohon *</label><input type="file" id="file_ktp_pindah" accept="image/*, application/pdf"></div>
             </div>
 
-            <button type="submit" id="btnUtama" class="btn-submit"><i class="fas fa-search"></i> Cek & Validasi Ringkasan Data</button>
+            <!-- 5. BLOK AKTA KELAHIRAN -->
+            <div id="blokAktaKelahiran" style="display: none;">
+                <!-- Data Saksi -->
+                <div class="section-title"><i class="fas fa-users"></i> 2. DATA SAKSI</div>
+                <div class="grid-2">
+                    <div class="form-group"><label>NIK Saksi 1 *</label><input type="number" id="nik_saksi_1"></div>
+                    <div class="form-group"><label>Nama Lengkap Saksi 1 *</label><input type="text" id="nama_saksi_1"></div>
+                    <div class="form-group"><label>NIK Saksi 2 *</label><input type="number" id="nik_saksi_2"></div>
+                    <div class="form-group"><label>Nama Lengkap Saksi 2 *</label><input type="text" id="nama_saksi_2"></div>
+                </div>
+
+                <!-- Data Orang Tua -->
+                <div class="section-title"><i class="fas fa-user-friends"></i> 3. DATA ORANG TUA</div>
+                <div class="grid-2">
+                    <div class="form-group"><label>NIK Ayah *</label><input type="number" id="nik_ayah"></div>
+                    <div class="form-group"><label>Nama Lengkap Ayah *</label><input type="text" id="nama_ayah"></div>
+                    <div class="form-group"><label>NIK Ibu *</label><input type="number" id="nik_ibu"></div>
+                    <div class="form-group"><label>Nama Lengkap Ibu *</label><input type="text" id="nama_ibu"></div>
+                </div>
+
+                <!-- Biodata Anak -->
+                <div class="section-title"><i class="fas fa-baby"></i> 4. BIODATA ANAK</div>
+                <div class="form-group"><label>Nama Lengkap Anak *</label><input type="text" id="nama_anak"></div>
+                <div class="grid-2">
+                    <div class="form-group"><label>Tempat Lahir *</label><input type="text" id="tempat_lahir_anak"></div>
+                    <div class="form-group"><label>Tanggal Lahir *</label><input type="date" id="tgl_lahir_anak"></div>
+                    <div class="form-group"><label>Waktu Kelahiran *</label><input type="time" id="waktu_lahir_anak"></div>
+                    <div class="form-group"><label>Kelahiran Ke- *</label><input type="number" id="anak_ke" placeholder="Contoh: 1"></div>
+                    <div class="form-group"><label>Berat Bayi (Kg) *</label><input type="number" step="0.1" id="berat_anak" placeholder="Contoh: 3.2"></div>
+                    <div class="form-group"><label>Panjang Bayi (Cm) *</label><input type="number" step="0.1" id="panjang_anak" placeholder="Contoh: 50"></div>
+                </div>
+                <div class="form-group"><label>Keterangan (Opsional)</label><textarea id="keterangan_akta"></textarea></div>
+
+                <!-- Dokumen Lampiran Akta -->
+                <div class="section-title"><i class="fas fa-file-upload"></i> 5. UPLOAD DOKUMEN</div>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #94a3b8;">
+                    <div class="form-group"><label>Formulir F2.01 *</label><input type="file" id="file_akta_f201"></div>
+                    <div class="form-group"><label>Kartu Keluarga *</label><input type="file" id="file_akta_kk"></div>
+                    <div class="form-group"><label>Surat Keterangan Kelahiran *</label><input type="file" id="file_akta_ket_lahir"></div>
+                    <div class="form-group"><label>Buku Nikah Hal 1 *</label><input type="file" id="file_akta_buku_nikah_1"></div>
+                    <div class="form-group"><label>Buku Nikah Hal 2 *</label><input type="file" id="file_akta_buku_nikah_2"></div>
+                    <div class="form-group"><label>Buku Nikah Hal 3 *</label><input type="file" id="file_akta_buku_nikah_3"></div>
+                    <div class="form-group"><label>KTP Ibu *</label><input type="file" id="file_akta_ktp_ibu"></div>
+                    <div class="form-group"><label>KTP Ayah *</label><input type="file" id="file_akta_ktp_ayah"></div>
+                    <div class="form-group"><label>Dokumen Pendukung (Opsional)</label><input type="file" id="file_akta_pendukung"></div>
+                    <div class="form-group"><label>Dokumen Pendukung 1 (Opsional)</label><input type="file" id="file_akta_pendukung_1"></div>
+                    <div class="form-group"><label>Dokumen Pendukung 2 (Opsional)</label><input type="file" id="file_akta_pendukung_2"></div>
+                </div>
+            </div>
+
+            <!-- TOMBOL SUBMIT UTAMA -->
+            <button type="submit" class="btn-submit" id="btnUtama"><i class="fas fa-search"></i> Cek & Validasi Ringkasan Data</button>
+            
         </form>
     </div>
 
-    <!-- MODAL RINGKASAN & STATUS SUKSES -->
-    <div id="modalRingkasan" class="modal-overlay">
-        <div class="modal-content" id="modalKonten">
-            <h3><i class="fas fa-check-circle" style="color: #10b981;"></i> Validasi Data</h3>
-            <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Harap periksa kembali rangkuman data di bawah ini.</p>
-            
-            <div id="isiRingkasan" style="background: #f8fafc; padding: 20px; border-radius: 10px; font-size: 14px; max-height: 40vh; overflow-y: auto; border: 1px solid #e2e8f0; color: #1e293b; line-height: 1.6;">
-                <!-- Diisi via JS -->
-            </div>
-            
-            <div class="modal-btn-grup">
-                <button type="button" class="modal-btn-batal" id="btnBatal" onclick="tutupModal()"><i class="fas fa-edit"></i> Batal / Edit</button>
-                <button type="button" class="modal-btn-kirim" id="btnKonfirmasi" onclick="prosesKirimAkhir()"><i class="fas fa-paper-plane"></i> Kirim Data</button>
-            </div>
+    <!-- MODAL KONFIRMASI -->
+    <div class="modal-overlay" id="modalRingkasan">
+        <div class="modal-box" id="modalKonten">
+            <h3 style="margin-bottom: 15px; color: #1e293b;"><i class="fas fa-check-circle" style="color: #10b981;"></i> Konfirmasi Pengiriman</h3>
+            <p style="color: #475569; font-size: 14px; margin-bottom: 15px;">Mohon periksa kembali ringkasan permohonan Anda:</p>
+            <div id="isiRingkasan" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; margin-bottom: 20px; line-height: 1.6; text-align: left;"></div>
+            <button class="btn-konfirmasi" id="btnKonfirmasi" onclick="prosesKirimAkhir()"><i class="fas fa-upload"></i> Kirim Permohonan Sekarang</button>
+            <button class="btn-batal" id="btnBatal" onclick="tutupModal()">Batal & Periksa Lagi</button>
         </div>
     </div>
 
-    <!-- SCRIPT MANDIRI (TIDAK MENGGUNAKAN WARGA.JS) -->
+    <!-- SCRIPT UTAMA -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../assets/js/config.js"></script>
-    
-  <script>
-    // INISIALISASI SUPABASE
-    const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
-    const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
-    const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
+    <script>
+        // KONEKSI DATABASE
+        const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
+        const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
+        const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
+        let dataDraft = {};
 
-    let dataDraft = {};
-
-    function formatWA(input) {
-        input.value = input.value.replace(/[^0-9]/g, '');
-        if (input.value.startsWith('0')) input.value = '62' + input.value.substring(1);
-    }
-
-    function generateAnggotaPindah() {
-        const jumlah = document.getElementById('jumlah_pindah').value;
-        const wadah = document.getElementById('wadahAnggotaPindah');
-        wadah.innerHTML = ''; 
-        for(let i = 1; i <= jumlah; i++) {
-            wadah.innerHTML += `
-                <div class="box-anggota">
-                    <h4><i class="fas fa-user-tag"></i> Anggota ke-${i}</h4>
-                    <div class="form-group"><label>NIK Anggota</label><input type="number" id="nik_anggota_${i}" required></div>
-                    <div class="form-group"><label>Nama Anggota</label><input type="text" id="nama_anggota_${i}" required></div>
-                    <div class="form-group"><label>Status Hubungan</label>
-                        <select id="status_anggota_${i}" required>
-                            <option value="" disabled selected>-- Pilih Status --</option>
-                            <option value="Suami">Suami</option><option value="Istri">Istri</option><option value="Anak">Anak</option>
-                        </select>
-                    </div>
-                </div>`;
+        // Format No WA otomatis
+        function formatWA(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            if (input.value.startsWith('0')) input.value = '62' + input.value.substring(1);
         }
-    }
 
-    function sesuaikanForm() {
-        const layanan = document.getElementById('jenis_layanan').value;
-        document.getElementById('blokCetakKK').style.display = 'none'; 
-        document.getElementById('blokCetakKTP').style.display = 'none'; 
-        document.getElementById('blokPerbaikan').style.display = 'none'; 
-        document.getElementById('blokPindah').style.display = 'none';
-        
-        document.getElementById('alamat_asal').required = false; 
-        document.getElementById('alamat_tujuan').required = false; 
-        document.getElementById('alasan_pindah').required = false; 
-
-        if (layanan === 'Cetak Kartu Keluarga') document.getElementById('blokCetakKK').style.display = 'block'; 
-        else if (layanan === 'Cetak Ulang KTP-El') document.getElementById('blokCetakKTP').style.display = 'block'; 
-        else if (layanan === 'Perbaikan Data') document.getElementById('blokPerbaikan').style.display = 'block'; 
-        else if (layanan === 'Pindah Keluar') { 
-            document.getElementById('blokPindah').style.display = 'block'; 
-            document.getElementById('alamat_asal').required = true; 
-            document.getElementById('alamat_tujuan').required = true; 
-            document.getElementById('alasan_pindah').required = true; 
-        }
-    }
-
-    async function validasiDuplikat(event) {
-        event.preventDefault(); 
-        const btn = document.getElementById('btnUtama');
-        const teksAsli = btn.innerHTML;
-        
-        const nik = document.getElementById('nik').value;
-        const no_kk = document.getElementById('no_kk').value;
-        const nama = document.getElementById('nama').value.toUpperCase();
-        const no_wa = document.getElementById('no_wa').value;
-        const email = document.getElementById('email').value || null;
-        const layanan = document.getElementById('jenis_layanan').value;
-        
-        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memeriksa Data Server...";
-        btn.disabled = true;
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('permohonan')
-                .select('status, nomor_tiket')
-                .eq('nik', nik)
-                .eq('jenis_layanan', layanan)
-                .neq('status', 'Selesai')
-                .neq('status', 'Ditolak');
-
-            if (error) throw error;
-
-            if (data && data.length > 0) {
-                alert(`⚠️ PENGAJUAN DITOLAK!\n\nNIK ${nik} masih memiliki permohonan "${layanan}" yang sedang dalam status: ${data[0].status || 'Menunggu'}.`);
-                return; 
+        // Generate Form Anggota Pindah Dinamis
+        function generateAnggotaPindah() {
+            const jumlah = document.getElementById('jumlah_pindah').value;
+            const wadah = document.getElementById('wadahAnggotaPindah');
+            wadah.innerHTML = ''; 
+            for(let i = 1; i <= jumlah; i++) {
+                wadah.innerHTML += `
+                    <div style="background:#f8fafc; padding:15px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:15px;">
+                        <h4 style="color:#1e40af; margin-bottom:10px; font-size:14px;"><i class="fas fa-user-tag"></i> Anggota ke-${i}</h4>
+                        <div class="form-group"><label>NIK Anggota</label><input type="number" id="nik_anggota_${i}" required></div>
+                        <div class="form-group"><label>Nama Anggota</label><input type="text" id="nama_anggota_${i}" required></div>
+                        <div class="form-group"><label>Status Hubungan</label>
+                            <select id="status_anggota_${i}" required>
+                                <option value="" disabled selected>-- Pilih --</option>
+                                <option value="Suami">Suami</option><option value="Istri">Istri</option><option value="Anak">Anak</option>
+                            </select>
+                        </div>
+                    </div>`;
             }
+        }
 
-            // 🚀 PERBAIKAN: MENANGKAP SEMUA INPUTAN DINAMIS WARGA
-            let rincian = "";
-            if (layanan === 'Cetak Kartu Keluarga') {
-                rincian += "Keterangan Warga: " + (document.getElementById('keterangan').value || "-");
-            } 
-            else if (layanan === 'Cetak Ulang KTP-El') {
-                rincian += "NIK Diajukan: " + document.getElementById('nik_pengajuan').value + "\n";
-                rincian += "Nama Diajukan: " + document.getElementById('nama_pengajuan').value + "\n";
-                rincian += "Alasan: " + document.getElementById('alasan_pengajuan').value;
-            } 
-            else if (layanan === 'Perbaikan Data') {
-                rincian += "NIK Perbaikan: " + document.getElementById('nik_perbaikan').value + "\n";
-                rincian += "Nama Perbaikan: " + document.getElementById('nama_perbaikan').value + "\n";
-                rincian += "Keterangan Perbaikan: " + document.getElementById('keterangan_perbaikan').value;
-            } 
-            else if (layanan === 'Pindah Keluar') {
-                rincian += "Alamat Asal: " + document.getElementById('alamat_asal').value + "\n";
-                rincian += "Alamat Tujuan: " + document.getElementById('alamat_tujuan').value + "\n";
-                rincian += "Alasan Pindah: " + document.getElementById('alasan_pindah').value + "\n";
+        // LOGIKA PENAMPILAN FORM (TIDAK AKAN ERROR MESKI ADA ELEMEN KOSONG)
+        function sesuaikanForm() {
+            const ddl = document.getElementById('jenis_layanan');
+            if (!ddl) return;
+            const layanan = ddl.value;
+
+            // Tangkap ID Blok
+            const bKK = document.getElementById('blokCetakKK');
+            const bKTP = document.getElementById('blokCetakKTP');
+            const bPerbaikan = document.getElementById('blokPerbaikan');
+            const bPindah = document.getElementById('blokPindah');
+            const bAkta = document.getElementById('blokAktaKelahiran');
+            
+            // Sembunyikan Semua Blok
+            if (bKK) bKK.style.display = 'none'; 
+            if (bKTP) bKTP.style.display = 'none'; 
+            if (bPerbaikan) bPerbaikan.style.display = 'none'; 
+            if (bPindah) bPindah.style.display = 'none';
+            if (bAkta) bAkta.style.display = 'none';
+            
+            // Atur ulang required form pindah
+            const elAsal = document.getElementById('alamat_asal');
+            const elTujuan = document.getElementById('alamat_tujuan');
+            const elAlasan = document.getElementById('alasan_pindah');
+            if(elAsal) elAsal.required = false; 
+            if(elTujuan) elTujuan.required = false; 
+            if(elAlasan) elAlasan.required = false; 
+
+            // Tampilkan yang dipilih
+            if (layanan === 'Cetak Kartu Keluarga' && bKK) bKK.style.display = 'block'; 
+            else if (layanan === 'Cetak Ulang KTP-El' && bKTP) bKTP.style.display = 'block'; 
+            else if (layanan === 'Perbaikan Data' && bPerbaikan) bPerbaikan.style.display = 'block'; 
+            else if (layanan === 'Pindah Keluar' && bPindah) { 
+                bPindah.style.display = 'block'; 
+                if(elAsal) elAsal.required = true; 
+                if(elTujuan) elTujuan.required = true; 
+                if(elAlasan) elAlasan.required = true; 
+            }
+            else if (layanan === 'Akta Kelahiran Tanpa NIK' && bAkta) {
+                bAkta.style.display = 'block';
+            }
+        }
+
+        // KLIK TOMBOL CEK VALIDASI
+        async function validasiDuplikat(event) {
+            event.preventDefault(); 
+            const btn = document.getElementById('btnUtama');
+            const teksAsli = btn.innerHTML;
+            
+            const nik = document.getElementById('nik').value;
+            const no_kk = document.getElementById('no_kk').value;
+            const nama = document.getElementById('nama').value.toUpperCase();
+            const no_wa = document.getElementById('no_wa').value;
+            const email = document.getElementById('email').value || null;
+            const layanan = document.getElementById('jenis_layanan').value;
+            
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memeriksa Data...";
+            btn.disabled = true;
+
+            try {
+                // Cek apakah NIK ini masih punya antrean yang sama
+                const { data, error } = await supabaseClient.from('permohonan').select('status').eq('nik', nik).eq('jenis_layanan', layanan).neq('status', 'Selesai').neq('status', 'Ditolak');
+                if (error) throw error;
                 
-                const jumlahPindah = parseInt(document.getElementById('jumlah_pindah').value);
-                if(jumlahPindah > 0) {
-                    rincian += "\n--- ANGGOTA KELUARGA YANG PINDAH ---\n";
-                    for(let i = 1; i <= jumlahPindah; i++) {
-                        let n = document.getElementById('nik_anggota_'+i).value;
-                        let nm = document.getElementById('nama_anggota_'+i).value;
-                        let st = document.getElementById('status_anggota_'+i).value;
-                        rincian += `${i}. NIK: ${n} | Nama: ${nm} (${st})\n`;
+                if (data && data.length > 0) {
+                    alert(`⚠️ PENGAJUAN DITOLAK!\n\nNIK ${nik} masih memiliki permohonan "${layanan}" yang sedang diproses petugas.`);
+                    btn.innerHTML = teksAsli; btn.disabled = false;
+                    return; 
+                }
+
+                // Pengumpulan Data Rincian
+                let rincian = "";
+                if (layanan === 'Cetak Kartu Keluarga') {
+                    rincian += "Keterangan Warga: " + (document.getElementById('keterangan').value || "-");
+                } 
+                else if (layanan === 'Cetak Ulang KTP-El') {
+                    rincian += "NIK Diajukan: " + document.getElementById('nik_pengajuan').value + "\n";
+                    rincian += "Nama Diajukan: " + document.getElementById('nama_pengajuan').value + "\n";
+                    rincian += "Alasan: " + document.getElementById('alasan_pengajuan').value;
+                } 
+                else if (layanan === 'Perbaikan Data') {
+                    rincian += "NIK Perbaikan: " + document.getElementById('nik_perbaikan').value + "\n";
+                    rincian += "Nama Perbaikan: " + document.getElementById('nama_perbaikan').value + "\n";
+                    rincian += "Keterangan Perbaikan: " + document.getElementById('keterangan_perbaikan').value;
+                } 
+                else if (layanan === 'Pindah Keluar') {
+                    rincian += "Alamat Asal: " + document.getElementById('alamat_asal').value + "\n";
+                    rincian += "Alamat Tujuan: " + document.getElementById('alamat_tujuan').value + "\n";
+                    rincian += "Alasan Pindah: " + document.getElementById('alasan_pindah').value + "\n";
+                    const jumlahPindah = parseInt(document.getElementById('jumlah_pindah').value);
+                    if(jumlahPindah > 0) {
+                        rincian += "\n--- ANGGOTA YANG PINDAH ---\n";
+                        for(let i = 1; i <= jumlahPindah; i++) {
+                            rincian += `${i}. NIK: ${document.getElementById('nik_anggota_'+i).value} | Nama: ${document.getElementById('nama_anggota_'+i).value} (${document.getElementById('status_anggota_'+i).value})\n`;
+                        }
                     }
                 }
+                else if (layanan === 'Akta Kelahiran Tanpa NIK') {
+                    rincian += "--- DATA SAKSI ---\n";
+                    rincian += "Saksi 1: " + document.getElementById('nik_saksi_1').value + " - " + document.getElementById('nama_saksi_1').value + "\n";
+                    rincian += "Saksi 2: " + document.getElementById('nik_saksi_2').value + " - " + document.getElementById('nama_saksi_2').value + "\n\n";
+                    rincian += "--- DATA ORANG TUA ---\n";
+                    rincian += "Ayah: " + document.getElementById('nik_ayah').value + " - " + document.getElementById('nama_ayah').value + "\n";
+                    rincian += "Ibu: " + document.getElementById('nik_ibu').value + " - " + document.getElementById('nama_ibu').value + "\n\n";
+                    rincian += "--- BIODATA ANAK ---\n";
+                    rincian += "Nama Anak: " + document.getElementById('nama_anak').value + "\n";
+                    rincian += "Tempat, Tgl Lahir: " + document.getElementById('tempat_lahir_anak').value + ", " + document.getElementById('tgl_lahir_anak').value + "\n";
+                    rincian += "Waktu Lahir: " + document.getElementById('waktu_lahir_anak').value + " WIB\n";
+                    rincian += "Anak Ke: " + document.getElementById('anak_ke').value + "\n";
+                    rincian += "Berat/Panjang: " + document.getElementById('berat_anak').value + " kg / " + document.getElementById('panjang_anak').value + " cm\n";
+                    rincian += "Keterangan: " + (document.getElementById('keterangan_akta').value || "-");
+                }
+
+                // Buat Tiket Acak
+                const tiketAcak = 'TKT-' + Math.floor(100000 + Math.random() * 900000);
+                
+                // Simpan Sementara
+                dataDraft = { nik: nik, no_kk: no_kk, nama: nama, no_wa: no_wa, email: email, layanan: layanan, tiket: tiketAcak, rincian_data: rincian };
+                
+                tampilkanRingkasan();
+
+            } catch (err) { 
+                alert("Gagal menghubungi server: " + err.message); 
+            } finally { 
+                btn.innerHTML = teksAsli; btn.disabled = false; 
             }
-
-            const tiketAcak = 'TKT-' + Math.floor(100000 + Math.random() * 900000);
-            dataDraft = { 
-                nik: nik, 
-                no_kk: no_kk, 
-                nama: nama, 
-                no_wa: no_wa, 
-                email: email, 
-                layanan: layanan, 
-                tiket: tiketAcak, 
-                rincian_data: rincian // <-- Menyimpan rincian ke draft
-            };
-            
-            tampilkanRingkasan();
-
-        } catch (err) {
-            alert("Gagal menghubungi server: " + err.message);
-        } finally {
-            btn.innerHTML = teksAsli;
-            btn.disabled = false;
         }
-    }
 
-    function tampilkanRingkasan() {
-        document.activeElement.blur(); 
-        document.getElementById('isiRingkasan').innerHTML = `
-            <div style="font-weight:bold; margin-bottom: 5px;">No Tiket: <span style="color:#2563eb;">${dataDraft.tiket}</span></div>
-            <div style="margin-bottom: 5px;"><strong>Layanan:</strong> ${dataDraft.layanan}</div>
-            <div style="margin-bottom: 5px;"><strong>Pemohon:</strong> ${dataDraft.nama}</div>
-            <div style="margin-bottom: 5px;"><strong>NIK:</strong> ${dataDraft.nik}</div>
-            <div style="margin-bottom: 5px;"><strong>No. KK:</strong> ${dataDraft.no_kk}</div>
-        `;
-        document.getElementById('modalRingkasan').style.display = 'flex';
-    }
-
-    function tutupModal() {
-        document.getElementById('modalRingkasan').style.display = 'none';
-    }
-
-    async function uploadDokumenWarga(inputId, namaKolom) {
-        const fileInput = document.getElementById(inputId);
-        if (fileInput && fileInput.files.length > 0) {
-            const file = fileInput.files[0];
-            const ekstensi = file.name.split('.').pop();
-            const namaFileUnik = `warga_${dataDraft.tiket}_${namaKolom}_${Date.now()}.${ekstensi}`;
-
-            const { error: uploadError } = await supabaseClient.storage.from('dokumen').upload(namaFileUnik, file);
-            if (uploadError) throw new Error(`Gagal mengunggah ${namaKolom}: ` + uploadError.message);
-
-            const { data: publicUrlData } = supabaseClient.storage.from('dokumen').getPublicUrl(namaFileUnik);
-            return publicUrlData.publicUrl; 
-        }
-        return null;
-    }
-
-    async function prosesKirimAkhir() {
-        const btnKirim = document.getElementById('btnKonfirmasi');
-        const btnBatal = document.getElementById('btnBatal');
-        const modalKonten = document.getElementById('modalKonten');
-
-        btnKirim.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mengunggah Dokumen...";
-        btnKirim.disabled = true;
-        btnBatal.disabled = true;
-
-        try {
-            let dataUploadUrls = {};
-
-            if (dataDraft.layanan === 'Cetak Kartu Keluarga') {
-                const urlKKHilang = await uploadDokumenWarga('file_kk_hilang', 'file_kk_hilang');
-                if(urlKKHilang) dataUploadUrls.file_kk_hilang = urlKKHilang;
-            } 
-            else if (dataDraft.layanan === 'Cetak Ulang KTP-El') {
-                const urlKTP = await uploadDokumenWarga('file_ktp', 'file_ktp');
-                const urlKK = await uploadDokumenWarga('file_kk', 'file_kk');
-                if(urlKTP) dataUploadUrls.file_ktp = urlKTP;
-                if(urlKK) dataUploadUrls.file_kk = urlKK;
-            } 
-            else if (dataDraft.layanan === 'Perbaikan Data') {
-                const urlF106 = await uploadDokumenWarga('file_f106', 'file_f106');
-                const urlTambah = await uploadDokumenWarga('dokumen_tambahan_perbaikan', 'dokumen_tambahan_perbaikan');
-                if(urlF106) dataUploadUrls.file_f106 = urlF106;
-                if(urlTambah) dataUploadUrls.dokumen_tambahan_perbaikan = urlTambah;
-            } 
-            else if (dataDraft.layanan === 'Pindah Keluar') {
-                const urlKKPindah = await uploadDokumenWarga('file_kk_pindah', 'file_kk_pindah');
-                const urlKTPPindah = await uploadDokumenWarga('file_ktp_pindah', 'file_ktp_pindah');
-                if(urlKKPindah) dataUploadUrls.file_kk_pindah = urlKKPindah;
-                if(urlKTPPindah) dataUploadUrls.file_ktp_pindah = urlKTPPindah;
-            }
-
-            btnKirim.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Menyimpan ke Database...";
-
-            // 🚀 PERBAIKAN: Mengirimkan rincian_data ke Supabase
-            const dataFinalInsert = {
-                nomor_tiket: dataDraft.tiket,
-                nik: dataDraft.nik,
-                no_kk: dataDraft.no_kk, 
-                no_wa: dataDraft.no_wa, 
-                email: dataDraft.email, 
-                nama_pemohon: dataDraft.nama,
-                jenis_layanan: dataDraft.layanan,
-                status: 'Menunggu',
-                rincian_data: dataDraft.rincian_data, // Akan dibaca otomatis oleh dasbor petugas
-                ...dataUploadUrls 
-            };
-
-            const { error } = await supabaseClient.from('permohonan').insert([dataFinalInsert]);
-
-            if (error) throw error;
-
-            modalKonten.innerHTML = `
-                <div style="text-align: center; padding: 10px;">
-                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 65px; margin-bottom: 15px;"></i>
-                    <h2 style="color: #1e293b; margin-bottom: 10px;">Berkas Terkirim!</h2>
-                    <p style="color: #64748b; font-size: 15px; margin-bottom: 25px; line-height: 1.5;">
-                        Permohonan Anda berhasil masuk ke antrean petugas dengan Nomor Tiket:<br>
-                        <strong style="color: #2563eb; font-size: 18px;">${dataDraft.tiket}</strong>
-                    </p>
-                    <p style="font-size: 12px; font-weight: bold; color: #f59e0b; margin-bottom: 8px;">
-                        Mengarahkan ke halaman status...
-                    </p>
-                    <div style="width: 100%; background: #e2e8f0; height: 6px; border-radius: 10px; overflow: hidden;">
-                        <div style="width: 100%; height: 100%; background: #f59e0b; animation: loadingBar 2.5s linear forwards;"></div>
-                    </div>
-                </div>
+        // TAMPILKAN MODAL POPUP
+        function tampilkanRingkasan() {
+            document.activeElement.blur(); 
+            document.getElementById('isiRingkasan').innerHTML = `
+                <div style="font-weight:bold; margin-bottom: 8px;">No Tiket: <span style="color:#2563eb; font-size:16px;">${dataDraft.tiket}</span></div>
+                <div style="margin-bottom: 5px;"><strong>Layanan:</strong> ${dataDraft.layanan}</div>
+                <div style="margin-bottom: 5px;"><strong>Pemohon:</strong> ${dataDraft.nama}</div>
+                <div style="margin-bottom: 5px;"><strong>NIK:</strong> ${dataDraft.nik}</div>
             `;
-
-            setTimeout(() => {
-                window.location.href = `status.html?nik=${dataDraft.nik}`;
-            }, 2500);
-
-        } catch (err) {
-            alert("Gagal mengirim permohonan: " + err.message);
-            btnKirim.innerHTML = "<i class='fas fa-paper-plane'></i> Kirim Data";
-            btnKirim.disabled = false;
-            btnBatal.disabled = false;
+            document.getElementById('modalRingkasan').style.display = 'flex';
         }
-    }
+
+        function tutupModal() { 
+            document.getElementById('modalRingkasan').style.display = 'none'; 
+        }
+
+        // FUNGSI UPLOAD FILE KE STORAGE
+        async function uploadDokumenWarga(inputId, namaKolom) {
+            const fileInput = document.getElementById(inputId);
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const ekstensi = file.name.split('.').pop();
+                const namaFileUnik = `warga_${dataDraft.tiket}_${namaKolom}_${Date.now()}.${ekstensi}`;
+                const { error: uploadError } = await supabaseClient.storage.from('dokumen').upload(namaFileUnik, file);
+                if (uploadError) throw new Error(`Gagal mengunggah ${namaKolom}: ` + uploadError.message);
+                const { data: publicUrlData } = supabaseClient.storage.from('dokumen').getPublicUrl(namaFileUnik);
+                return publicUrlData.publicUrl; 
+            }
+            return null;
+        }
+
+        // KLIK TOMBOL KIRIM DI DALAM MODAL
+        async function prosesKirimAkhir() {
+            const btnKirim = document.getElementById('btnKonfirmasi');
+            const btnBatal = document.getElementById('btnBatal');
+            const modalKonten = document.getElementById('modalKonten');
+
+            btnKirim.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Sedang Mengunggah Dokumen...";
+            btnKirim.disabled = true; 
+            btnBatal.disabled = true;
+
+            try {
+                let dataUploadUrls = {};
+
+                // Proses Upload Berdasarkan Layanan
+                if (dataDraft.layanan === 'Cetak Kartu Keluarga') {
+                    const f1 = await uploadDokumenWarga('file_kk_hilang', 'file_kk_hilang'); if(f1) dataUploadUrls.file_kk_hilang = f1;
+                    const f2 = await uploadDokumenWarga('dokumen_pendukung_kk', 'dokumen_pendukung_kk'); if(f2) dataUploadUrls.dokumen_pendukung_kk = f2;
+                } 
+                else if (dataDraft.layanan === 'Cetak Ulang KTP-El') {
+                    const f1 = await uploadDokumenWarga('file_ktp', 'file_ktp'); if(f1) dataUploadUrls.file_ktp = f1;
+                    const f2 = await uploadDokumenWarga('file_kk', 'file_kk'); if(f2) dataUploadUrls.file_kk = f2;
+                } 
+                else if (dataDraft.layanan === 'Perbaikan Data') {
+                    const f1 = await uploadDokumenWarga('file_f106', 'file_f106'); if(f1) dataUploadUrls.file_f106 = f1;
+                    const f2 = await uploadDokumenWarga('dokumen_tambahan_perbaikan', 'dokumen_tambahan_perbaikan'); if(f2) dataUploadUrls.dokumen_tambahan_perbaikan = f2;
+                    const f3 = await uploadDokumenWarga('dokumen_pendukung_1', 'dokumen_pendukung_1'); if(f3) dataUploadUrls.dokumen_pendukung_1 = f3;
+                    const f4 = await uploadDokumenWarga('dokumen_pendukung_2', 'dokumen_pendukung_2'); if(f4) dataUploadUrls.dokumen_pendukung_2 = f4;
+                } 
+                else if (dataDraft.layanan === 'Pindah Keluar') {
+                    const f1 = await uploadDokumenWarga('file_kk_pindah', 'file_kk_pindah'); if(f1) dataUploadUrls.file_kk_pindah = f1;
+                    const f2 = await uploadDokumenWarga('file_ktp_pindah', 'file_ktp_pindah'); if(f2) dataUploadUrls.file_ktp_pindah = f2;
+                }
+                else if (dataDraft.layanan === 'Akta Kelahiran Tanpa NIK') {
+                    const keys = ['file_akta_f201', 'file_akta_kk', 'file_akta_ket_lahir', 'file_akta_buku_nikah_1', 'file_akta_buku_nikah_2', 'file_akta_buku_nikah_3', 'file_akta_ktp_ibu', 'file_akta_ktp_ayah', 'file_akta_pendukung', 'file_akta_pendukung_1', 'file_akta_pendukung_2'];
+                    for (let key of keys) {
+                        const url = await uploadDokumenWarga(key, key);
+                        if (url) dataUploadUrls[key] = url;
+                    }
+                }
+
+                btnKirim.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Menyimpan ke Server...";
+
+                // Insert ke Database
+                const dataFinalInsert = {
+                    nomor_tiket: dataDraft.tiket, nik: dataDraft.nik, no_kk: dataDraft.no_kk, 
+                    no_wa: dataDraft.no_wa, email: dataDraft.email, nama_pemohon: dataDraft.nama,
+                    jenis_layanan: dataDraft.layanan, status: 'Menunggu',
+                    rincian_data: dataDraft.rincian_data, ...dataUploadUrls 
+                };
+
+                const { error } = await supabaseClient.from('permohonan').insert([dataFinalInsert]);
+                if (error) throw error;
+
+                // Tampilan Sukses
+                modalKonten.innerHTML = `
+                    <div style="text-align: center; padding: 10px;">
+                        <i class="fas fa-check-circle" style="color: #10b981; font-size: 65px; margin-bottom: 15px;"></i>
+                        <h2 style="color: #1e293b; margin-bottom: 10px;">Berkas Terkirim!</h2>
+                        <p style="color: #64748b; font-size: 15px; margin-bottom: 25px;">
+                            Permohonan Anda masuk dengan Nomor Tiket:<br><strong style="color: #2563eb; font-size: 20px;">${dataDraft.tiket}</strong>
+                        </p>
+                        <p style="font-size:12px; color:#f59e0b; margin-bottom:5px; font-weight:bold;">Mengarahkan ke halaman status...</p>
+                        <div style="width: 100%; background: #e2e8f0; height: 6px; border-radius: 10px; overflow: hidden;">
+                            <div style="width: 100%; height: 100%; background: #f59e0b; transition: width 2s ease; width: 100%;"></div>
+                        </div>
+                    </div>`;
+                    
+                setTimeout(() => { window.location.href = `status.html?nik=${dataDraft.nik}`; }, 2500);
+
+            } catch (err) {
+                alert("Gagal mengirim permohonan: " + err.message);
+                btnKirim.innerHTML = "<i class='fas fa-upload'></i> Coba Kirim Ulang";
+                btnKirim.disabled = false; 
+                btnBatal.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>
