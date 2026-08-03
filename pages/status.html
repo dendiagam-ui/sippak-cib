@@ -3,133 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lacak Status | SIPPAK-CIB</title>
+    <title>Cek Status Permohonan | SIPPAK-CIB</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        body { background-color: #f8fafc; padding: 20px; color: #334155; }
-        .container { max-width: 650px; margin: 30px auto; background: #ffffff; padding: 35px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: center; }
-        .btn-back { text-decoration: none; color: #64748b; font-weight: 600; margin-bottom: 25px; display: inline-block; font-size: 15px; text-align: left; width: 100%; transition: 0.2s; }
-        .btn-back:hover { color: #f59e0b; transform: translateX(-3px); }
-        h2 { color: #0f172a; margin-bottom: 15px; }
+        body { background: #f1f5f9; padding: 20px; color: #1e293b; }
         
-        .form-group input { width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; transition: 0.3s; }
-        .form-group input:focus { outline: none; border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
+        .wadah-status { max-width: 650px; margin: 40px auto; }
+        .box-pencarian { background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: center; margin-bottom: 25px; }
+        .box-pencarian h2 { color: #2563eb; margin-bottom: 10px; font-weight: 800; }
+        .box-pencarian p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
         
-        .btn-submit { background: #f59e0b; color: white; border: none; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
-        .btn-submit:hover { background: #d97706; transform: translateY(-2px); }
+        .form-group input { width: 100%; padding: 15px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        .form-group input:focus { border-color: #2563eb; }
         
-        .hasil-lacak { margin-top: 30px; display: none; text-align: left; }
-        .kartu-riwayat { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: 0.3s; position: relative; overflow: hidden; }
-        .kartu-riwayat:hover { border-color: #cbd5e1; box-shadow: 0 6px 20px rgba(0,0,0,0.06); }
-        .kartu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #cbd5e1; padding-bottom: 12px; margin-bottom: 12px; }
-        .kartu-header .tiket { color: #2563eb; font-weight: 800; font-size: 15px; }
-        .kartu-header .tanggal { font-size: 12px; color: #64748b; }
-        .kartu-body p { margin-bottom: 6px; font-size: 14px; color: #475569; }
-        
-        .status-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .status-Menunggu { background: #fef3c7; color: #d97706; }
-        .status-Diproses { background: #e0f2fe; color: #0284c7; }
-        .status-Selesai { background: #dcfce7; color: #16a34a; }
-        .status-Ditolak { background: #fee2e2; color: #dc2626; }
+        .btn-cari { background: #2563eb; color: white; padding: 15px; width: 100%; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-cari:hover { background: #1d4ed8; }
 
-        /* TOMBOL DOWNLOAD PDF */
-        .btn-download { display: inline-block; background: #10b981; color: white; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: bold; text-decoration: none; margin-top: 15px; transition: 0.3s; }
-        .btn-download:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+        /* KARTU HASIL PENCARIAN */
+        .kartu-hasil { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); text-align: left; }
+        .kartu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .no-tiket { font-size: 18px; font-weight: 900; color: #2563eb; }
+        
+        .rincian-teks { font-size: 14px; color: #475569; margin-bottom: 8px; }
+        .rincian-teks strong { color: #1e293b; }
+        
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; text-transform: uppercase; }
+        .badge-menunggu { background: #fef3c7; color: #d97706; }
+        .badge-proses { background: #e0f2fe; color: #0284c7; }
+        .badge-selesai { background: #dcfce7; color: #16a34a; }
+        .badge-ditolak { background: #fee2e2; color: #dc2626; }
+
+        .catatan-petugas { background: #eff6ff; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6; font-size: 13px; color: #1e40af; }
+        .btn-unduh-hasil { background: #10b981; color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; display: inline-block; margin-top: 15px; }
+        
+        .pengaju-info { font-size: 12px; font-weight: bold; padding: 5px 10px; border-radius: 5px; display: inline-block; margin-bottom: 10px; }
+        .pengaju-petugas { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .pengaju-mandiri { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="../index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
-        
-        <div style="font-size: 45px; color: #f59e0b; margin-bottom: 15px;"><i class="fas fa-fingerprint"></i></div>
-        <h2>Lacak Riwayat Berkas</h2>
-        <p style="color: #64748b; margin-bottom: 25px; font-size: 15px;">Masukkan 16 Digit NIK Anda untuk melihat seluruh perkembangan permohonan.</p>
 
-        <form onsubmit="lacakNik(event)">
-            <div class="form-group">
-                <input type="number" id="inpNik" required placeholder="Ketik 16 Digit NIK Anda" pattern="[0-9]{16}">
-            </div>
-            <button type="submit" class="btn-submit" id="btnCari"><i class="fas fa-search"></i> Lacak Sekarang</button>
-        </form>
-        
-        <div id="hasilLacak" class="hasil-lacak"></div>
+    <div class="wadah-status">
+        <div class="box-pencarian">
+            <h2><i class="fas fa-search"></i> Cek Status Dokumen</h2>
+            <p>Masukkan NIK Anda untuk melacak perkembangan dokumen.</p>
+            <form onsubmit="cariStatus(event)">
+                <div class="form-group">
+                    <input type="number" id="inpCariNik" placeholder="Masukkan 16 Digit NIK" required>
+                </div>
+                <button type="submit" class="btn-cari" id="btnCari">Lacak Sekarang</button>
+            </form>
+            <div style="margin-top: 15px;"><a href="../index.html" style="color: #64748b; text-decoration: none; font-size: 14px;">Kembali ke Beranda</a></div>
+        </div>
+
+        <div id="wadahHasil"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-      const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
-    const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
-    const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
+        const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
+        const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
+        const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-    async function lacakNik(event) {
-        event.preventDefault();
-        const btn = document.getElementById('btnCari');
-        const kotakHasil = document.getElementById('hasilLacak');
-        const nomorNik = document.getElementById('inpNik').value.trim();
-        const teksAsli = btn.innerHTML;
+        // Jika ada query URL (Dilempar setelah submit dari permohonan.html)
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nikURL = urlParams.get('nik');
+            if(nikURL) {
+                document.getElementById('inpCariNik').value = nikURL;
+                document.getElementById('btnCari').click();
+            }
+        });
 
-        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari Data...";
-        btn.disabled = true;
-        kotakHasil.style.display = 'none';
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('permohonan')
-                .select('nomor_tiket, nama_pemohon, jenis_layanan, status, created_at, dokumen_hasil')
-                .eq('nik', nomorNik)
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            if (!data || data.length === 0) throw new Error(`Tidak ada riwayat permohonan untuk NIK: ${nomorNik}`);
-
-            let htmlList = `<h3 style="color: #1e293b; margin-bottom: 20px; font-size: 18px;"><i class="fas fa-list-check"></i> Riwayat Ditemukan (${data.length})</h3>`;
+        async function cariStatus(event) {
+            event.preventDefault();
+            const nik = document.getElementById('inpCariNik').value;
+            const btn = document.getElementById('btnCari');
+            const wadahHasil = document.getElementById('wadahHasil');
             
-            data.forEach(item => {
-                const tgl = new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-                const statusLengkap = item.status || 'Menunggu';
-                
-                // CEK JIKA STATUS SELESAI DAN ADA FILE DOKUMEN HASIL
-                let tombolDownload = '';
-                if (statusLengkap === 'Selesai' && item.dokumen_hasil) {
-                    
-                    // PERBAIKAN: Memaksa browser untuk langsung mendownload file 
-                    // dengan menambahkan atribut bawaan dari Supabase
-                    const namaFileDownload = `Hasil_${item.nomor_tiket}.pdf`;
-                    const linkLangsungDownload = `${item.dokumen_hasil}?download=${namaFileDownload}`;
-                    
-                    tombolDownload = `<a href="${linkLangsungDownload}" class="btn-download"><i class="fas fa-file-download"></i> Unduh Dokumen (PDF)</a>`;
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari...";
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient.from('permohonan').select('*').eq('nik', nik).order('created_at', { ascending: false });
+                if (error) throw error;
+
+                if (data.length === 0) {
+                    wadahHasil.innerHTML = `<div style="text-align:center; color:#ef4444; background:#fee2e2; padding:20px; border-radius:12px; font-weight:bold;">Tidak ada riwayat permohonan yang ditemukan untuk NIK tersebut.</div>`;
+                    return;
                 }
 
-                htmlList += `
-                    <div class="kartu-riwayat">
-                        <div class="kartu-header">
-                            <span class="tiket"><i class="fas fa-ticket-alt"></i> ${item.nomor_tiket}</span>
-                            <span class="tanggal">${tgl}</span>
-                        </div>
-                        <div class="kartu-body">
-                            <p><strong>Pemohon:</strong> ${item.nama_pemohon}</p>
-                            <p><strong>Layanan:</strong> ${item.jenis_layanan}</p>
-                            <div>
-                                <span class="status-badge status-${statusLengkap}">${statusLengkap}</span>
+                let htmlCard = '';
+                data.forEach(item => {
+                    let kelasBadge = (item.status === 'Diproses') ? 'badge-proses' : (item.status === 'Selesai') ? 'badge-selesai' : (item.status === 'Ditolak') ? 'badge-ditolak' : 'badge-menunggu';
+                    const tgl = new Date(item.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                    
+                    const namaPengaju = item.diajukan_oleh || 'Mandiri (Warga)';
+                    const kelasPengaju = namaPengaju !== 'Mandiri (Warga)' ? 'pengaju-petugas' : 'pengaju-mandiri';
+                    const iconPengaju = namaPengaju !== 'Mandiri (Warga)' ? 'fa-user-tie' : 'fa-user';
+
+                    htmlCard += `
+                        <div class="kartu-hasil">
+                            <div class="kartu-header">
+                                <span class="no-tiket">${item.nomor_tiket}</span>
+                                <span class="badge ${kelasBadge}">${item.status}</span>
                             </div>
-                            ${tombolDownload} 
+                            
+                            <div class="pengaju-info ${kelasPengaju}"><i class="fas ${iconPengaju}"></i> Diajukan Oleh: ${namaPengaju}</div>
+                            
+                            <div class="rincian-teks"><strong>Layanan:</strong> ${item.jenis_layanan}</div>
+                            <div class="rincian-teks"><strong>Pemohon:</strong> ${item.nama_pemohon}</div>
+                            <div class="rincian-teks"><strong>Tanggal:</strong> ${tgl}</div>
+                            
+                            ${item.catatan_petugas ? `<div class="catatan-petugas"><strong><i class="fas fa-comment-dots"></i> Catatan Petugas:</strong><br>${item.catatan_petugas}</div>` : ''}
+                            
+                            ${item.status === 'Selesai' && item.dokumen_hasil ? `<a href="${item.dokumen_hasil}?download=Dokumen_Hasil.pdf" class="btn-unduh-hasil"><i class="fas fa-download"></i> Unduh Dokumen Hasil PDF</a>` : ''}
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            kotakHasil.innerHTML = htmlList;
-            kotakHasil.style.display = 'block';
+                wadahHasil.innerHTML = htmlCard;
 
-        } catch (err) {
-            kotakHasil.innerHTML = `<div style="background: #fee2e2; border: 1px solid #f87171; border-radius: 10px; padding: 20px; text-align: center; color: #dc2626;"><i class="fas fa-times-circle" style="font-size: 35px; margin-bottom: 12px;"></i><h4 style="margin-bottom: 5px;">Pencarian Gagal</h4><p style="font-size: 14px;">${err.message}</p></div>`;
-            kotakHasil.style.display = 'block';
-        } finally {
-            btn.innerHTML = teksAsli;
-            btn.disabled = false;
+            } catch (err) {
+                alert("Gagal memuat data: " + err.message);
+            } finally {
+                btn.innerHTML = "Lacak Sekarang";
+                btn.disabled = false;
+            }
         }
-    }
     </script>
 </body>
 </html>

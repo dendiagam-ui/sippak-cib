@@ -3,65 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dasbor Pengelola | SIPPAK-CIB</title>
+    <title>Dasbor Utama | SIPPAK-CIB</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* CSS SAMA PERSIS SEPERTI SEBELUMNYA */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
         :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
-
         body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
-
-        /* SIDEBAR MODERN */
         .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
         .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; gap: 10px; }
         .sidebar-header i { color: #3b82f6; }
         .menu-list { list-style: none; padding: 20px 0; flex-grow: 1; overflow-y: auto; }
         .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 16px 30px; color: #94a3b8; text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; border-left: 4px solid transparent; }
         .menu-list li a:hover, .menu-list li a.active { background-color: rgba(255,255,255,0.05); color: #fff; border-left: 4px solid #3b82f6; }
-
-        /* MAIN CONTENT */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 280px); }
         .topbar { background-color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
         .toggle-btn { font-size: 24px; cursor: pointer; color: var(--teks-gelap); display: none; }
-        
         .user-profile { display: flex; align-items: center; gap: 15px; }
         .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
-
         .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
-        .page-title { margin-bottom: 30px; }
+        .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
         .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
-        .page-title p { color: var(--teks-pudar); font-size: 15px; margin-top: 5px; }
-
-        /* KARTU STATISTIK */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 40px; }
-        .stat-card { background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 20px; border: 1px solid #e2e8f0; transition: 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.06); }
-        .stat-icon { width: 60px; height: 60px; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 26px; color: white; }
-        .bg-biru { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .bg-kuning { background: linear-gradient(135deg, #f59e0b, #b45309); }
-        .bg-hijau { background: linear-gradient(135deg, #10b981, #047857); }
-        .stat-info h4 { font-size: 13px; color: var(--teks-pudar); text-transform: uppercase; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
-        .stat-info h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
-
-        /* TABEL MODERN */
-        .card-table { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; overflow: hidden; }
-        .card-header { padding: 25px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
-        .card-header h3 { font-size: 18px; color: var(--teks-gelap); }
-        
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 18px 25px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-        th { background-color: #fff; color: var(--teks-pudar); font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
-        tr:hover { background-color: #f8fafc; }
-
-        .badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; text-align: center; text-transform: uppercase; }
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; margin-bottom: 25px; overflow-x: auto; }
+        .tabel-antrean { width: 100%; border-collapse: collapse; min-width: 900px; }
+        .tabel-antrean th, .tabel-antrean td { padding: 15px; border-bottom: 1px solid #f1f5f9; text-align: left; font-size: 14px; }
+        .tabel-antrean th { background: #f8fafc; font-weight: 700; color: #475569; border-top: 1px solid #e2e8f0; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+        .tabel-antrean tr:hover { background: #f8fafc; }
+        .btn-detail { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-detail:hover { background: #2563eb; color: white; }
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; text-transform: uppercase; }
         .badge-menunggu { background: #fef3c7; color: #d97706; }
         .badge-proses { background: #e0f2fe; color: #0284c7; }
         .badge-selesai { background: #dcfce7; color: #16a34a; }
         .badge-ditolak { background: #fee2e2; color: #dc2626; }
-
-        .btn-aksi { background: #f1f5f9; color: var(--primer); padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 700; display: inline-block; transition: 0.2s; border: 1px solid #e2e8f0; }
-        .btn-aksi:hover { background: var(--primer); color: white; border-color: var(--primer); }
-
+        .badge-petugas { background: #dcfce7; color: #166534; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid #bbf7d0; display: inline-block; white-space: nowrap; }
+        .badge-mandiri { background: #f1f5f9; color: #475569; padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 1px solid #e2e8f0; display: inline-block; white-space: nowrap; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
         .overlay.active { display: block; }
         @media (max-width: 900px) {
@@ -75,6 +51,7 @@
     </style>
 </head>
 <body>
+
     <div class="overlay" id="overlay"></div>
 
     <nav class="sidebar" id="sidebar">
@@ -87,8 +64,8 @@
             <div class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
             <div class="user-profile">
                 <div style="text-align: right;">
-                    <div style="font-size: 15px; font-weight: 700;" id="namaUser">Memuat...</div>
-                    <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600; text-transform: uppercase;" id="roleUser">MEMUAT</div>
+                    <div style="font-size: 15px; font-weight: 700;" id="namaUser">Petugas</div>
+                    <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600;" id="roleUser">STAF</div>
                 </div>
                 <div class="user-avatar"><i class="fas fa-user-tie"></i></div>
             </div>
@@ -96,47 +73,18 @@
 
         <div class="content-area">
             <div class="page-title">
-                <h2>Dasbor Pelayanan</h2>
-                <p>Kelola dan pantau seluruh permohonan warga yang masuk melalui portal.</p>
+                <h2><i class="fas fa-desktop" style="color: #2563eb; margin-right: 10px;"></i> Antrean Permohonan</h2>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon bg-biru"><i class="fas fa-folder-open"></i></div>
-                    <div class="stat-info"><h4>Total Berkas</h4><h2 id="jmlTotal">0</h2></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon bg-kuning"><i class="fas fa-clock"></i></div>
-                    <div class="stat-info"><h4>Menunggu & Diproses</h4><h2 id="jmlMenunggu">0</h2></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon bg-hijau"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-info"><h4>Selesai Dikerjakan</h4><h2 id="jmlSelesai">0</h2></div>
-                </div>
-            </div>
-
-            <div class="card-table">
-                <div class="card-header">
-                    <h3><i class="fas fa-list"></i> Antrean Permohonan Warga</h3>
-                    <button class="btn-aksi" onclick="muatDataPermohonan()" style="cursor:pointer;"><i class="fas fa-sync-alt"></i> Muat Ulang</button>
-                </div>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No. Tiket</th>
-                                <th>Tgl Masuk</th>
-                                <th>Pemohon</th>
-                                <th>Layanan</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="isiTabel">
-                            <tr><td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;"><i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i><br>Menarik data server...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card">
+                <table class="tabel-antrean">
+                    <thead>
+                        <tr><th>No. Tiket</th><th>Tanggal Masuk</th><th>Layanan</th><th>Nama Pemohon</th><th>Diajukan Oleh</th><th>Status</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody id="dataTabel">
+                        <tr><td colspan="7" style="text-align:center; padding: 30px;"><i class="fas fa-spinner fa-spin" style="color:#2563eb; font-size:24px;"></i><br><br>Memuat data...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
@@ -147,100 +95,74 @@
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
         const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function inisialisasiDashboard() {
+        // SISTEM SIDEBAR DINAMIS BERDASARKAN HAK AKSES BARU
+        document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
             if(!roleSaatIni) { window.location.href = "login.html"; return; } 
-
-            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin Kelurahan';
-            document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMINISTRATOR' : 'PETUGAS KELURAHAN';
-
-            const menuList = document.getElementById('menuDinamis');
             
-            // MENU DINAMIS BERDASARKAN ROLE (DITAMBAHKAN TOMBOL GENERATE SURAT)
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Staf';
+            
+            // SET NAMA BADGE ROLE
+            let labelRole = 'STAF';
+            if(roleSaatIni === 'superadmin') labelRole = 'SUPER ADMIN';
+            else if(roleSaatIni === 'petugas_loket') labelRole = 'PETUGAS LOKET';
+            else if(roleSaatIni === 'petugas_proses') labelRole = 'PETUGAS PROSES';
+            document.getElementById('roleUser').innerText = labelRole;
+
+            // ATUR MENU SIDEBAR
+            let menuHTML = `<li><a href="dashboard-master.html" class="active"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>`;
+            
             if (roleSaatIni === 'superadmin') {
-                menuList.innerHTML = `
-                    <li><a href="dashboard-master.html" class="active"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
-                    <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf / Petugas</a></li>
-                    <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
-                `;
-            } else {
-                menuList.innerHTML = `
-                    <li><a href="dashboard-master.html" class="active"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
-                    <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
-                `;
+                menuHTML += `<li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>`;
+                menuHTML += `<li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>`;
+                menuHTML += `<li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>`;
+            } 
+            else if (roleSaatIni === 'petugas_loket') {
+                menuHTML += `<li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>`;
+                menuHTML += `<li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>`;
+            }
+            else if (roleSaatIni === 'petugas_proses') {
+                // Petugas Proses (Back Office) hanya dapat melihat Antrean saja.
             }
 
-            muatDataPermohonan();
-        }
-
-        async function muatDataPermohonan() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('permohonan').select('*').order('created_at', { ascending: false });
-
-                if (error) throw error;
-                const tbody = document.getElementById('isiTabel');
-                tbody.innerHTML = '';
-                let total = 0, menunggu = 0, selesai = 0;
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 40px;"><i class="fas fa-inbox" style="font-size: 30px; color:#cbd5e1; margin-bottom:10px;"></i><br>Belum ada permohonan masuk.</td></tr>`;
-                } else {
-                    data.forEach(item => {
-                        total++;
-                        if (item.status === 'Menunggu' || item.status === 'Diproses' || !item.status) menunggu++;
-                        if (item.status === 'Selesai') selesai++;
-
-                        let kelasBadge = 'badge-menunggu';
-                        if (item.status === 'Diproses') kelasBadge = 'badge-proses';
-                        else if (item.status === 'Selesai') kelasBadge = 'badge-selesai';
-                        else if (item.status === 'Ditolak') kelasBadge = 'badge-ditolak';
-
-                        let tgl = new Date(item.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-
-                        tbody.innerHTML += `
-                            <tr>
-                                <td style="font-weight: 700; color: #2563eb;">${item.nomor_tiket}</td>
-                                <td>${tgl}</td>
-                                <td>
-                                    <div style="font-weight: 700; color: #334155;">${item.nama_pemohon}</div>
-                                    <div style="font-size: 11px; color: #94a3b8; margin-top:2px;">NIK: ${item.nik}</div>
-                                </td>
-                                <td>${item.jenis_layanan}</td>
-                                <td><span class="badge ${kelasBadge}">${item.status || 'Menunggu'}</span></td>
-                                <td><a href="detail.html?id=${item.id}" class="btn-aksi"><i class="fas fa-folder-open"></i> Buka File</a></td>
-                            </tr>
-                        `;
-                    });
-                }
-                document.getElementById('jmlTotal').innerText = total;
-                document.getElementById('jmlMenunggu').innerText = menunggu;
-                document.getElementById('jmlSelesai').innerText = selesai;
-
-            } catch (err) {
-                document.getElementById('isiTabel').innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Error: ${err.message}</td></tr>`;
-            }
-        }
-
-        function logoutUser() {
-            localStorage.clear();
-            window.location.href = "../index.html";
-        }
-
-        document.addEventListener("DOMContentLoaded", inisialisasiDashboard);
-        document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay');
-            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btn.contains(e.target)) {
-                sidebar.classList.remove('active'); overlay.classList.remove('active');
-            }
+            menuHTML += `<li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>`;
+            document.getElementById('menuDinamis').innerHTML = menuHTML;
+            
+            muatDataAntrean();
         });
+
+        async function muatDataAntrean() {
+            const tbody = document.getElementById('dataTabel');
+            try {
+                const { data, error } = await supabaseClient.from('permohonan').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:#64748b;">Belum ada antrean permohonan yang masuk.</td></tr>'; return; }
+
+                let html = '';
+                data.forEach(item => {
+                    const tgl = new Date(item.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    let stat = item.status || 'Menunggu';
+                    let kelasBadge = (stat === 'Diproses') ? 'badge-proses' : (stat === 'Selesai') ? 'badge-selesai' : (stat === 'Ditolak') ? 'badge-ditolak' : 'badge-menunggu';
+                    const pengaju = item.diajukan_oleh || 'Mandiri (Warga)';
+                    let htmlPengaju = (pengaju !== 'Mandiri (Warga)') ? `<span class="badge-petugas" title="Dibantu Petugas"><i class="fas fa-user-tie"></i> ${pengaju}</span>` : `<span class="badge-mandiri" title="Dari HP Warga Sendiri"><i class="fas fa-user"></i> Mandiri</span>`;
+
+                    html += `
+                        <tr>
+                            <td style="font-weight:900; color:#2563eb;">${item.nomor_tiket}</td>
+                            <td>${tgl}</td>
+                            <td style="font-weight:bold; color:#334155;">${item.jenis_layanan}</td>
+                            <td>${item.nama_pemohon}</td>
+                            <td>${htmlPengaju}</td>
+                            <td><span class="badge ${kelasBadge}">${stat}</span></td>
+                            <td><a href="detail.html?id=${item.id}" class="btn-detail"><i class="fas fa-eye"></i> Detail</a></td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+            } catch (err) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#dc2626; font-weight:bold; padding:20px;">Gagal memuat data: ${err.message}</td></tr>`; }
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        document.addEventListener('click', function(e) { const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay'); if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btn.contains(e.target)) { sidebar.classList.remove('active'); overlay.classList.remove('active'); } });
     </script>
 </body>
 </html>

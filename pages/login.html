@@ -7,86 +7,136 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        body { background: linear-gradient(135deg, #1e293b, #0f172a); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        body { 
+            background-color: #0f172a; /* Warna gelap sesuai gambar */
+            display: flex; justify-content: center; align-items: center; height: 100vh; color: #1e293b;
+        }
         
-        .login-card { background: white; width: 100%; max-width: 420px; padding: 40px 30px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); text-align: center; position: relative; overflow: hidden; }
-        .login-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #3b82f6, #10b981); }
-        
-        .logo-box { width: 70px; height: 70px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #3b82f6; margin: 0 auto 15px; }
-        .login-card h2 { color: #1e293b; font-size: 24px; margin-bottom: 5px; }
-        .login-card p { color: #64748b; font-size: 14px; margin-bottom: 30px; }
+        .login-card {
+            background: #ffffff;
+            width: 100%; max-width: 400px;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
 
-        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
-        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 8px; }
-        .input-icon { position: absolute; bottom: 14px; left: 15px; color: #94a3b8; font-size: 16px; }
-        .form-group input { width: 100%; padding: 14px 15px 14px 45px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 15px; background: #f8fafc; transition: 0.3s; }
-        .form-group input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); background: white; }
+        .icon-fingerprint {
+            background: #eff6ff;
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            margin: 0 auto 20px auto;
+            color: #2563eb;
+            font-size: 35px;
+        }
 
-        .btn-login { background: #2563eb; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-login:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); }
-        .btn-back { display: block; margin-top: 25px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
-        .btn-back:hover { color: #1e293b; }
+        .login-card h2 { font-size: 24px; font-weight: 800; margin-bottom: 5px; color: #0f172a; }
+        .login-card p { font-size: 14px; color: #64748b; margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 20px; text-align: left; position: relative; }
+        .form-group i {
+            position: absolute; left: 15px; top: 15px; color: #94a3b8; font-size: 16px;
+        }
+        .form-group input {
+            width: 100%; padding: 15px 15px 15px 45px;
+            border: 1px solid #cbd5e1; border-radius: 12px;
+            font-size: 15px; background: #f8fafc; transition: 0.3s;
+        }
+        .form-group input:focus { outline: none; border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+        .btn-login {
+            background: #1e3a8a; /* Biru gelap */
+            color: white; padding: 15px; width: 100%;
+            border: none; border-radius: 12px;
+            font-size: 16px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+            margin-bottom: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-login:hover { background: #172554; }
+
+        .link-kembali { color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block; transition: 0.2s; }
+        .link-kembali:hover { color: #1e293b; }
+
     </style>
 </head>
 <body>
+
     <div class="login-card">
-        <div class="logo-box"><i class="fas fa-fingerprint"></i></div>
+        <div class="icon-fingerprint"><i class="fas fa-fingerprint"></i></div>
         <h2>Portal Petugas</h2>
-        <p>Gunakan kredensial Anda untuk masuk ke sistem.</p>
+        <p>Silakan masuk menggunakan kredensial Anda.</p>
 
         <form onsubmit="prosesLogin(event)">
             <div class="form-group">
-                <label>Alamat Email</label>
-                <i class="fas fa-envelope input-icon"></i>
-                <input type="email" id="emailVal" required placeholder="admin@kelurahan.com">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="Alamat Email" required>
             </div>
+            
             <div class="form-group">
-                <label>Kata Sandi</label>
-                <i class="fas fa-lock input-icon"></i>
-                <input type="password" id="passwordVal" required placeholder="••••••••">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Kata Sandi" required>
             </div>
-            <button type="submit" class="btn-login" id="btnLogin">Masuk ke Dasbor</button>
+
+            <button type="submit" class="btn-login" id="btnLogin">Masuk Sistem</button>
         </form>
-        
-        <a href="../index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Beranda Warga</a>
+
+        <a href="../index.html" class="link-kembali"><i class="fas fa-arrow-left"></i> Kembali ke Beranda Warga</a>
     </div>
 
+    <!-- SCRIPT SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
-        const supabaseAuth = window.supabase.createClient(URL_DB, KEY_DB);
+        const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
         async function prosesLogin(event) {
             event.preventDefault();
+            
             const btn = document.getElementById('btnLogin');
-            const email = document.getElementById('emailVal').value;
-            const password = document.getElementById('passwordVal').value;
+            const teksAsli = btn.innerHTML;
+            
+            const emailInput = document.getElementById('email').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
 
             btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Otentikasi...";
             btn.disabled = true;
 
             try {
-                const { data: authData, error: authError } = await supabaseAuth.auth.signInWithPassword({ email, password });
-                if (authError) throw authError; 
+                // ⚠️ PERHATIKAN BARIS INI ⚠️
+                // Ganti 'username' di bawah ini dengan nama kolom asli di Supabase Anda
+                // jika nama kolomnya bukan username (misal: 'alamat_email' atau 'email_pengguna')
+                const { data, error } = await supabaseClient
+                    .from('pengguna')
+                    .select('*')
+                    .ilike('username', emailInput); 
 
-                const { data: profileData, error: profileError } = await supabaseAuth
-                    .from('profiles').select('role, nama_lengkap').eq('id', authData.user.id).single();
+                if (error) throw error;
 
-                if (profileError || !profileData) throw new Error("Akses ditolak. Profil tidak ditemukan.");
-
-                const role = profileData.role.toLowerCase();
-                localStorage.setItem('user_role', role);
-                localStorage.setItem('user_nama', profileData.nama_lengkap);
-
-                if (role === 'petugas' || role === 'superadmin') {
-                    window.location.href = "dashboard-master.html";
-                } else {
-                    throw new Error("Akun ini bukan milik petugas.");
+                if (!data || data.length === 0) {
+                    throw new Error("Akun tidak ditemukan. Pastikan email benar.");
                 }
+
+                const user = data[0]; 
+
+                // ⚠️ PERHATIKAN BARIS INI JUGA ⚠️
+                // Pastikan kolom password di database Anda namanya benar-benar 'password'
+                // Jika namanya 'kata_sandi', ubah menjadi user.kata_sandi
+                if (user.password !== passwordInput) {
+                    throw new Error("Kata Sandi (Password) salah!");
+                }
+
+                // Menyimpan sesi lokal (Pastikan kolom role, nama, dan username ada di database)
+                localStorage.setItem('user_role', user.role); 
+                localStorage.setItem('user_nama', user.nama);
+                localStorage.setItem('user_email', user.username); // Sesuaikan juga di sini
+
+                window.location.href = "dashboard-master.html";
+
             } catch (err) {
-                alert("GAGAL LOGIN:\nEmail atau Password Salah!");
-                btn.innerHTML = "Masuk ke Dasbor";
+                alert("GAGAL LOGIN:\n" + err.message);
+                btn.innerHTML = teksAsli;
                 btn.disabled = false;
             }
         }
