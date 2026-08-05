@@ -3,75 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Pelayanan Masyarakat | SIPPAK-CIB</title>
+    <title>Portal Layanan | SIPPAK-CIB</title>
+    
+    <!-- 1. METODE TAG META (Untuk mempermudah bot verifikasi Google) -->
+    <meta name="google-adsense-account" content="ca-pub-3360741150487096">
+
+    <!-- 2. METODE SCRIPT ADSENSE (Untuk menampilkan iklan nantinya) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3360741150487096" crossorigin="anonymous"></script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        body { background-color: #f0f4f8; color: #334155; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background: #f8fafc; color: #1e293b; display: flex; flex-direction: column; min-height: 100vh; }
         
-        .header { background: #1e293b; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
-        .logo span { color: #3b82f6; }
-        
-        .main-container { max-width: 1100px; margin: 50px auto; padding: 0 20px; flex-grow: 1; width: 100%; }
-        .hero-text { text-align: center; margin-bottom: 50px; }
-        .hero-text h1 { font-size: 32px; color: #0f172a; margin-bottom: 10px; }
-        .hero-text p { color: #64748b; font-size: 16px; }
+        /* NAVBAR */
+        .navbar { background: #fff; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: 900; color: #1e40af; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-login { background: #f1f5f9; color: #475569; padding: 10px 20px; border-radius: 8px; font-weight: 700; text-decoration: none; transition: 0.3s; border: 1px solid #e2e8f0; }
+        .btn-login:hover { background: #e2e8f0; color: #1e293b; }
 
-        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        /* HERO SECTION */
+        .hero { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #eff6ff, #f8fafc); }
+        .hero h1 { font-size: 40px; font-weight: 900; color: #0f172a; margin-bottom: 15px; line-height: 1.2; }
+        .hero h1 span { color: #2563eb; }
+        .hero p { font-size: 16px; color: #64748b; max-width: 600px; margin-bottom: 40px; line-height: 1.6; }
+
+        /* KOTAK MENU UTAMA */
+        .grid-menu { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; max-width: 800px; }
+        .menu-card { background: #fff; padding: 40px 30px; border-radius: 16px; width: 100%; max-width: 350px; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; transition: 0.3s; display: flex; flex-direction: column; align-items: center; }
+        .menu-card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(37,99,235,0.1); border-color: #bfdbfe; }
         
-        .menu-card { 
-            background: white; border-radius: 15px; padding: 35px 20px; text-align: center; text-decoration: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #e2e8f0; display: block;
+        .icon-box { width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 35px; margin-bottom: 20px; }
+        .icon-biru { background: #eff6ff; color: #2563eb; }
+        .icon-hijau { background: #f0fdf4; color: #10b981; }
+        
+        .menu-card h3 { font-size: 20px; color: #1e293b; margin-bottom: 10px; font-weight: 800; }
+        .menu-card p { font-size: 14px; color: #64748b; text-align: center; }
+
+        /* FOOTER */
+        .footer { text-align: center; padding: 25px; background: #fff; border-top: 1px solid #e2e8f0; font-size: 14px; color: #94a3b8; font-weight: 600; }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 30px; }
+            .grid-menu { flex-direction: column; align-items: center; }
         }
-        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); border-color: #3b82f6; }
-        
-        .menu-icon { width: 75px; height: 75px; margin: 0 auto 20px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 32px; color: white; }
-        .bg-buat { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .bg-lacak { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .bg-login { background: linear-gradient(135deg, #10b981, #059669); }
-        
-        .menu-card h3 { font-size: 20px; margin-bottom: 10px; color: #1e293b; }
-        .menu-card p { font-size: 14px; color: #64748b; line-height: 1.5; margin-bottom: 25px; }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">SIPPAK<span>CIB</span></div>
-        <div style="font-size: 14px; color: #cbd5e1;">V.1 (BETA)</div>
-    </header>
 
-    <div class="main-container">
-        <div class="hero-text">
-            <h1>SISTEM INFORMASI PEMBANTU ADMINISTRASI KEPENDUDUKAN</h1>
-            <p>Pilih menu di bawah ini untuk memulai permohonan atau mengecek status berkas Anda.</p>
-        </div>
+    <!-- NAVIGASI ATAS -->
+    <nav class="navbar">
+        <a href="index.html" class="logo"><i class="fas fa-landmark"></i> SIPPAK-CIB</a>
+        <a href="pages/login.html" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login Petugas</a>
+    </nav>
 
-        <div class="menu-grid">
-            <!-- Tombol Buat Permohonan (Diarahkan ke pages/permohonan.html) -->
+    <!-- BAGIAN KONTEN UTAMA -->
+    <section class="hero">
+        <h1>Selamat Datang di <br><span>SIPPAK-CIB</span></h1>
+        <p>Sistem Informasi Pelayanan Pendaftaran Administrasi Kependudukan Kelurahan Cibeureum. Ajukan permohonan dokumen Anda secara online dengan mudah dan cepat.</p>
+
+        <div class="grid-menu">
+            <!-- Tombol Buat Permohonan -->
             <a href="pages/permohonan.html" class="menu-card">
-                <div class="menu-icon bg-buat"><i class="fas fa-file-signature"></i></div>
+                <div class="icon-box icon-biru"><i class="fas fa-file-signature"></i></div>
                 <h3>Buat Permohonan</h3>
-                <p>Ajukan pembuatan surat keterangan, pengantar, atau dokumen lainnya tanpa perlu login.</p>
-                <span style="color: #3b82f6; font-weight: bold; font-size: 14px;">Mulai <i class="fas fa-arrow-right"></i></span>
+                <p>Ajukan pembuatan KK, KTP-El, Surat Pindah, Akta Kelahiran, dan Perbaikan Data secara online.</p>
             </a>
 
-            <!-- Tombol Lacak Permohonan (Diarahkan ke pages/status.html) -->
+            <!-- Tombol Cek Status -->
             <a href="pages/status.html" class="menu-card">
-                <div class="menu-icon bg-lacak"><i class="fas fa-search"></i></div>
-                <h3>Lacak Permohonan</h3>
-                <p>Cek status permohonan Anda secara real-time menggunakan Nomor Tiket yang diberikan.</p>
-                <span style="color: #d97706; font-weight: bold; font-size: 14px;">Cek Sekarang <i class="fas fa-arrow-right"></i></span>
-            </a>
-
-            <!-- Tombol Login Petugas -->
-            <a href="pages/login.html" class="menu-card">
-                <div class="menu-icon bg-login"><i class="fas fa-user-shield"></i></div>
-                <h3>Login Petugas</h3>
-                <p>Akses khusus untuk admin dan staf kelurahan mengelola data permohonan warga.</p>
-                <span style="color: #059669; font-weight: bold; font-size: 14px;">Masuk <i class="fas fa-arrow-right"></i></span>
+                <div class="icon-box icon-hijau"><i class="fas fa-search"></i></div>
+                <h3>Cek Status Dokumen</h3>
+                <p>Lacak perkembangan dokumen yang telah Anda ajukan hanya dengan menggunakan NIK.</p>
             </a>
         </div>
-    </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        &copy; 2026 SIPPAK-CIB | Kelurahan Cibeureum
+    </footer>
+
 </body>
 </html>
