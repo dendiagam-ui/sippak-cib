@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Surat | SIPPAK-CIB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+        :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
+
+        body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
+        #appLayout { display: flex; width: 100%; height: 100%; transition: 0.3s; }
+
+        /* SIDEBAR */
+        .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; gap: 10px; }
+        .sidebar-header i { color: #3b82f6; }
+        .menu-list { list-style: none; padding: 20px 0; flex-grow: 1; overflow-y: auto; }
+        .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 16px 30px; color: #94a3b8; text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; border-left: 4px solid transparent; }
+        .menu-list li a:hover, .menu-list li a.active { background-color: rgba(255,255,255,0.05); color: #fff; border-left: 4px solid #3b82f6; }
+
+        /* MAIN CONTENT */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 280px); }
+        .topbar { background-color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
+        .toggle-btn { font-size: 24px; cursor: pointer; color: var(--teks-gelap); display: none; }
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
+
+        .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
+        .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
+        .btn-kembali { background: #fff; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; color: #475569; text-decoration: none; font-weight: bold; transition: 0.2s; }
+        .btn-kembali:hover { background: #f1f5f9; color: var(--teks-gelap); }
+
+        /* FORMULIR */
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 35px; max-width: 800px; margin: 0 auto; }
+        .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        
+        .pilih-surat-box { background: #eff6ff; padding: 20px; border-radius: 12px; border: 1px solid #bfdbfe; margin-bottom: 25px; text-align: center; }
+        .pilih-surat-box label { display: block; font-size: 15px; font-weight: 800; color: #1e40af; margin-bottom: 12px; }
+        .pilih-surat-box select { width: 100%; max-width: 450px; padding: 12px 15px; border-radius: 8px; border: 2px solid #93c5fd; font-weight: bold; font-size: 15px; color: #1e293b; outline: none; cursor: pointer; text-align: center; }
+        .pilih-surat-box select:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 768px) { .grid-form { grid-template-columns: 1fr; } }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; background: white; }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        /* KOTAK TANDA TANGAN */
+        #canvasTtd { border: 2px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; width: 100%; height: 180px; touch-action: none; cursor: crosshair; }
+        .btn-hapus-ttd { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
+        .btn-hapus-ttd:hover { background: #ef4444; color: white; }
+        .btn-submit { color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        /* KELAS CSS UNTUK KERTAS BACKGROUND PDF */
+        .kertas-surat { 
+            display: none; 
+            padding: 30px 60px; 
+            font-family: 'Times New Roman', Times, serif; 
+            color: black; 
+            line-height: 1.5; 
+            font-size: 16px; 
+            width: 100%; 
+            max-width: 210mm; 
+            min-height: 297mm; 
+            margin: 0 auto; 
+            background-image: url('../assets/img/kertas.png');
+            background-size: 100% 100%; 
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .kop-surat { text-align: center; font-weight: bold; font-size: 18px; text-decoration: underline; margin-bottom: 25px; letter-spacing: 1px; }
+        .tabel-biodata { margin-bottom: 20px; width: 100%; border-collapse: collapse; }
+        .tabel-biodata td { padding: 5px 0; vertical-align: top; border: none; }
+        .kolom-label { width: 35%; }
+        .kolom-titikdua { width: 3%; text-align: center; }
+        .teks-paragraf { text-indent: 50px; text-align: justify; margin-bottom: 12px; }
+        
+        .area-ttd { width: 100%; margin-top: 30px; }
+        .area-ttd td { vertical-align: top; }
+        
+        .wadah-ttd-materai { margin: 5px 0; white-space: nowrap; }
+        .img-materai { width: 95px; height: auto; display: inline-block; vertical-align: middle; position: relative; z-index: 1; }
+        .img-ttd-hasil { display: none; height: 95px; width: auto; max-width: 180px; vertical-align: middle; position: relative; z-index: 2; margin-left: -55px; margin-bottom: 2px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
+        .overlay.active { display: block; }
+        @media (max-width: 900px) {
+            .sidebar { position: fixed; left: -280px; height: 100%; } 
+            .sidebar.active { left: 0; } 
+            .main-content { width: 100%; }
+            .toggle-btn { display: block; } 
+            .content-area { padding: 20px; }
+            .topbar { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="appLayout">
+        <div class="overlay" id="overlay"></div>
+
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
+            <ul class="menu-list" id="menuDinamis"></ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+                <div class="user-profile">
+                    <div style="text-align: right;">
+                        <div style="font-size: 15px; font-weight: 700;" id="namaUser">Petugas</div>
+                        <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600; text-transform: uppercase;" id="roleUser">PETUGAS</div>
+                    </div>
+                    <div class="user-avatar"><i class="fas fa-user-tie"></i></div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- BENNER UTAMA DENGAN SOLUSI 2 (height: auto, display: block) -->
+                <div style="margin-bottom: 25px;">
+                    <img src="../assets/img/benner.png" alt="Benner Wargi Cibeureum" style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                </div>
+
+                <div class="page-title">
+                    <a href="dashboard-master.html" class="btn-kembali"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
+                    <h2>Generator Surat Warga</h2>
+                </div>
+
+                <div class="card">
+                    
+                    <!-- PILIHAN JENIS SURAT DINAMIS -->
+                    <div class="pilih-surat-box">
+                        <label><i class="fas fa-file-signature"></i> Pilih Format Surat yang Akan Dicetak</label>
+                        <select id="jenisSurat" onchange="gantiFormSurat()">
+                            <option value="belum_bekerja">Surat Pernyataan Belum Bekerja</option>
+                            <option value="usaha">Surat Pernyataan Memiliki Kegiatan Usaha</option>
+                            <option value="belum_nikah">Surat Pernyataan Belum Pernah Nikah</option>
+                            <option value="penghasilan">Surat Pernyataan Penghasilan</option>
+                            <option value="tidak_punya_rumah">Surat Pernyataan Tidak Memiliki Rumah</option>
+                            <option value="tidak_punya_akta_ijazah">Surat Pernyataan Tidak Memiliki Akta & Ijazah</option>
+                        </select>
+                    </div>
+
+                    <div class="card-header" id="judulFormSurat"><i class="fas fa-file-invoice" style="color: #2563eb;"></i> Form Cetak Surat Pernyataan Belum Bekerja</div>
+                    
+                    <form id="formSurat">
+                        <div class="grid-form">
+                            <!-- Field Bersama (Selalu Muncul) -->
+                            <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="inNama" placeholder="Sesuai KTP" required></div>
+                            <div class="form-group"><label>Nomor Induk Kependudukan (NIK) *</label><input type="number" id="inNik" placeholder="16 Digit NIK" required></div>
+                            <div class="form-group"><label>Tempat, Tanggal Lahir *</label><input type="text" id="inTTL" placeholder="Contoh: Cimahi, 17 Agustus 1990" required></div>
+                            <div class="form-group"><label>Pekerjaan Saat Ini *</label><input type="text" id="inPekerjaan" placeholder="Sesuai KTP / Kenyataan" required></div>
+                            <div class="form-group full-width"><label id="labelAlamatPemohon">Alamat Lengkap Pemohon *</label><textarea id="inAlamat" placeholder="Tuliskan alamat domisili lengkap beserta RT/RW..." required></textarea></div>
+
+                            <!-- Field Khusus: JK (Dipakai di bbrp surat) -->
+                            <div class="form-group khusus-jk"><label>Jenis Kelamin *</label>
+                                <select id="inJk" required>
+                                    <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                            </div>
+
+                            <!-- Field Khusus: Surat Belum Bekerja -->
+                            <div class="form-group khusus-belum-bekerja"><label>Jumlah Tanggungan (Opsional)</label><input type="number" id="inTanggungan" placeholder="Contoh: 3"></div>
+                            <div class="form-group full-width khusus-belum-bekerja"><label>Nomor Telepon / WhatsApp (Opsional)</label><input type="tel" id="inHp" placeholder="Mulai dengan 08..."></div>
+
+                            <!-- Field Khusus: Surat Usaha -->
+                            <div class="form-group full-width khusus-usaha" style="display: none;"><label>Jenis Kegiatan Usaha *</label><input type="text" id="inJenisUsaha" placeholder="Contoh: Warung Kelontong / Katering Makanan"></div>
+                            <div class="form-group khusus-usaha" style="display: none;"><label>Jalan Lokasi Usaha (Tanpa RT/RW) *</label><input type="text" id="inJalanUsaha" placeholder="Contoh: Jl. Mahar Martanegara No. 10"></div>
+                            <div class="form-group khusus-usaha" style="display: none;">
+                                <div style="display: flex; gap: 10px;">
+                                    <div style="flex: 1;"><label>RT Lokasi Usaha *</label><input type="number" id="inRtUsaha" placeholder="01"></div>
+                                    <div style="flex: 1;"><label>RW Lokasi Usaha *</label><input type="number" id="inRwUsaha" placeholder="05"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Field Khusus: Surat Penghasilan -->
+                            <div class="form-group khusus-penghasilan" style="display: none;"><label>Penghasilan Per Bulan (Rp) *</label><input type="text" id="inPenghasilan" placeholder="Contoh: 3.000.000"></div>
+                            
+                            <!-- Field Khusus: Tujuan Administrasi -->
+                            <div class="form-group khusus-administrasi" style="display: none;"><label>Tujuan Keperluan Administrasi *</label><input type="text" id="inTujuanAdministrasi" placeholder="Contoh: Pengajuan KPR / Bantuan Sosial / Sekolah"></div>
+
+                            <!-- Tanda Tangan (Bersama) -->
+                            <div class="form-group full-width">
+                                <label>Tanda Tangan Pemohon *</label>
+                                <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Gunakan mouse atau sentuh layar HP Anda untuk menandatangani di dalam kotak di bawah ini.</p>
+                                <canvas id="canvasTtd"></canvas>
+                                <button type="button" class="btn-hapus-ttd" onclick="hapusTandaTangan()"><i class="fas fa-eraser"></i> Bersihkan Tanda Tangan</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button type="button" id="btnUnduhPDF" class="btn-submit" onclick="generateDokumen(event, 'pdf')" style="flex: 1; background: #2563eb;">
+                                <i class="fas fa-file-pdf"></i> Unduh PDF
+                            </button>
+                            <button type="button" id="btnUnduhJPG" class="btn-submit" onclick="generateDokumen(event, 'jpg')" style="flex: 1; background: #10b981;">
+                                <i class="fas fa-image"></i> Unduh JPG
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- TEMPLATE 1: SURAT BELUM BEKERJA -->
+    <div id="kertasSuratBelumBekerja" class="kertas-surat">
+        <div class="kop-surat">SURAT PERNYATAAN</div>
+        <div style="margin-bottom: 15px; padding-left: 20px;">Yang bertandatangan dibawah ini :</div>
+        <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px);">
+            <tr><td class="kolom-label">Nama</td><td class="kolom-titikdua">:</td><td id="bNama"></td></tr>
+            <tr><td class="kolom-label">NIK</td><td class="kolom-titikdua">:</td><td id="bNik"></td></tr>
+            <tr><td class="kolom-label">Jenis Kelamin</td><td class="kolom-titikdua">:</td><td id="bJk"></td></tr>
+            <tr><td class="kolom-label">Tempat Tgl. Lahir</td><td class="kolom-titikdua">:</td><td id="bTTL"></td></tr>
+            <tr><td class="kolom-label">Pekerjaan</td><td class="kolom-titikdua">:</td><td id="bPekerjaan"></td></tr>
+            <tr><td class="kolom-label">Jumlah Tanggungan</td><td class="kolom-titikdua">:</td><td id="bTanggungan"></td></tr>
+            <tr><td class="kolom-label">No. Tlp./No. Handphone</td><td class="kolom-titikdua">:</td><td id="bHp"></td></tr>
+            <tr><td class="kolom-label">Alamat</td><td class="kolom-titikdua">:</td><td id="bAlamat"></td></tr>
+        </table>
+        <div class="teks-paragraf">Dengan ini menyatakan bahwa saya tidak bekerja dan tidak memiliki penghasilan.</div>
+        <div class="teks-paragraf">Demikian surat pernyataan ini saya buat dengan sebenar-benarnya dalam keadaan sehat jasmani dan rohani tanpa ada paksaan dari pihak manapun dan siap bertanggung jawab mutlak apabila pernyataan ini tidak sesuai dengan keadaan yang sebenarnya saya bersedia dituntut sesuai dengan hukum yang berlaku.</div>
+        <table class="area-ttd">
+            <tr>
+                <td style="width: 50%;"></td> 
+                <td style="width: 50%; text-align: left; padding-left: 20px;">
+                    <div style="margin-bottom: 2px;">Cimahi, <span id="bTanggal"></span></div>
+                    <div style="margin-bottom: 2px;">Yang membuat pernyataan</div>
+                    <div class="wadah-ttd-materai">
+                        <img src="../assets/img/meterai.png" alt="Materai" class="img-materai">
+                        <img id="bTtdImage" src="" alt="Tanda Tangan" class="img-ttd-hasil">
+                    </div>
+                    <div><strong><span style="text-decoration: underline;" id="bNamaTtd"></span></strong></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- TEMPLATE 2: SURAT USAHA -->
+    <div id="kertasSuratUsaha" class="kertas-surat">
+        <div class="kop-surat" style="margin-top: 20px;">SURAT PERNYATAAN</div>
+        <div style="margin-bottom: 15px; padding-left: 45px;">Yang bertanda tangan di bawah ini :</div>
+        <table class="tabel-biodata" style="margin-left: 45px; width: calc(100% - 45px);">
+            <tr><td class="kolom-label" style="width: 30%;">Nama</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="uNama"></td></tr>
+            <tr><td class="kolom-label">Tempat/Tgl Lahir</td><td class="kolom-titikdua">:</td><td id="uTTL"></td></tr>
+            <tr><td class="kolom-label">NIK</td><td class="kolom-titikdua">:</td><td id="uNik"></td></tr>
+            <tr><td class="kolom-label">Pekerjaan</td><td class="kolom-titikdua">:</td><td id="uPekerjaan"></td></tr>
+            <tr><td class="kolom-label">Alamat</td><td class="kolom-titikdua">:</td><td id="uAlamat"></td></tr>
+        </table>
+        
+        <div style="margin-left: 45px; margin-bottom: 25px;">Kelurahan Cibeureum Kecamatan Cimahi Selatan Kota Cimahi.</div>
+        
+        <div class="teks-paragraf">Dengan ini menyatakan bahwa benar Saya memiliki kegiatan usaha berupa <strong><span id="uJenisUsaha"></span></strong> yang beralamat di Jl. <strong><span id="uJalanUsaha"></span></strong> RT. <strong><span id="uRtUsaha"></span></strong> RW. <strong><span id="uRwUsaha"></span></strong> Kelurahan Cibeureum Kecamatan Cimahi Selatan Kota Cimahi.</div>
+        
+        <div class="teks-paragraf" style="margin-top: 20px;">Apabila Ternyata di kemudian hari diketahui Pernyataan yang Saya sampaikan tersebut tidak benar, Saya bersedia dituntut sesuai dengan ketentuan Hukum yang berlaku dengan tidak melibatkan pihak Kelurahan.</div>
+        
+        <div class="teks-paragraf" style="margin-top: 20px; margin-bottom: 40px;">Demikian Surat Pernyataan ini Saya buat dengan sebenarnya.</div>
+
+        <table class="area-ttd">
+            <tr>
+                <td style="width: 50%;"></td> 
+                <td style="width: 50%; text-align: center;">
+                    <div style="margin-bottom: 5px;">Cibeureum, <span id="uTanggal"></span></div>
+                    <div style="margin-bottom: 10px;">Yang Membuat Pernyataan</div>
+                    
+                    <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+                        <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
+                        <img id="uTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
+                    </div>
+                    
+                    <div><strong><span style="text-decoration: underline;" id="uNamaTtd"></span></strong></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- TEMPLATE 3: SURAT BELUM PERNAH NIKAH -->
+    <div id="kertasSuratBelumNikah" class="kertas-surat">
+        <div class="kop-surat" style="text-decoration: none; font-size: 17px; line-height: 1.3; margin-top: 30px;">
+            <strong>SURAT PERNYATAAN</strong><br>
+            <strong>BELUM PERNAH NIKAH / KAWIN</strong>
+        </div>
+        <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
+        
+        <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px);">
+            <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="nNama"></td></tr>
+            <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="nJk"></td></tr>
+            <tr><td class="kolom-label">TEMPAT / TGL.LAHIR</td><td class="kolom-titikdua">:</td><td id="nTTL"></td></tr>
+            <tr><td class="kolom-label">PEKERJAAN</td><td class="kolom-titikdua">:</td><td id="nPekerjaan"></td></tr>
+            <tr><td class="kolom-label">ALAMAT</td><td class="kolom-titikdua">:</td><td id="nAlamat"></td></tr>
+            <tr><td class="kolom-label">NO.KTP</td><td class="kolom-titikdua">:</td><td id="nKtp"></td></tr>
+            <tr><td class="kolom-label">KEWARGANEGARAAN</td><td class="kolom-titikdua">:</td><td>Indonesia</td></tr>
+        </table>
+        
+        <div class="teks-paragraf" style="margin-top: 25px;">Bersama ini saya menyatakan sebenarnya bahwa sampai dengan menandatangani pernyataan ini, saya benar-benar belum pernah Nikah atau Kawin, baik melalui Kantor Urusan Agama (KUA) atau Kantor Catatan Sipil manapun juga.</div>
+        
+        <div class="teks-paragraf">Apabila dikemudian hari Surat Pernyataan ini tidak benar, maka saya sanggup dituntut di muka Hakim atau yang berwajib sesuai dengan Hukum Undang-Undang yang berlaku.</div>
+        
+        <div class="teks-paragraf" style="margin-bottom: 40px;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya.</div>
+
+        <table class="area-ttd">
+            <tr>
+                <td style="width: 50%;"></td> 
+                <td style="width: 50%; text-align: center;">
+                    <div style="margin-bottom: 5px;">Cimahi, <span id="nTanggal"></span></div>
+                    <div style="margin-bottom: 15px;">Yang Membuat Pernyataan</div>
+                    
+                    <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px;">
+                        <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
+                        <img id="nTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
+                    </div>
+                    
+                    <div><strong><span style="text-decoration: underline;" id="nNamaTtd"></span></strong></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- TEMPLATE 4: SURAT PENGHASILAN -->
+    <div id="kertasSuratPenghasilan" class="kertas-surat">
+        <div class="kop-surat" style="font-size: 19px; margin-top: 25px; margin-bottom: 30px;">SURAT PERNYATAAN</div>
+        <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
+        
+        <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px); line-height: 1.8;">
+            <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="pNama"></td></tr>
+            <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="pJk"></td></tr>
+            <tr><td class="kolom-label">TEMPAT / TGL.LAHIR</td><td class="kolom-titikdua">:</td><td id="pTTL"></td></tr>
+            <tr><td class="kolom-label">NIK</td><td class="kolom-titikdua">:</td><td id="pNik"></td></tr>
+            <tr><td class="kolom-label">PEKERJAAN</td><td class="kolom-titikdua">:</td><td id="pPekerjaan"></td></tr>
+            <tr><td class="kolom-label">ALAMAT</td><td class="kolom-titikdua">:</td><td id="pAlamat"></td></tr>
+        </table>
+        
+        <div style="margin-left: 210px; margin-bottom: 35px; line-height: 1.5;">Kel. Cibeureum Kec.Cimahi Selatan Kota Cimahi</div>
+        
+        <div class="teks-paragraf" style="margin-bottom: 25px; line-height: 1.8;">Dengan ini saya menyatakan bahwa benar saya mempunyai penghasilan per bulannya sebesar RP <strong><span id="pPenghasilan"></span></strong></div>
+        
+        <div class="teks-paragraf" style="line-height: 1.8;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya, Apabila Surat Pernyataan ini tidak benar, maka saya sanggup dituntut yang berwajib sesuai dengan Hukum dan Undang-undang yang berlaku, dan surat pernyataan ini digunakan untuk melengkapi persyaratan administrasi ke <strong><span id="pTujuan"></span></strong></div>
+
+        <table class="area-ttd" style="margin-top: 50px;">
+            <tr>
+                <td style="width: 50%;"></td> 
+                <td style="width: 50%; text-align: center;">
+                    <div style="margin-bottom: 5px;">Cibeureum, <span id="pTanggal"></span></div>
+                    <div style="margin-bottom: 20px;">Yang membuat pernyataan</div>
+                    
+                    <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                        <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
+                        <img id="pTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
+                    </div>
+                    
+                    <div><strong><span style="text-decoration: underline;" id="pNamaTtd"></span></strong></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- TEMPLATE 5: SURAT TIDAK MEMILIKI RUMAH -->
+    <div id="kertasSuratTidakRumah" class="kertas-surat">
+        <div class="kop-surat" style="font-size: 19px; margin-top: 25px; margin-bottom: 30px;">SURAT PERNYATAAN</div>
+        <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
+        
+        <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px); line-height: 1.8;">
+            <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="rNama"></td></tr>
+            <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="rJk"></td></tr>
+            <tr><td class="kolom-label">TEMPAT / TGL.LAHIR</td><td class="kolom-titikdua">:</td><td id="rTTL"></td></tr>
+            <tr><td class="kolom-label">NIK</td><td class="kolom-titikdua">:</td><td id="rNik"></td></tr>
+            <tr><td class="kolom-label">PEKERJAAN</td><td class="kolom-titikdua">:</td><td id="rPekerjaan"></td></tr>
+            <tr><td class="kolom-label">ALAMAT</td><td class="kolom-titikdua">:</td><td id="rAlamat"></td></tr>
+        </table>
+        
+        <div style="margin-left: 210px; margin-bottom: 35px; line-height: 1.5;">Kel. Cibeureum Kec.Cimahi Selatan Kota Cimahi</div>
+        
+        <div class="teks-paragraf" style="margin-bottom: 25px; line-height: 1.8;">Dengan ini saya menyatakan bahwa benar pada saat ini saya tidak memiliki rumah dan masih tinggal bersama orang tua/mengontrak.</div>
+        
+        <div class="teks-paragraf" style="line-height: 1.8;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya, Apabila Surat Pernyataan ini tidak benar, maka saya sanggup dituntut yang berwajib sesuai dengan Hukum dan Undang-undang yang berlaku, dan surat pernyataan ini digunakan untuk melengkapi persyaratan administrasi ke <strong><span id="rTujuan"></span></strong></div>
+
+        <table class="area-ttd" style="margin-top: 50px;">
+            <tr>
+                <td style="width: 50%;"></td> 
+                <td style="width: 50%; text-align: center;">
+                    <div style="margin-bottom: 5px;">Cibeureum, <span id="rTanggal"></span></div>
+                    <div style="margin-bottom: 20px;">Yang membuat pernyataan</div>
+                    
+                    <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                        <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
+                        <img id="rTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
+                    </div>
+                    
+                    <div><strong><span style="text-decoration: underline;" id="rNamaTtd"></span></strong></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- TEMPLATE 6: SURAT TIDAK MEMILIKI AKTA IJAZAH -->
+    <div id="kertasSuratTidakAktaIjazah" class="kertas-surat">
+        <div class="kop-surat" style="font-size: 19px; margin-top: 25px; margin-bottom: 30px;">SURAT PERNYATAAN</div>
+        <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
+        
+        <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px); line-height: 1.8;">
+            <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="iNama"></td></tr>
+            <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="iJk"></td></tr>
+            <tr><td class="kolom-label">TEMPAT / TGL.LAHIR</td><td class="kolom-titikdua">:</td><td id="iTTL"></td></tr>
+            <tr><td class="kolom-label">NIK</td><td class="kolom-titikdua">:</td><td id="iNik"></td></tr>
+            <tr><td class="kolom-label">PEKERJAAN</td><td class="kolom-titikdua">:</td><td id="iPekerjaan"></td></tr>
+            <tr><td class="kolom-label">ALAMAT</td><td class="kolom-titikdua">:</td><td id="iAlamat"></td></tr>
+        </table>
+        
+        <div style="margin-left: 210px; margin-bottom: 35px; line-height: 1.5;">Kel. Cibeureum Kec.Cimahi Selatan Kota Cimahi</div>
+        
+        <div class="teks-paragraf" style="margin-bottom: 25px; line-height: 1.8;">Dengan ini saya menyatakan bahwa benar pada saat ini saya tidak memiliki Akta Kelahiran dan Ijazah Sekolah.</div>
+        
+        <div class="teks-paragraf" style="line-height: 1.8;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya, Apabila dikemudian hari diketahui pernyataan yang saya buat tidak benar saya bersedia dituntut sesuai dengan hukum yang berlaku dengan tidak melibatkan pihak Kelurahan Cibeureum, dan surat pernyataan ini digunakan untuk melengkapi persyaratan administrasi ke <strong><span id="iTujuan"></span></strong></div>
+
+        <table class="area-ttd" style="margin-top: 50px;">
+            <tr>
+                <td style="width: 50%;"></td> 
+                <td style="width: 50%; text-align: center;">
+                    <div style="margin-bottom: 5px;">Cibeureum, <span id="iTanggal"></span></div>
+                    <div style="margin-bottom: 20px;">Yang membuat pernyataan</div>
+                    
+                    <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                        <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
+                        <img id="iTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
+                    </div>
+                    
+                    <div><strong><span style="text-decoration: underline;" id="iNamaTtd"></span></strong></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const roleSaatIni = localStorage.getItem('user_role');
+            if(!roleSaatIni) { window.location.href = "login.html"; return; } 
+            
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
+            document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
+
+            const menuList = document.getElementById('menuDinamis');
+            if (roleSaatIni === 'superadmin') {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+                    <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+                    <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
+            } else {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+                    <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
+            }
+            initSignaturePad();
+        });
+
+        // FUNGSI GANTI JENIS SURAT DINAMIS
+        function gantiFormSurat() {
+            const jenis = document.getElementById('jenisSurat').value;
+            const fieldBelumBekerja = document.querySelectorAll('.khusus-belum-bekerja');
+            const fieldUsaha = document.querySelectorAll('.khusus-usaha');
+            const fieldJk = document.querySelectorAll('.khusus-jk');
+            const fieldPenghasilan = document.querySelectorAll('.khusus-penghasilan');
+            const fieldAdministrasi = document.querySelectorAll('.khusus-administrasi');
+            
+            const judulForm = document.getElementById('judulFormSurat');
+            const labelAlamat = document.getElementById('labelAlamatPemohon');
+
+            // Sembunyikan semua field tambahan dulu
+            fieldBelumBekerja.forEach(el => el.style.display = 'none');
+            fieldUsaha.forEach(el => el.style.display = 'none');
+            fieldJk.forEach(el => el.style.display = 'none');
+            fieldPenghasilan.forEach(el => el.style.display = 'none');
+            fieldAdministrasi.forEach(el => el.style.display = 'none');
+
+            // Reset requirement
+            document.getElementById('inJk').required = false;
+            document.getElementById('inJenisUsaha').required = false;
+            document.getElementById('inJalanUsaha').required = false;
+            document.getElementById('inRtUsaha').required = false;
+            document.getElementById('inRwUsaha').required = false;
+            document.getElementById('inPenghasilan').required = false;
+            document.getElementById('inTujuanAdministrasi').required = false;
+
+            if (jenis === 'belum_bekerja') {
+                judulForm.innerHTML = '<i class="fas fa-file-invoice" style="color: #2563eb;"></i> Form Cetak Surat Pernyataan Belum Bekerja';
+                labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
+                fieldBelumBekerja.forEach(el => el.style.display = 'block');
+                fieldJk.forEach(el => el.style.display = 'block');
+                document.getElementById('inJk').required = true;
+
+            } else if (jenis === 'usaha') {
+                judulForm.innerHTML = '<i class="fas fa-store" style="color: #10b981;"></i> Form Cetak Surat Pernyataan Memiliki Usaha';
+                labelAlamat.innerText = 'Alamat Rumah Pemilik *';
+                fieldUsaha.forEach(el => el.style.display = 'block');
+                document.getElementById('inJenisUsaha').required = true;
+                document.getElementById('inJalanUsaha').required = true;
+                document.getElementById('inRtUsaha').required = true;
+                document.getElementById('inRwUsaha').required = true;
+
+            } else if (jenis === 'belum_nikah') {
+                judulForm.innerHTML = '<i class="fas fa-heart-broken" style="color: #ec4899;"></i> Form Cetak Surat Pernyataan Belum Pernah Nikah';
+                labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
+                fieldJk.forEach(el => el.style.display = 'block');
+                document.getElementById('inJk').required = true;
+                
+            } else if (jenis === 'penghasilan') {
+                judulForm.innerHTML = '<i class="fas fa-money-bill-wave" style="color: #059669;"></i> Form Cetak Surat Pernyataan Penghasilan';
+                labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
+                fieldJk.forEach(el => el.style.display = 'block');
+                fieldPenghasilan.forEach(el => el.style.display = 'block');
+                fieldAdministrasi.forEach(el => el.style.display = 'block');
+                document.getElementById('inJk').required = true;
+                document.getElementById('inPenghasilan').required = true;
+                document.getElementById('inTujuanAdministrasi').required = true;
+                
+            } else if (jenis === 'tidak_punya_rumah') {
+                judulForm.innerHTML = '<i class="fas fa-home" style="color: #6366f1;"></i> Form Cetak Surat Pernyataan Tidak Memiliki Rumah';
+                labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
+                fieldJk.forEach(el => el.style.display = 'block');
+                fieldAdministrasi.forEach(el => el.style.display = 'block');
+                document.getElementById('inJk').required = true;
+                document.getElementById('inTujuanAdministrasi').required = true;
+
+            } else if (jenis === 'tidak_punya_akta_ijazah') {
+                judulForm.innerHTML = '<i class="fas fa-file-alt" style="color: #8b5cf6;"></i> Form Cetak Surat Pernyataan Tidak Memiliki Akta/Ijazah';
+                labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
+                fieldJk.forEach(el => el.style.display = 'block');
+                fieldAdministrasi.forEach(el => el.style.display = 'block');
+                document.getElementById('inJk').required = true;
+                document.getElementById('inTujuanAdministrasi').required = true;
+            }
+        }
+
+        const canvas = document.getElementById('canvasTtd');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let hasDrawn = false; 
+
+        function initSignaturePad() {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+        function resizeCanvas() {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio;
+            ctx.scale(ratio, ratio); hasDrawn = false;
+        }
+        function startDrawing(e) { isDrawing = true; hasDrawn = true; draw(e); }
+        function stopDrawing() { isDrawing = false; ctx.beginPath(); }
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault(); 
+            let clientX, clientY;
+            if (e.type.includes('touch')) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } 
+            else { clientX = e.clientX; clientY = e.clientY; }
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left; const y = clientY - rect.top;
+            ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#1e293b'; 
+            ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y);
+        }
+        function hapusTandaTangan() { ctx.clearRect(0, 0, canvas.width, canvas.height); hasDrawn = false; }
+
+        function generateDokumen(event, formatOutput) {
+            event.preventDefault(); 
+            const requiredInputs = document.querySelectorAll('#formSurat [required]');
+            let isValid = true;
+            requiredInputs.forEach(input => { 
+                if(input.closest('.form-group').style.display !== 'none' && !input.value) { 
+                    input.reportValidity(); isValid = false; 
+                } 
+            });
+            if(!isValid) return;
+
+            if (!hasDrawn) { alert("Mohon isi tanda tangan terlebih dahulu!"); return; }
+
+            const jenisSurat = document.getElementById('jenisSurat').value;
+            const btnPDF = document.getElementById('btnUnduhPDF');
+            const btnJPG = document.getElementById('btnUnduhJPG');
+            const teksPDFAsli = btnPDF.innerHTML; const teksJPGAsli = btnJPG.innerHTML;
+
+            btnPDF.disabled = true; btnJPG.disabled = true;
+            if(formatOutput === 'pdf') btnPDF.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses PDF...";
+            if(formatOutput === 'jpg') btnJPG.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses JPG...";
+
+            const tgl = new Date();
+            const bulanIndo = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const tanggalCetak = tgl.getDate() + ' ' + bulanIndo[tgl.getMonth()] + ' ' + tgl.getFullYear();
+
+            const nama = document.getElementById('inNama').value;
+            let namaFile = 'Surat_Pernyataan_';
+            if(jenisSurat === 'belum_bekerja') namaFile += 'Belum_Bekerja_';
+            else if(jenisSurat === 'usaha') namaFile += 'Usaha_';
+            else if(jenisSurat === 'belum_nikah') namaFile += 'Belum_Nikah_';
+            else if(jenisSurat === 'penghasilan') namaFile += 'Penghasilan_';
+            else if(jenisSurat === 'tidak_punya_rumah') namaFile += 'Tidak_Memiliki_Rumah_';
+            else if(jenisSurat === 'tidak_punya_akta_ijazah') namaFile += 'Tidak_Memiliki_AktaIjazah_';
+            namaFile += nama.replace(/\s+/g, '_');
+            
+            const dataTtd = canvas.toDataURL('image/png');
+
+            let elemenSurat;
+
+            if (jenisSurat === 'belum_bekerja') {
+                elemenSurat = document.getElementById('kertasSuratBelumBekerja');
+                document.getElementById('bNama').innerText = nama;
+                document.getElementById('bNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('bNik').innerText = document.getElementById('inNik').value;
+                document.getElementById('bJk').innerText = document.getElementById('inJk').value;
+                document.getElementById('bTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('bPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('bTanggungan').innerText = document.getElementById('inTanggungan').value || '-';
+                document.getElementById('bHp').innerText = document.getElementById('inHp').value || '-';
+                document.getElementById('bAlamat').innerText = document.getElementById('inAlamat').value;
+                document.getElementById('bTanggal').innerText = tanggalCetak;
+                document.getElementById('bTtdImage').src = dataTtd;
+                document.getElementById('bTtdImage').style.display = 'inline-block';
+                
+            } else if (jenisSurat === 'usaha') {
+                elemenSurat = document.getElementById('kertasSuratUsaha');
+                document.getElementById('uNama').innerText = nama;
+                document.getElementById('uNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('uTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('uNik').innerText = document.getElementById('inNik').value;
+                document.getElementById('uPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('uAlamat').innerText = document.getElementById('inAlamat').value;
+                document.getElementById('uJenisUsaha').innerText = document.getElementById('inJenisUsaha').value;
+                document.getElementById('uJalanUsaha').innerText = document.getElementById('inJalanUsaha').value;
+                document.getElementById('uRtUsaha').innerText = document.getElementById('inRtUsaha').value.padStart(2, '0');
+                document.getElementById('uRwUsaha').innerText = document.getElementById('inRwUsaha').value.padStart(2, '0');
+                document.getElementById('uTanggal').innerText = tanggalCetak;
+                document.getElementById('uTtdImage').src = dataTtd;
+                document.getElementById('uTtdImage').style.display = 'inline-block';
+                
+            } else if (jenisSurat === 'belum_nikah') {
+                elemenSurat = document.getElementById('kertasSuratBelumNikah');
+                document.getElementById('nNama').innerText = nama;
+                document.getElementById('nNamaTtd').innerText = nama.toUpperCase(); 
+                const jk = document.getElementById('inJk').value;
+                document.getElementById('nJk').innerText = (jk === 'Laki-laki') ? 'Pria' : 'Wanita';
+                document.getElementById('nTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('nPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('nAlamat').innerText = document.getElementById('inAlamat').value;
+                document.getElementById('nKtp').innerText = document.getElementById('inNik').value;
+                document.getElementById('nTanggal').innerText = tanggalCetak;
+                document.getElementById('nTtdImage').src = dataTtd;
+                document.getElementById('nTtdImage').style.display = 'inline-block';
+                
+            } else if (jenisSurat === 'penghasilan') {
+                elemenSurat = document.getElementById('kertasSuratPenghasilan');
+                document.getElementById('pNama').innerText = nama;
+                document.getElementById('pNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('pJk').innerText = document.getElementById('inJk').value;
+                document.getElementById('pTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('pNik').innerText = document.getElementById('inNik').value;
+                document.getElementById('pPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('pAlamat').innerText = document.getElementById('inAlamat').value;
+                document.getElementById('pPenghasilan').innerText = document.getElementById('inPenghasilan').value;
+                document.getElementById('pTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
+                document.getElementById('pTanggal').innerText = tanggalCetak;
+                document.getElementById('pTtdImage').src = dataTtd;
+                document.getElementById('pTtdImage').style.display = 'inline-block';
+                
+            } else if (jenisSurat === 'tidak_punya_rumah') {
+                elemenSurat = document.getElementById('kertasSuratTidakRumah');
+                document.getElementById('rNama').innerText = nama;
+                document.getElementById('rNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('rJk').innerText = document.getElementById('inJk').value;
+                document.getElementById('rTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('rNik').innerText = document.getElementById('inNik').value;
+                document.getElementById('rPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('rAlamat').innerText = document.getElementById('inAlamat').value;
+                document.getElementById('rTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
+                document.getElementById('rTanggal').innerText = tanggalCetak;
+                document.getElementById('rTtdImage').src = dataTtd;
+                document.getElementById('rTtdImage').style.display = 'inline-block';
+
+            } else if (jenisSurat === 'tidak_punya_akta_ijazah') {
+                elemenSurat = document.getElementById('kertasSuratTidakAktaIjazah');
+                document.getElementById('iNama').innerText = nama;
+                document.getElementById('iNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('iJk').innerText = document.getElementById('inJk').value;
+                document.getElementById('iTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('iNik').innerText = document.getElementById('inNik').value;
+                document.getElementById('iPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('iAlamat').innerText = document.getElementById('inAlamat').value;
+                document.getElementById('iTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
+                document.getElementById('iTanggal').innerText = tanggalCetak;
+                document.getElementById('iTtdImage').src = dataTtd;
+                document.getElementById('iTtdImage').style.display = 'inline-block';
+            }
+
+            const appLayout = document.getElementById('appLayout');
+            window.scrollTo(0, 0); 
+            appLayout.style.display = 'none';
+            elemenSurat.style.display = 'block';
+
+            setTimeout(() => {
+                if(formatOutput === 'pdf') {
+                    const opsiPDF = {
+                        margin: [0, 0, 0, 0], 
+                        filename: namaFile + '.pdf',
+                        image: { type: 'jpeg', quality: 1 },
+                        html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, 
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    };
+                    html2pdf().set(opsiPDF).from(elemenSurat).save().then(kembalikanTampilan);
+                } 
+                else if (formatOutput === 'jpg') {
+                    html2canvas(elemenSurat, { scale: 2, useCORS: true, scrollY: 0 }).then(canvasTarget => {
+                        let link = document.createElement('a');
+                        link.download = namaFile + '.jpg';
+                        link.href = canvasTarget.toDataURL('image/jpeg', 1.0);
+                        link.click();
+                        kembalikanTampilan();
+                    });
+                }
+            }, 400); 
+
+            function kembalikanTampilan() {
+                elemenSurat.style.display = 'none';
+                appLayout.style.display = 'flex'; 
+                btnPDF.innerHTML = teksPDFAsli; btnJPG.innerHTML = teksJPGAsli;
+                btnPDF.disabled = false; btnJPG.disabled = false;
+            }
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay');
+            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btn.contains(e.target)) { sidebar.classList.remove('active'); overlay.classList.remove('active'); }
+        });
+    </script>
+</body>
+</html>

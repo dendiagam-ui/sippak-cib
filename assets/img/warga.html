@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasbor Warga | SIPPAK-CIB</title>
+    <!-- ========================================== -->
+    <!-- 🚀 TEKNOLOGI PRE-CACHE (MEMPERCEPAT LOADING) -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://ufplggwklwopzhhwrdqk.supabase.co" crossorigin> <!-- Opsional: Ganti dengan URL Supabase Anda -->
+    
+    <!-- Memaksa browser menyimpan Mesin Supabase & Ikon ke RAM -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
+    <!-- ========================================== -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 🚀 TAMBAHKAN KODE INI UNTUK TRANSISI HALUS */
+        body { 
+            animation: fadeInPage 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+            /* Sembunyikan scrollbar yang sering bikin patah-patah */
+            overflow-x: hidden; 
+        }
+
+        @keyframes fadeInPage {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        /* ========================================== */
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+        :root { --sidebar-bg: #1e293b; --sidebar-hover: #334155; --bg-utama: #f8fafc; --kartu-bg: #ffffff; --teks-gelap: #334155; --teks-pudar: #64748b; --primer: #059669; /* Hijau Zamrud untuk Warga */ }
+        body { background-color: var(--bg-utama); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
+        
+        /* SIDEBAR & TOPBAR (Konsisten dengan Admin) */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 25px 20px; text-align: center; font-size: 22px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; }
+        .sidebar-header span { color: var(--primer); }
+        .menu-list { list-style: none; padding: 15px 0; flex-grow: 1; overflow-y: auto; }
+        .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 15px 25px; color: #cbd5e1; text-decoration: none; font-size: 15px; transition: 0.2s; }
+        .menu-list li a:hover, .menu-list li a.active { background-color: var(--sidebar-hover); color: #fff; border-left: 4px solid var(--primer); }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 260px); }
+        .topbar { background-color: var(--kartu-bg); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); z-index: 10; }
+        .toggle-btn { font-size: 22px; cursor: pointer; color: var(--teks-gelap); display: none; }
+        .content-area { padding: 30px; overflow-y: auto; flex-grow: 1; }
+
+        /* KARTU FORM */
+        .card { background: var(--kartu-bg); border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; padding: 25px; margin-bottom: 20px; }
+        .welcome-banner { background: linear-gradient(135deg, #059669, #10b981); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(5, 150, 105, 0.2); }
+        .welcome-banner h2 { font-size: 22px; margin-bottom: 5px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group.full { grid-column: span 2; }
+        label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--teks-gelap); }
+        input, select, textarea { width: 100%; padding: 12px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; transition: 0.3s; background: #f8fafc; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primer); background: white; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1); }
+        
+        .btn-submit { background: var(--primer); color: white; width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background: #047857; transform: translateY(-2px); }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 15px; }
+        .modal-header h3 { color: var(--teks-gelap); }
+        .btn-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #94a3b8; }
+        
+        /* DINAMIS UPLOAD */
+        .upload-section { background: #f0fdf4; padding: 15px; border-radius: 8px; border: 1px dashed #86efac; margin-top: 15px; display: none; }
+
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -260px; height: 100%; } 
+            .sidebar.active { left: 0; } 
+            .main-content { width: 100%; }
+            .toggle-btn { display: block; } 
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">SIPPAK<span>CIB</span></div>
+        <ul class="menu-list">
+            <li><a href="warga.html" class="active"><i class="fas fa-edit"></i> Buat Permohonan</a></li>
+            <li><a href="status.html"><i class="fas fa-search"></i> Lacak Berkas</a></li>
+            <li><a href="../index.html" style="color: #fb7185; margin-top: 30px;"><i class="fas fa-sign-out-alt"></i> Keluar (Logout)</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="toggle-btn" onclick="document.getElementById('sidebar').classList.toggle('active')"><i class="fas fa-bars"></i></div>
+            <div style="font-weight:bold; color: #1e293b;"><i class="fas fa-user-circle"></i> Warga Pemohon</div>
+        </header>
+
+        <div class="content-area">
+            <div class="welcome-banner">
+                <h2>Selamat Datang, <span id="namaWarga">Warga</span>!</h2>
+                <p style="font-size: 14px; opacity: 0.9;">Silakan isi formulir di bawah ini untuk mengajukan permohonan administrasi secara online.</p>
+            </div>
+
+            <div class="card">
+                <form id="formPermohonan" onsubmit="tampilkanRingkasan(event)">
+                    <div class="form-group full">
+                        <label>Jenis Layanan Administrasi</label>
+                        <select id="jenis_layanan" onchange="aturFormDinamis()" required>
+                            <option value="">-- Pilih Layanan --</option>
+                            <option value="Cetak Kartu Keluarga">Cetak Kartu Keluarga (Baru/Hilang)</option>
+                            <option value="Cetak Ulang KTP-El">Cetak Ulang KTP-El (Hilang/Rusak)</option>
+                            <option value="Perbaikan Data">Perbaikan Data Kependudukan</option>
+                            <option value="Pindah Keluar">Surat Pengantar Pindah Keluar</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group"><label>Nomor Induk Kependudukan (NIK)</label><input type="text" id="nik" required></div>
+                        <div class="form-group"><label>Nama Lengkap (Sesuai KTP)</label><input type="text" id="nama" required></div>
+                        <div class="form-group"><label>Nomor Kartu Keluarga</label><input type="text" id="no_kk" required></div>
+                        <div class="form-group"><label>Nomor WhatsApp Aktif</label><input type="text" id="no_wa" required></div>
+                        <div class="form-group full"><label>Alamat Email</label><input type="email" id="email" required></div>
+                    </div>
+
+                    <!-- Area Input Dinamis Berdasarkan Layanan -->
+                    <div id="areaDinamis"></div>
+
+                    <!-- Area Upload Berkas -->
+                    <div id="areaUpload" class="upload-section">
+                        <label style="color: #166534;"><i class="fas fa-upload"></i> Unggah Dokumen Utama (KTP/Surat Hilang)</label>
+                        <input type="file" id="fileUtama" accept=".pdf, image/*" required style="margin-bottom: 10px;">
+                        
+                        <label style="color: #166534;"><i class="fas fa-paperclip"></i> Dokumen Pendukung (KK Lama / Opsional)</label>
+                        <input type="file" id="filePendukung" accept=".pdf, image/*">
+                    </div>
+
+                    <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Lanjutkan Pengajuan</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Ringkasan -->
+    <div class="modal-overlay" id="modalRingkasan">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-clipboard-check"></i> Konfirmasi Data</h3>
+                <button class="btn-close" onclick="tutupModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="isiRingkasan" style="font-size: 14px; line-height: 1.6; margin-bottom: 20px; color: #475569;">
+                <!-- Data akan dimasukkan oleh JS -->
+            </div>
+            <button class="btn-submit" id="btnKonfirmasi" onclick="prosesKirimAkhir()">✅ Ya, Kirim Sekarang</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/warga.js"></script> <!-- Script yang menangani upload & simpan data -->
+
+    <script>
+        // Set nama Warga (Dummy/Local)
+        document.getElementById('namaWarga').innerText = localStorage.getItem('user_nama') || 'Warga';
+
+        function aturFormDinamis() {
+            const layanan = document.getElementById('jenis_layanan').value;
+            const area = document.getElementById('areaDinamis');
+            const upload = document.getElementById('areaUpload');
+            
+            area.innerHTML = ''; 
+            upload.style.display = 'none';
+
+            if (!layanan) return;
+
+            upload.style.display = 'block';
+
+            if (layanan === 'Cetak Ulang KTP-El') {
+                area.innerHTML = `<div class="form-group full"><label>Alasan (Hilang/Rusak)</label><input type="text" id="alasan_pengajuan" required placeholder="Contoh: KTP Hilang di jalan"></div>`;
+            } else if (layanan === 'Pindah Keluar') {
+                area.innerHTML = `<div class="form-group full"><label>Alamat Tujuan Pindah Lengkap</label><textarea id="alamat_tujuan" rows="3" required></textarea></div>`;
+            } else {
+                area.innerHTML = `<div class="form-group full"><label>Keterangan Tambahan (Opsional)</label><input type="text" id="keterangan" placeholder="Masukkan detail jika perlu"></div>`;
+            }
+        }
+    </script>
+        <!-- 🚀 SENSOR PENUTUP SIDEBAR OTOMATIS 🚀 -->
+    <script>
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.querySelector('.toggle-btn');
+            
+            // Pastikan elemen sidebar dan tombol garis 3 benar-benar ada di halaman ini
+            if (sidebar && toggleBtn) {
+                // Cek apakah sidebar sedang dalam keadaan terbuka (aktif) di HP
+                if (sidebar.classList.contains('active')) {
+                    // Jika jari mengetuk BUKAN di area sidebar DAN BUKAN di tombol garis 3
+                    if (!sidebar.contains(event.target) && !toggleBtn.contains(event.target)) {
+                        
+                        // Tutup sidebarnya
+                        sidebar.classList.remove('active'); 
+                        
+                        // Jika Anda memakai efek bayangan hitam (overlay), hilangkan juga
+                        const overlay = document.getElementById('overlay');
+                        if (overlay) overlay.classList.remove('active');
+                    }
+                }
+            }
+        });
+    </script>
+    <!-- ======================================= -->
+</body>
+</html>

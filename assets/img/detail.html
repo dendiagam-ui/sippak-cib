@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Permohonan | SIPPAK-CIB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+        :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
+        body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
+        
+        .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; gap: 10px; }
+        .sidebar-header i { color: #3b82f6; }
+        .menu-list { list-style: none; padding: 20px 0; flex-grow: 1; overflow-y: auto; }
+        .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 16px 30px; color: #94a3b8; text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; border-left: 4px solid transparent; }
+        .menu-list li a:hover, .menu-list li a.active { background-color: rgba(255,255,255,0.05); color: #fff; border-left: 4px solid #3b82f6; }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 280px); }
+        .topbar { background-color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
+        .toggle-btn { font-size: 24px; cursor: pointer; color: var(--teks-gelap); display: none; }
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
+        
+        .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
+        .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
+        .btn-kembali { background: #fff; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; color: #475569; text-decoration: none; font-weight: bold; transition: 0.2s; }
+        .btn-kembali:hover { background: #f1f5f9; color: var(--teks-gelap); }
+        
+        .grid-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }
+        @media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+        
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; margin-bottom: 25px; }
+        .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+        
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px;}
+        .info-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 15px; }
+        .info-table td:first-child { font-weight: 700; color: #475569; width: 35%; background: #f8fafc; border-right: 1px solid #f1f5f9; border-radius: 8px 0 0 8px; }
+        
+        .btn-lampiran { background: #f8fafc; border: 1px solid #cbd5e1; color: #334155; padding: 8px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-lampiran:hover { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; transform: translateY(-2px); }
+        
+        .preview-box { border: 1px solid #e2e8f0; background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 25px; }
+        .preview-header { font-size: 14px; font-weight: 700; color: #475569; margin-bottom: 12px; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .preview-image { width: 100%; max-height: 450px; object-fit: contain; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; margin-bottom: 10px; }
+        .preview-pdf { width: 100%; height: 350px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; margin-bottom: 10px; }
+        
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; background: white; }
+        
+        .btn-submit { background: #10b981; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-submit:hover { background: #059669; transform: translateY(-2px); }
+        
+        .btn-edit { background: #3b82f6; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-edit:hover { background: #2563eb; transform: translateY(-2px); }
+
+        .btn-hapus { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-hapus:hover { background: #ef4444; color: white; }
+        
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 800; display: inline-block; text-transform: uppercase; }
+        .badge-dikirim { background: #fef3c7; color: #d97706; }
+        .badge-terverifikasi { background: #e0e7ff; color: #4338ca; }
+        .badge-proses { background: #e0f2fe; color: #0284c7; }
+        .badge-selesai { background: #dcfce7; color: #16a34a; }
+        .badge-ditolak { background: #fee2e2; color: #dc2626; }
+
+        /* KELAS MODAL POPUP */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(3px); }
+        .modal-box { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 20px; font-weight: bold; color: #2563eb; }
+        
+        @media (max-width: 900px) {
+            .sidebar { position: fixed; left: -280px; height: 100%; } 
+            .sidebar.active { left: 0; } 
+            .main-content { width: 100%; }
+            .toggle-btn { display: block; } 
+            .content-area { padding: 20px; }
+            .topbar { padding: 15px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay"><i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px;"></i> Memuat Data Berkas...</div>
+    <div class="modal-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
+        <ul class="menu-list" id="menuDinamis"></ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <div class="user-profile">
+                <div style="text-align: right;">
+                    <div style="font-size: 15px; font-weight: 700;" id="namaUser">Petugas</div>
+                    <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600; text-transform: uppercase;" id="roleUser">PETUGAS</div>
+                </div>
+                <div class="user-avatar"><i class="fas fa-user-tie"></i></div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-title"><a href="dashboard-master.html" class="btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a><h2>Detail Permohonan Warga</h2></div>
+            <div class="grid-layout">
+                <div>
+                    <div class="card" style="padding-bottom: 10px;">
+                        <div class="card-header"><span><i class="fas fa-file-alt" style="color: #2563eb;"></i> Informasi Berkas Warga</span></div>
+                        <table class="info-table" id="tabelInfo"></table>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header"><span><i class="fas fa-paperclip" style="color: #64748b;"></i> Preview Dokumen Lampiran</span></div>
+                        <div id="wadahLampiran"></div>
+                    </div>
+                    
+                    <!-- WADAH KHUSUS SUPER ADMIN -->
+                    <div id="wadahSuperAdmin" style="display: none; flex-direction: column; gap: 15px; margin-bottom: 30px;">
+                        <button class="btn-edit" onclick="bukaModalEdit()"><i class="fas fa-user-edit"></i> Edit Data Teks Permohonan Warga</button>
+                        <button class="btn-hapus" onclick="hapusPermohonan()"><i class="fas fa-trash-alt"></i> Hapus Permohonan Permanen</button>
+                    </div>
+                </div>
+
+                <div class="card" style="height: fit-content;">
+                    <div class="card-header"><i class="fas fa-edit" style="color: #f59e0b;"></i> Pemrosesan Status Permohonan</div>
+                    <form onsubmit="updateStatus(event)">
+                        <div class="form-group">
+                            <label>Ubah Status Permohonan</label>
+                            <select id="inpStatus" required>
+                                <option value="Dikirim">Dikirim</option>
+                                <option value="Terverifikasi">Terverifikasi</option>
+                                <option value="Proses">Proses</option>
+                                <option value="Selesai">Selesai</option>
+                                <option value="Ditolak">Ditolak</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="blokCatatan" style="display: none;">
+                            <label style="color: #f59e0b;"><i class="fas fa-comment-dots"></i> Catatan Petugas (Otomatis Kirim ke WA)</label>
+                            <textarea id="inpCatatan" placeholder="Contoh: Berkas telah selesai diproses. Silakan ambil KTP fisik Anda di Loket Pelayanan..."></textarea>
+                        </div>
+                        
+                        <button type="submit" id="btnUpdate" class="btn-submit"><i class="fas fa-save"></i> Simpan & Beri Tahu Warga</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL EDIT DATA (KHUSUS SUPER ADMIN) -->
+    <div class="modal-overlay" id="modalEditData">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 20px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                <i class="fas fa-user-edit" style="color: #3b82f6;"></i> Koreksi Data Permohonan Warga
+            </h3>
+            <form onsubmit="simpanEditData(event)">
+                <div class="form-group">
+                    <label>Nama Lengkap Pemohon</label>
+                    <input type="text" id="editNama" required style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Induk Kependudukan (NIK)</label>
+                    <input type="number" id="editNik" required>
+                </div>
+                <div class="form-group">
+                    <label>Nomor WhatsApp (Awalan 62)</label>
+                    <input type="text" id="editWa" required>
+                </div>
+                <div class="form-group">
+                    <label>Rincian Data (Alamat, Alasan, Anggota Keluarga, dll)</label>
+                    <textarea id="editRincian" style="min-height: 200px;" required></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
+                    <button type="submit" class="btn-submit" id="btnSimpanEdit" style="flex: 2; background: #3b82f6;"><i class="fas fa-save"></i> Terapkan Perubahan</button>
+                    <button type="button" class="btn-hapus" style="flex: 1; margin-top: 0; background: #f1f5f9; color: #475569; border-color: #cbd5e1;" onclick="tutupModalEdit()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
+        const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
+        const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const idPermohonan = urlParams.get('id');
+        let dataPermohonan = null;
+
+        document.getElementById('inpStatus').addEventListener('change', function() {
+            const val = this.value;
+            document.getElementById('blokCatatan').style.display = (val !== 'Dikirim') ? 'block' : 'none';
+        });
+
+        async function muatDataDetail() {
+            try {
+                if(!idPermohonan) throw new Error("ID Permohonan tidak ditemukan!");
+
+                const { data, error } = await supabaseClient.from('permohonan').select('*').eq('id', idPermohonan).single();
+                if (error) throw error;
+                dataPermohonan = data; 
+
+                const stat = data.status || 'Dikirim';
+                let kelasBadge = 'badge-dikirim';
+                if(stat === 'Terverifikasi') kelasBadge = 'badge-terverifikasi';
+                else if(stat === 'Proses') kelasBadge = 'badge-proses';
+                else if(stat === 'Selesai') kelasBadge = 'badge-selesai';
+                else if(stat === 'Ditolak') kelasBadge = 'badge-ditolak';
+
+                const tgl = new Date(data.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+                
+                const namaPengaju = data.diajukan_oleh || 'Mandiri (Warga)';
+                const warnaPengaju = namaPengaju !== 'Mandiri (Warga)' ? '#10b981' : '#64748b';
+                const iconPengaju = namaPengaju !== 'Mandiri (Warga)' ? 'fa-user-tie' : 'fa-user';
+
+                let tabelHTML = `
+                    <tr><td>Nomor Tiket</td><td style="font-weight:bold; color: #2563eb;">${data.nomor_tiket}</td></tr>
+                    <tr><td>Waktu Pengajuan</td><td>${tgl} WIB</td></tr>
+                    <tr><td>Status Saat Ini</td><td><span class="badge ${kelasBadge}">${stat}</span></td></tr>
+                    <tr><td>Diajukan Oleh</td><td><span style="font-weight:bold; color: ${warnaPengaju}; background:#f8fafc; padding:5px 10px; border-radius:5px; border:1px solid #e2e8f0;"><i class="fas ${iconPengaju}"></i> ${namaPengaju}</span></td></tr>
+                    <tr><td>Jenis Layanan</td><td style="font-weight:bold;">${data.jenis_layanan}</td></tr>
+                    <tr><td>Nama Pemohon</td><td>${data.nama_pemohon}</td></tr>
+                    <tr><td>NIK</td><td>${data.nik}</td></tr>
+                    <tr><td>No. HP/WA</td><td><a href="https://wa.me/${data.no_wa}" target="_blank" style="color:#10b981; font-weight:bold; text-decoration:none;"><i class="fab fa-whatsapp"></i> ${data.no_wa || '-'}</a></td></tr>
+                `;
+
+                let htmlLampiran = '';
+                const kolomAbaikan = ['id', 'created_at', 'nomor_tiket', 'status', 'jenis_layanan', 'nama_pemohon', 'nik', 'dokumen_hasil', 'catatan_petugas', 'diajukan_oleh'];
+
+                for (const [key, value] of Object.entries(data)) {
+                    if (!kolomAbaikan.includes(key) && value !== null && value !== '') {
+                        const label = key.replace(/_/g, ' ').toUpperCase();
+                        
+                        if (typeof value === 'string' && (value.startsWith('http') || value.startsWith('https'))) {
+                            const ekstensi = value.split('.').pop().toLowerCase().split('?')[0]; 
+                            const isImage = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ekstensi);
+
+                            if (isImage) {
+                                htmlLampiran += `
+                                <div class="preview-box">
+                                    <div class="preview-header">
+                                        <span><i class="fas fa-image" style="color: #3b82f6;"></i> GAMBAR: ${label}</span>
+                                        <a href="${value}?download=${label}.${ekstensi}" class="btn-lampiran" style="margin: 0;"><i class="fas fa-download"></i> Unduh File</a>
+                                    </div>
+                                    <img src="${value}" alt="${label}" class="preview-image">
+                                </div>`;
+                            } else {
+                                htmlLampiran += `
+                                <div class="preview-box">
+                                    <div class="preview-header">
+                                        <span><i class="fas fa-file-pdf" style="color: #ef4444;"></i> DOKUMEN: ${label}</span>
+                                        <a href="${value}?download=${label}.${ekstensi}" class="btn-lampiran" style="margin: 0;"><i class="fas fa-download"></i> Unduh File</a>
+                                    </div>
+                                    <iframe src="${value}" class="preview-pdf"></iframe>
+                                </div>`;
+                            }
+                        } else {
+                            tabelHTML += `<tr><td>${label}</td><td style="white-space: pre-wrap; line-height: 1.6;">${value}</td></tr>`;
+                        }
+                    }
+                }
+
+                document.getElementById('tabelInfo').innerHTML = tabelHTML;
+                document.getElementById('wadahLampiran').innerHTML = htmlLampiran || '<p style="color: #94a3b8; font-size: 14px; font-style: italic; text-align: center; padding: 20px;">Tidak ada dokumen lampiran.</p>';
+
+                document.getElementById('inpStatus').value = stat;
+                document.getElementById('inpCatatan').value = data.catatan_petugas || '';
+                
+                if(stat !== 'Dikirim') {
+                    document.getElementById('blokCatatan').style.display = 'block';
+                }
+                
+                // MUNCULKAN TOMBOL EDIT & HAPUS JIKA SUPERADMIN
+                const roleSaatIni = localStorage.getItem('user_role');
+                if (roleSaatIni === 'superadmin') {
+                    document.getElementById('wadahSuperAdmin').style.display = 'flex';
+                }
+
+            } catch (err) { alert("Gagal menarik data: " + err.message); window.location.href = "dashboard-master.html"; } 
+            finally { document.getElementById('loadingOverlay').style.display = 'none'; }
+        }
+
+        async function updateStatus(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btnUpdate');
+            const teksAsli = btn.innerHTML;
+            const statusBaru = document.getElementById('inpStatus').value;
+            const catatanBaru = document.getElementById('inpCatatan').value;
+
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses...";
+            btn.disabled = true;
+
+            try {
+                const { error: updateError } = await supabaseClient.from('permohonan').update({ 
+                    status: statusBaru, catatan_petugas: catatanBaru 
+                }).eq('id', idPermohonan);
+                if (updateError) throw updateError;
+
+                // NOTIFIKASI WA KEPADA WARGA
+                if (statusBaru !== 'Dikirim' && dataPermohonan.no_wa) {
+                    let pesanWA = "";
+                    let linkPelacakan = window.location.origin + "/pages/status.html";
+                    
+                    if (statusBaru === 'Terverifikasi' || statusBaru === 'Proses') {
+                        pesanWA = `Halo Bapak/Ibu ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* (Tiket: *${dataPermohonan.nomor_tiket}*) saat ini masuk tahap *${statusBaru.toUpperCase()}*.\n\n*Catatan Petugas:*\n"${catatanBaru}"\n\nCek secara berkala melalui:\n${linkPelacakan}`;
+                    } else {
+                        pesanWA = `Halo Bapak/Ibu ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* (Tiket: *${dataPermohonan.nomor_tiket}*) telah *${statusBaru.toUpperCase()}*.\n\n*Catatan Petugas:*\n"${catatanBaru}"\n\nCek status melalui:\n${linkPelacakan}`;
+                    }
+                    const urlWA = `https://wa.me/${dataPermohonan.no_wa}?text=${encodeURIComponent(pesanWA)}`;
+                    window.open(urlWA, '_blank'); 
+                }
+
+                alert(`✅ BERHASIL!\nStatus permohonan berhasil diperbarui.`);
+                window.location.reload(); 
+
+            } catch (err) { alert("⚠️ GAGAL:\n" + err.message); btn.innerHTML = teksAsli; btn.disabled = false; }
+        }
+
+        // FUNGSI EDIT DATA (SUPER ADMIN)
+        function bukaModalEdit() {
+            document.getElementById('editNama').value = dataPermohonan.nama_pemohon || '';
+            document.getElementById('editNik').value = dataPermohonan.nik || '';
+            document.getElementById('editWa').value = dataPermohonan.no_wa || '';
+            document.getElementById('editRincian').value = dataPermohonan.rincian_data || '';
+            document.getElementById('modalEditData').style.display = 'flex';
+        }
+
+        function tutupModalEdit() {
+            document.getElementById('modalEditData').style.display = 'none';
+        }
+
+        async function simpanEditData(event) {
+            event.preventDefault();
+            
+            if(!confirm("Anda yakin ingin menyimpan perubahan data warga ini?")) return;
+
+            const btn = document.getElementById('btnSimpanEdit');
+            const teksAsli = btn.innerHTML;
+            
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Menyimpan Perubahan...";
+            btn.disabled = true;
+
+            const namaBaru = document.getElementById('editNama').value.toUpperCase();
+            const nikBaru = document.getElementById('editNik').value;
+            const waBaru = document.getElementById('editWa').value;
+            const rincianBaru = document.getElementById('editRincian').value;
+
+            try {
+                const { error } = await supabaseClient.from('permohonan').update({
+                    nama_pemohon: namaBaru,
+                    nik: nikBaru,
+                    no_wa: waBaru,
+                    rincian_data: rincianBaru
+                }).eq('id', idPermohonan);
+
+                if (error) throw error;
+                
+                alert("✅ DATA BERHASIL DIKOREKSI!");
+                window.location.reload(); 
+
+            } catch(err) {
+                alert("⚠️ GAGAL MENYIMPAN:\n" + err.message);
+                btn.innerHTML = teksAsli;
+                btn.disabled = false;
+            }
+        }
+
+        // FUNGSI HAPUS PERMANEN (SUPER ADMIN)
+        async function hapusPermohonan() {
+            const roleSaatIni = localStorage.getItem('user_role');
+            if (roleSaatIni !== 'superadmin') { alert("⛔ AKSES DITOLAK!\nHanya Super Admin yang diizinkan menghapus data permanen."); return; }
+            if(!confirm("⚠️ YAKIN MENGHAPUS PERMANEN?\nSemua file lampiran dan data akan musnah.")) return;
+
+            document.getElementById('loadingOverlay').innerHTML = "<i class='fas fa-trash-alt fa-spin' style='font-size:40px; color:#dc2626; margin-bottom:15px;'></i> Menghancurkan Data...";
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            try {
+                let fileYangDihapus = [];
+                const semuaKolomFile = ['file_kk_hilang', 'dokumen_pendukung_kk', 'file_ktp', 'file_kk', 'file_f106', 'dokumen_tambahan_perbaikan', 'dokumen_pendukung_1', 'dokumen_pendukung_2', 'file_kk_pindah', 'file_ktp_pindah', 'file_akta_f201', 'file_akta_kk', 'file_akta_ket_lahir', 'file_akta_buku_nikah_1', 'file_akta_buku_nikah_2', 'file_akta_buku_nikah_3', 'file_akta_ktp_ibu', 'file_akta_ktp_ayah', 'file_akta_pendukung', 'file_akta_pendukung_1', 'file_akta_pendukung_2', 'dokumen_hasil'];
+                
+                semuaKolomFile.forEach(kolom => {
+                    if (dataPermohonan[kolom] && dataPermohonan[kolom].includes('/dokumen/')) {
+                        const ekstrakNamaFile = dataPermohonan[kolom].split('/dokumen/')[1].split('?')[0]; 
+                        fileYangDihapus.push(ekstrakNamaFile);
+                    }
+                });
+                
+                if (fileYangDihapus.length > 0) await supabaseClient.storage.from('dokumen').remove(fileYangDihapus);
+
+                const { error: errDB } = await supabaseClient.from('permohonan').delete().eq('id', idPermohonan);
+                if (errDB) throw errDB;
+
+                alert("🗑️ PEMBERSIHAN BERHASIL!");
+                window.location.href = "dashboard-master.html";
+            } catch(err) { alert("Gagal menghapus: " + err.message); document.getElementById('loadingOverlay').style.display = 'none'; }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const roleSaatIni = localStorage.getItem('user_role');
+            if(!roleSaatIni) { window.location.href = "login.html"; return; } 
+            
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Petugas';
+            document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
+            
+            const menuList = document.getElementById('menuDinamis');
+            menuList.innerHTML = `
+                <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+                ${roleSaatIni === 'superadmin' ? '<li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>' : ''}
+                <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+            `;
+            muatDataDetail();
+        });
+        
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+    </script>
+</body>
+</html>
