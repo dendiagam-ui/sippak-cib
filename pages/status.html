@@ -7,61 +7,45 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        body { background: #f1f5f9; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background: #f1f5f9; padding: 20px; color: #1e293b; }
         
-        /* HEADER SENADA DENGAN DASBOR */
-        .top-navbar { background: #fff; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); position: sticky; top: 0; z-index: 100; }
-        .logo-nav { font-size: 20px; font-weight: 800; color: #1e293b; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-        .logo-nav i { color: #2563eb; }
-        .btn-kembali-nav { background: #eff6ff; color: #2563eb; padding: 8px 15px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; border: 1px solid #bfdbfe; }
-        .btn-kembali-nav:hover { background: #2563eb; color: white; }
+        .wadah-status { max-width: 650px; margin: 40px auto; }
+        .box-pencarian { background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: center; margin-bottom: 25px; }
+        .box-pencarian h2 { color: #2563eb; margin-bottom: 10px; font-weight: 800; }
+        .box-pencarian p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
         
-        .wadah-status { max-width: 650px; margin: 40px auto; width: 95%; }
-        
-        .card { background: #fff; padding: 35px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; text-align: center; margin-bottom: 25px; }
-        .card h2 { color: #1e293b; margin-bottom: 10px; font-weight: 800; }
-        .card p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
-        
-        .form-group input { width: 100%; padding: 15px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; outline: none; transition: 0.3s; }
-        .form-group input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-group input { width: 100%; padding: 15px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; outline: none; transition: 0.3s; }
+        .form-group input:focus { border-color: #2563eb; }
         
         .btn-cari { background: #2563eb; color: white; padding: 15px; width: 100%; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-cari:hover { background: #1d4ed8; }
 
-        /* KARTU HASIL PENCARIAN (Sama persis card dasbor) */
-        .kartu-hasil { background: #fff; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: left; }
-        .kartu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+        .kartu-hasil { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); text-align: left; }
+        .kartu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
         .no-tiket { font-size: 18px; font-weight: 900; color: #2563eb; }
         
-        .rincian-teks { font-size: 14px; color: #475569; margin-bottom: 8px; line-height: 1.6; }
-        .rincian-teks strong { color: #1e293b; display: inline-block; width: 80px; }
+        .rincian-teks { font-size: 14px; color: #475569; margin-bottom: 8px; }
+        .rincian-teks strong { color: #1e293b; }
         
         .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; text-transform: uppercase; }
-        .badge-menunggu { background: #fef3c7; color: #d97706; }
+        .badge-dikirim { background: #fef3c7; color: #d97706; }
+        .badge-terverifikasi { background: #e0e7ff; color: #4338ca; }
         .badge-proses { background: #e0f2fe; color: #0284c7; }
         .badge-selesai { background: #dcfce7; color: #16a34a; }
         .badge-ditolak { background: #fee2e2; color: #dc2626; }
 
         .catatan-petugas { background: #eff6ff; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6; font-size: 13px; color: #1e40af; }
-        .btn-unduh-hasil { background: #10b981; color: white; padding: 12px 15px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; display: inline-block; margin-top: 15px; border: none; transition: 0.2s; }
-        .btn-unduh-hasil:hover { background: #059669; }
         
-        .pengaju-info { font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 6px; display: inline-block; margin-bottom: 15px; }
+        .pengaju-info { font-size: 12px; font-weight: bold; padding: 5px 10px; border-radius: 5px; display: inline-block; margin-bottom: 10px; }
         .pengaju-petugas { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .pengaju-mandiri { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
     </style>
 </head>
 <body>
 
-    <!-- TOP NAVIGATION -->
-    <nav class="top-navbar">
-        <a href="../index.html" class="logo-nav"><i class="fas fa-landmark"></i> SIPPAK-CIB</a>
-        <a href="../index.html" class="btn-kembali-nav"><i class="fas fa-home"></i> Beranda</a>
-    </nav>
-
     <div class="wadah-status">
-        <div class="card">
-            <h2><i class="fas fa-search" style="color: #2563eb;"></i> Cek Status Dokumen</h2>
+        <div class="box-pencarian">
+            <h2><i class="fas fa-search"></i> Cek Status Dokumen</h2>
             <p>Masukkan NIK Anda untuk melacak perkembangan dokumen.</p>
             <form onsubmit="cariStatus(event)">
                 <div class="form-group">
@@ -69,6 +53,7 @@
                 </div>
                 <button type="submit" class="btn-cari" id="btnCari">Lacak Sekarang</button>
             </form>
+            <div style="margin-top: 15px;"><a href="../index.html" style="color: #64748b; text-decoration: none; font-size: 14px;">Kembali ke Beranda</a></div>
         </div>
 
         <div id="wadahHasil"></div>
@@ -82,7 +67,11 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             const urlParams = new URLSearchParams(window.location.search);
-            if(urlParams.get('nik')) { document.getElementById('inpCariNik').value = urlParams.get('nik'); document.getElementById('btnCari').click(); }
+            const nikURL = urlParams.get('nik');
+            if(nikURL) {
+                document.getElementById('inpCariNik').value = nikURL;
+                document.getElementById('btnCari').click();
+            }
         });
 
         async function cariStatus(event) {
@@ -91,19 +80,27 @@
             const btn = document.getElementById('btnCari');
             const wadahHasil = document.getElementById('wadahHasil');
             
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari..."; btn.disabled = true;
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari...";
+            btn.disabled = true;
 
             try {
                 const { data, error } = await supabaseClient.from('permohonan').select('*').eq('nik', nik).order('created_at', { ascending: false });
                 if (error) throw error;
 
                 if (data.length === 0) {
-                    wadahHasil.innerHTML = `<div class="card" style="text-align:center; color:#ef4444; background:#fee2e2; border-color:#fca5a5;">Tidak ada riwayat permohonan yang ditemukan untuk NIK tersebut.</div>`; return;
+                    wadahHasil.innerHTML = `<div style="text-align:center; color:#ef4444; background:#fee2e2; padding:20px; border-radius:12px; font-weight:bold;">Tidak ada riwayat permohonan yang ditemukan untuk NIK tersebut.</div>`;
+                    return;
                 }
 
                 let htmlCard = '';
                 data.forEach(item => {
-                    let kelasBadge = (item.status === 'Diproses') ? 'badge-proses' : (item.status === 'Selesai') ? 'badge-selesai' : (item.status === 'Ditolak') ? 'badge-ditolak' : 'badge-menunggu';
+                    let stat = item.status || 'Dikirim';
+                    let kelasBadge = 'badge-dikirim';
+                    if(stat === 'Terverifikasi') kelasBadge = 'badge-terverifikasi';
+                    else if(stat === 'Proses') kelasBadge = 'badge-proses';
+                    else if(stat === 'Selesai') kelasBadge = 'badge-selesai';
+                    else if(stat === 'Ditolak') kelasBadge = 'badge-ditolak';
+
                     const tgl = new Date(item.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
                     
                     const namaPengaju = item.diajukan_oleh || 'Mandiri (Warga)';
@@ -114,21 +111,28 @@
                         <div class="kartu-hasil">
                             <div class="kartu-header">
                                 <span class="no-tiket">${item.nomor_tiket}</span>
-                                <span class="badge ${kelasBadge}">${item.status}</span>
+                                <span class="badge ${kelasBadge}">${stat}</span>
                             </div>
                             
                             <div class="pengaju-info ${kelasPengaju}"><i class="fas ${iconPengaju}"></i> Diajukan Oleh: ${namaPengaju}</div>
                             
-                            <div class="rincian-teks"><strong>Layanan</strong>: ${item.jenis_layanan}</div>
-                            <div class="rincian-teks"><strong>Pemohon</strong>: ${item.nama_pemohon}</div>
-                            <div class="rincian-teks"><strong>Tanggal</strong>: ${tgl}</div>
+                            <div class="rincian-teks"><strong>Layanan:</strong> ${item.jenis_layanan}</div>
+                            <div class="rincian-teks"><strong>Pemohon:</strong> ${item.nama_pemohon}</div>
+                            <div class="rincian-teks"><strong>Tanggal:</strong> ${tgl}</div>
                             
                             ${item.catatan_petugas ? `<div class="catatan-petugas"><strong><i class="fas fa-comment-dots"></i> Catatan Petugas:</strong><br>${item.catatan_petugas}</div>` : ''}
-                            ${item.status === 'Selesai' && item.dokumen_hasil ? `<a href="${item.dokumen_hasil}?download=Dokumen_Hasil.pdf" class="btn-unduh-hasil"><i class="fas fa-download"></i> Unduh File PDF</a>` : ''}
-                        </div>`;
+                        </div>
+                    `;
                 });
+
                 wadahHasil.innerHTML = htmlCard;
-            } catch (err) { alert("Gagal memuat data: " + err.message); } finally { btn.innerHTML = "Lacak Sekarang"; btn.disabled = false; }
+
+            } catch (err) {
+                alert("Gagal memuat data: " + err.message);
+            } finally {
+                btn.innerHTML = "Lacak Sekarang";
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
