@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cek Status Permohonan | SIPPAK-CIB</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- SCRIPT GOOGLE ADSENSE UTAMA -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3360741150487096" crossorigin="anonymous"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
         body { background: #f1f5f9; padding: 20px; color: #1e293b; }
@@ -39,11 +43,33 @@
         .pengaju-info { font-size: 12px; font-weight: bold; padding: 5px 10px; border-radius: 5px; display: inline-block; margin-bottom: 10px; }
         .pengaju-petugas { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .pengaju-mandiri { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+        /* WADAH IKLAN ADSENSE */
+        .wadah-iklan { width: 100%; text-align: center; margin: 20px 0; overflow: hidden; background: transparent; border-radius: 12px; min-height: 100px; display: flex; justify-content: center; align-items: center; }
+        .teks-iklan { font-size: 11px; color: #94a3b8; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="wadah-status">
+        
+        <!-- IKLAN ADSENSE ATAS (Header Ad) -->
+        <div class="wadah-iklan">
+            <div style="width: 100%;">
+                <span class="teks-iklan">Advertisement</span>
+                <!-- JANGAN LUPA: Ganti data-ad-slot dengan ID slot Anda nanti -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3360741150487096" 
+                     data-ad-slot="XXXXXXXXXX"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
         <div class="box-pencarian">
             <h2><i class="fas fa-search"></i> Cek Status Dokumen</h2>
             <p>Masukkan NIK Anda untuk melacak perkembangan dokumen.</p>
@@ -57,6 +83,24 @@
         </div>
 
         <div id="wadahHasil"></div>
+
+        <!-- IKLAN ADSENSE BAWAH (Footer Ad) -->
+        <div class="wadah-iklan">
+            <div style="width: 100%;">
+                <span class="teks-iklan">Advertisement</span>
+                <!-- JANGAN LUPA: Ganti data-ad-slot dengan ID slot Anda nanti -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-3360741150487096"
+                     data-ad-slot="XXXXXXXXXX"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
