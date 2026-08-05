@@ -30,6 +30,11 @@
         .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
 
         .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
+        
+        /* BANNER STYLING */
+        .banner-container { width: 100%; margin-bottom: 25px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.04); background: #fff; }
+        .banner-container img { width: 100%; height: auto; display: block; max-height: 250px; object-fit: cover; }
+
         .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
         .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
         .btn-kembali { background: #fff; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; color: #475569; text-decoration: none; font-weight: bold; transition: 0.2s; }
@@ -127,6 +132,12 @@
             </header>
 
             <div class="content-area">
+                
+                <!-- BANNER DITAMBAHKAN DI SINI -->
+                <div class="banner-container">
+                    <img src="../assets/img/benner.png" alt="Banner Pelayanan SIPPAK-CIB" onerror="this.style.display='none'">
+                </div>
+
                 <div class="page-title">
                     <a href="dashboard-master.html" class="btn-kembali"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
                     <h2>Generator Surat Warga</h2>
