@@ -30,11 +30,6 @@
         .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
 
         .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
-        
-        /* BANNER STYLING */
-        .banner-container { width: 100%; margin-bottom: 25px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.04); background: #fff; }
-        .banner-container img { width: 100%; height: auto; display: block; max-height: 250px; object-fit: cover; }
-
         .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
         .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
         .btn-kembali { background: #fff; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; color: #475569; text-decoration: none; font-weight: bold; transition: 0.2s; }
@@ -132,10 +127,9 @@
             </header>
 
             <div class="content-area">
-                
-                <!-- BANNER DITAMBAHKAN DI SINI -->
-                <div class="banner-container">
-                    <img src="../assets/img/benner.png" alt="Banner Pelayanan SIPPAK-CIB" onerror="this.style.display='none'">
+                <!-- BANNER UTAMA DENGAN SOLUSI 2 (height: auto, display: block) -->
+                <div style="margin-bottom: 25px;">
+                    <img src="../assets/img/banner.png" alt="Banner Wargi Cibeureum" style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                 </div>
 
                 <div class="page-title">
@@ -195,7 +189,7 @@
                             <!-- Field Khusus: Surat Penghasilan -->
                             <div class="form-group khusus-penghasilan" style="display: none;"><label>Penghasilan Per Bulan (Rp) *</label><input type="text" id="inPenghasilan" placeholder="Contoh: 3.000.000"></div>
                             
-                            <!-- Field Khusus: Tujuan Administrasi (Penghasilan, Tidak Rumah, Tidak Akta Ijazah) -->
+                            <!-- Field Khusus: Tujuan Administrasi -->
                             <div class="form-group khusus-administrasi" style="display: none;"><label>Tujuan Keperluan Administrasi *</label><input type="text" id="inTujuanAdministrasi" placeholder="Contoh: Pengajuan KPR / Bantuan Sosial / Sekolah"></div>
 
                             <!-- Tanda Tangan (Bersama) -->
@@ -253,7 +247,7 @@
         </table>
     </div>
 
-    <!-- TEMPLATE 2: SURAT KEGIATAN USAHA -->
+    <!-- TEMPLATE 2: SURAT USAHA -->
     <div id="kertasSuratUsaha" class="kertas-surat">
         <div class="kop-surat" style="margin-top: 20px;">SURAT PERNYATAAN</div>
         <div style="margin-bottom: 15px; padding-left: 45px;">Yang bertanda tangan di bawah ini :</div>
@@ -627,7 +621,6 @@
 
             let elemenSurat;
 
-            // MENGISI DATA KE TEMPLATE YANG DIPILIH
             if (jenisSurat === 'belum_bekerja') {
                 elemenSurat = document.getElementById('kertasSuratBelumBekerja');
                 document.getElementById('bNama').innerText = nama;
