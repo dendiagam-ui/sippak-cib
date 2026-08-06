@@ -102,9 +102,43 @@
             .content-area { padding: 20px; }
             .topbar { padding: 15px 20px; }
         }
+
+        /* POPUP UCAPAN SETELAH DOWNLOAD PDF */
+        .modal-ucapan { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); display: none; justify-content: center; 
+            align-items: center; z-index: 10001; backdrop-filter: blur(4px); 
+        }
+        .modal-ucapan-content { 
+            background: #fff; padding: 20px; border-radius: 16px; 
+            width: 90%; max-width: 450px; text-align: center; 
+            animation: zoomMuncul 0.3s ease-out; box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+        }
+        .modal-ucapan-content img { 
+            width: 100%; height: auto; border-radius: 10px; margin-bottom: 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+        }
+        .btn-tutup-ucapan { 
+            background: #2563eb; color: white; border: none; padding: 12px 20px; 
+            border-radius: 8px; font-weight: bold; font-size: 15px; 
+            cursor: pointer; width: 100%; transition: 0.2s; 
+        }
+        .btn-tutup-ucapan:hover { background: #1d4ed8; }
+        @keyframes zoomMuncul { 
+            from { transform: scale(0.8); opacity: 0; } 
+            to { transform: scale(1); opacity: 1; } 
+        }
     </style>
 </head>
 <body>
+
+    <!-- WADAH POPUP UCAPAN GAMBAR -->
+    <div class="modal-ucapan" id="modalUcapan">
+        <div class="modal-ucapan-content">
+            <img src="../assets/img/ucapan.png" alt="Ucapan Terima Kasih">
+            <button class="btn-tutup-ucapan" onclick="tutupPopupUcapan()"><i class="fas fa-check"></i> Tutup & Kembali</button>
+        </div>
+    </div>
 
     <div id="appLayout">
         <div class="overlay" id="overlay"></div>
@@ -127,9 +161,8 @@
             </header>
 
             <div class="content-area">
-                <!-- BENNER UTAMA DENGAN SOLUSI 2 (height: auto, display: block) -->
                 <div style="margin-bottom: 25px;">
-                    <img src="../assets/img/benner.png" alt="Benner Wargi Cibeureum" style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    <img src="../assets/img/banner.png" alt="Banner Wargi Cibeureum" style="width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                 </div>
 
                 <div class="page-title">
@@ -139,7 +172,6 @@
 
                 <div class="card">
                     
-                    <!-- PILIHAN JENIS SURAT DINAMIS -->
                     <div class="pilih-surat-box">
                         <label><i class="fas fa-file-signature"></i> Pilih Format Surat yang Akan Dicetak</label>
                         <select id="jenisSurat" onchange="gantiFormSurat()">
@@ -163,7 +195,7 @@
                             <div class="form-group"><label>Pekerjaan Saat Ini *</label><input type="text" id="inPekerjaan" placeholder="Sesuai KTP / Kenyataan" required></div>
                             <div class="form-group full-width"><label id="labelAlamatPemohon">Alamat Lengkap Pemohon *</label><textarea id="inAlamat" placeholder="Tuliskan alamat domisili lengkap beserta RT/RW..." required></textarea></div>
 
-                            <!-- Field Khusus: JK (Dipakai di bbrp surat) -->
+                            <!-- Field Khusus: JK -->
                             <div class="form-group khusus-jk"><label>Jenis Kelamin *</label>
                                 <select id="inJk" required>
                                     <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
@@ -192,7 +224,7 @@
                             <!-- Field Khusus: Tujuan Administrasi -->
                             <div class="form-group khusus-administrasi" style="display: none;"><label>Tujuan Keperluan Administrasi *</label><input type="text" id="inTujuanAdministrasi" placeholder="Contoh: Pengajuan KPR / Bantuan Sosial / Sekolah"></div>
 
-                            <!-- Tanda Tangan (Bersama) -->
+                            <!-- Tanda Tangan -->
                             <div class="form-group full-width">
                                 <label>Tanda Tangan Pemohon *</label>
                                 <p style="font-size: 12px; color: #64748b; margin-bottom: 8px;">Gunakan mouse atau sentuh layar HP Anda untuk menandatangani di dalam kotak di bawah ini.</p>
@@ -724,7 +756,10 @@
                         html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, 
                         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                     };
-                    html2pdf().set(opsiPDF).from(elemenSurat).save().then(kembalikanTampilan);
+                    html2pdf().set(opsiPDF).from(elemenSurat).save().then(() => {
+                        kembalikanTampilan();
+                        tampilkanPopupUcapan(); // Memicu popup ucapan di sini
+                    });
                 } 
                 else if (formatOutput === 'jpg') {
                     html2canvas(elemenSurat, { scale: 2, useCORS: true, scrollY: 0 }).then(canvasTarget => {
@@ -743,6 +778,15 @@
                 btnPDF.innerHTML = teksPDFAsli; btnJPG.innerHTML = teksJPGAsli;
                 btnPDF.disabled = false; btnJPG.disabled = false;
             }
+        }
+
+        // FUNGSI UNTUK MENAMPILKAN & MENUTUP POPUP UCAPAN
+        function tampilkanPopupUcapan() {
+            document.getElementById('modalUcapan').style.display = 'flex';
+        }
+
+        function tutupPopupUcapan() {
+            document.getElementById('modalUcapan').style.display = 'none';
         }
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
