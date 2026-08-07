@@ -474,10 +474,31 @@
     </div>
 
     <script>
+        // ==========================================
+        // SISTEM SESI LOGIN 6 JAM & MUAT HALAMAN
+        // ==========================================
         document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
-            if(!roleSaatIni) { window.location.href = "login.html"; return; } 
+            const waktuLogin = localStorage.getItem('login_time');
             
+            // Cek jika belum login
+            if(!roleSaatIni || !waktuLogin) { 
+                window.location.href = "login.html"; 
+                return; 
+            } 
+            
+            // Logika kedaluwarsa 6 Jam
+            const waktuSekarang = new Date().getTime();
+            const batasSesiMilis = 6 * 60 * 60 * 1000; // 6 Jam
+            
+            if (waktuSekarang - parseInt(waktuLogin) > batasSesiMilis) {
+                alert("⏱️ Sesi login Anda telah habis (Lebih dari 6 Jam).\nSilakan login kembali demi keamanan.");
+                localStorage.clear();
+                window.location.href = "login.html";
+                return;
+            }
+            
+            // Lanjutkan jika sesi aman
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
             document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
 
@@ -758,7 +779,7 @@
                     };
                     html2pdf().set(opsiPDF).from(elemenSurat).save().then(() => {
                         kembalikanTampilan();
-                        tampilkanPopupUcapan(); // Memicu popup ucapan di sini
+                        tampilkanPopupUcapan(); // Memicu popup ucapan khusus PDF
                     });
                 } 
                 else if (formatOutput === 'jpg') {
@@ -768,6 +789,7 @@
                         link.href = canvasTarget.toDataURL('image/jpeg', 1.0);
                         link.click();
                         kembalikanTampilan();
+                        tampilkanPopupUcapan(); // Memicu popup ucapan khusus JPG
                     });
                 }
             }, 400); 

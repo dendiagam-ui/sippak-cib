@@ -69,7 +69,6 @@
         .badge-selesai { background: #dcfce7; color: #16a34a; }
         .badge-ditolak { background: #fee2e2; color: #dc2626; }
 
-        /* KELAS MODAL POPUP */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(3px); }
         .modal-box { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
 
@@ -121,7 +120,6 @@
                         <div id="wadahLampiran"></div>
                     </div>
                     
-                    <!-- WADAH KHUSUS SUPER ADMIN -->
                     <div id="wadahSuperAdmin" style="display: none; flex-direction: column; gap: 15px; margin-bottom: 30px;">
                         <button class="btn-edit" onclick="bukaModalEdit()"><i class="fas fa-user-edit"></i> Edit Data Teks Permohonan Warga</button>
                         <button class="btn-hapus" onclick="hapusPermohonan()"><i class="fas fa-trash-alt"></i> Hapus Permohonan Permanen</button>
@@ -153,7 +151,6 @@
         </div>
     </main>
 
-    <!-- MODAL EDIT DATA (KHUSUS SUPER ADMIN) -->
     <div class="modal-overlay" id="modalEditData">
         <div class="modal-box">
             <h3 style="margin-bottom: 20px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
@@ -278,7 +275,6 @@
                     document.getElementById('blokCatatan').style.display = 'block';
                 }
                 
-                // MUNCULKAN TOMBOL EDIT & HAPUS JIKA SUPERADMIN
                 const roleSaatIni = localStorage.getItem('user_role');
                 if (roleSaatIni === 'superadmin') {
                     document.getElementById('wadahSuperAdmin').style.display = 'flex';
@@ -304,7 +300,6 @@
                 }).eq('id', idPermohonan);
                 if (updateError) throw updateError;
 
-                // NOTIFIKASI WA KEPADA WARGA
                 if (statusBaru !== 'Dikirim' && dataPermohonan.no_wa) {
                     let pesanWA = "";
                     let linkPelacakan = window.location.origin + "/pages/status.html";
@@ -324,7 +319,6 @@
             } catch (err) { alert("⚠️ GAGAL:\n" + err.message); btn.innerHTML = teksAsli; btn.disabled = false; }
         }
 
-        // FUNGSI EDIT DATA (SUPER ADMIN)
         function bukaModalEdit() {
             document.getElementById('editNama').value = dataPermohonan.nama_pemohon || '';
             document.getElementById('editNik').value = dataPermohonan.nik || '';
@@ -373,7 +367,6 @@
             }
         }
 
-        // FUNGSI HAPUS PERMANEN (SUPER ADMIN)
         async function hapusPermohonan() {
             const roleSaatIni = localStorage.getItem('user_role');
             if (roleSaatIni !== 'superadmin') { alert("⛔ AKSES DITOLAK!\nHanya Super Admin yang diizinkan menghapus data permanen."); return; }
@@ -403,10 +396,31 @@
             } catch(err) { alert("Gagal menghapus: " + err.message); document.getElementById('loadingOverlay').style.display = 'none'; }
         }
 
+        // ==========================================
+        // SISTEM SESI LOGIN 6 JAM & MUAT HALAMAN
+        // ==========================================
         document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
-            if(!roleSaatIni) { window.location.href = "login.html"; return; } 
+            const waktuLogin = localStorage.getItem('login_time');
             
+            // Cek jika belum login
+            if(!roleSaatIni || !waktuLogin) { 
+                window.location.href = "login.html"; 
+                return; 
+            } 
+            
+            // Logika kedaluwarsa 6 Jam
+            const waktuSekarang = new Date().getTime();
+            const batasSesiMilis = 6 * 60 * 60 * 1000; // 6 Jam
+            
+            if (waktuSekarang - parseInt(waktuLogin) > batasSesiMilis) {
+                alert("⏱️ Sesi login Anda telah habis (Lebih dari 6 Jam).\nSilakan login kembali demi keamanan.");
+                localStorage.clear();
+                window.location.href = "login.html";
+                return;
+            }
+            
+            // Lanjutkan memuat halaman jika sesi aman
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Petugas';
             document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
             

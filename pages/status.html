@@ -7,58 +7,81 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        body { background: #f1f5f9; padding: 20px; color: #1e293b; }
+        body { background: #f8fafc; padding: 40px 20px; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
         
-        .wadah-status { max-width: 650px; margin: 40px auto; }
-        .box-pencarian { background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: center; margin-bottom: 25px; }
-        .box-pencarian h2 { color: #2563eb; margin-bottom: 10px; font-weight: 800; }
-        .box-pencarian p { color: #64748b; font-size: 14px; margin-bottom: 25px; }
+        .wadah-status { width: 100%; max-width: 550px; }
         
-        .form-group input { width: 100%; padding: 15px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 15px; outline: none; transition: 0.3s; }
-        .form-group input:focus { border-color: #2563eb; }
+        /* BOX PENCARIAN (SELARAS DENGAN LOGIN.HTML) */
+        .box-pencarian { background: #fff; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: center; margin-bottom: 25px; }
+        .logo-icon { font-size: 40px; color: #2563eb; margin-bottom: 15px; }
+        .box-pencarian h2 { color: #0f172a; margin-bottom: 8px; font-weight: 900; font-size: 24px; }
+        .box-pencarian p { color: #64748b; font-size: 14px; margin-bottom: 30px; }
         
-        .btn-cari { background: #2563eb; color: white; padding: 15px; width: 100%; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-cari:hover { background: #1d4ed8; }
+        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
+        .form-group i { position: absolute; left: 16px; top: 16px; color: #94a3b8; font-size: 16px; }
+        .form-group input { width: 100%; padding: 14px 14px 14px 45px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; outline: none; font-weight: 600; }
+        .form-group input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-group input:focus + i { color: #2563eb; }
+        
+        .btn-cari { background: #2563eb; color: white; padding: 15px; width: 100%; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+        .btn-cari:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+        .btn-cari:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .kartu-hasil { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); text-align: left; }
-        .kartu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
-        .no-tiket { font-size: 18px; font-weight: 900; color: #2563eb; }
+        .link-kembali { display: inline-block; margin-top: 25px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .link-kembali:hover { color: #2563eb; }
+
+        /* KARTU HASIL PENCARIAN (DESAIN PREMIUM) */
+        .kartu-hasil { background: #fff; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: left; transition: 0.3s; }
+        .kartu-hasil:hover { border-color: #bfdbfe; box-shadow: 0 10px 25px rgba(37,99,235,0.05); }
+        .kartu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+        .no-tiket { font-size: 18px; font-weight: 900; color: #2563eb; display: flex; align-items: center; gap: 8px; }
         
-        .rincian-teks { font-size: 14px; color: #475569; margin-bottom: 8px; }
-        .rincian-teks strong { color: #1e293b; }
+        .grid-rincian { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
+        .rincian-teks { font-size: 14px; color: #334155; display: flex; flex-direction: column; font-weight: 600; }
+        .rincian-teks strong { color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 700; }
         
-        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; text-transform: uppercase; }
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
         .badge-dikirim { background: #fef3c7; color: #d97706; }
         .badge-terverifikasi { background: #e0e7ff; color: #4338ca; }
         .badge-proses { background: #e0f2fe; color: #0284c7; }
         .badge-selesai { background: #dcfce7; color: #16a34a; }
         .badge-ditolak { background: #fee2e2; color: #dc2626; }
 
-        .catatan-petugas { background: #eff6ff; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6; font-size: 13px; color: #1e40af; }
+        .catatan-petugas { background: #fffbeb; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #fde68a; font-size: 13.5px; color: #92400e; line-height: 1.5; }
         
-        .pengaju-info { font-size: 12px; font-weight: bold; padding: 5px 10px; border-radius: 5px; display: inline-block; margin-bottom: 10px; }
+        .pengaju-info { font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 6px; display: inline-block; margin-bottom: 20px; }
         .pengaju-petugas { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .pengaju-mandiri { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        
+        @media (max-width: 500px) {
+            .grid-rincian { grid-template-columns: 1fr; gap: 10px; }
+            .box-pencarian { padding: 30px 20px; }
+        }
     </style>
 </head>
 <body>
 
     <div class="wadah-status">
         <div class="box-pencarian">
-            <h2><i class="fas fa-search"></i> Cek Status Dokumen</h2>
-            <p>Masukkan NIK Anda untuk melacak perkembangan dokumen.</p>
+            <i class="fas fa-search logo-icon"></i>
+            <h2>Cek Status Dokumen</h2>
+            <p>Masukkan 16 Digit NIK Anda untuk melacak perkembangan permohonan dokumen.</p>
+            
             <form onsubmit="cariStatus(event)">
                 <div class="form-group">
-                    <input type="number" id="inpCariNik" placeholder="Masukkan 16 Digit NIK" required>
+                    <input type="number" id="inpCariNik" placeholder="Masukkan 16 Digit NIK..." required autocomplete="off">
+                    <i class="fas fa-id-card"></i>
                 </div>
-                <button type="submit" class="btn-cari" id="btnCari">Lacak Sekarang</button>
+                <button type="submit" class="btn-cari" id="btnCari"><i class="fas fa-search"></i> Lacak Sekarang</button>
             </form>
-            <div style="margin-top: 15px;"><a href="../index.html" style="color: #64748b; text-decoration: none; font-size: 14px;">Kembali ke Beranda</a></div>
+            
+            <a href="../index.html" class="link-kembali"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
         </div>
 
         <div id="wadahHasil"></div>
     </div>
 
+    <!-- SCRIPT SUPABASE & LOGIKA -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
@@ -80,7 +103,7 @@
             const btn = document.getElementById('btnCari');
             const wadahHasil = document.getElementById('wadahHasil');
             
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari...";
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari Data...";
             btn.disabled = true;
 
             try {
@@ -88,7 +111,12 @@
                 if (error) throw error;
 
                 if (data.length === 0) {
-                    wadahHasil.innerHTML = `<div style="text-align:center; color:#ef4444; background:#fee2e2; padding:20px; border-radius:12px; font-weight:bold;">Tidak ada riwayat permohonan yang ditemukan untuk NIK tersebut.</div>`;
+                    wadahHasil.innerHTML = `
+                        <div style="text-align:center; background:#fee2e2; border: 1px solid #f87171; padding:25px; border-radius:12px;">
+                            <i class="fas fa-exclamation-circle" style="color:#ef4444; font-size:35px; margin-bottom:10px;"></i>
+                            <div style="color:#b91c1c; font-weight:bold; font-size:15px;">Tidak Ditemukan</div>
+                            <div style="color:#dc2626; font-size:13px; margin-top:5px;">Tidak ada riwayat permohonan yang aktif untuk NIK tersebut.</div>
+                        </div>`;
                     return;
                 }
 
@@ -97,7 +125,7 @@
                     let stat = item.status || 'Dikirim';
                     let kelasBadge = 'badge-dikirim';
                     if(stat === 'Terverifikasi') kelasBadge = 'badge-terverifikasi';
-                    else if(stat === 'Proses') kelasBadge = 'badge-proses';
+                    else if(stat === 'Proses' || stat === 'Diproses') kelasBadge = 'badge-proses';
                     else if(stat === 'Selesai') kelasBadge = 'badge-selesai';
                     else if(stat === 'Ditolak') kelasBadge = 'badge-ditolak';
 
@@ -110,17 +138,26 @@
                     htmlCard += `
                         <div class="kartu-hasil">
                             <div class="kartu-header">
-                                <span class="no-tiket">${item.nomor_tiket}</span>
+                                <span class="no-tiket"><i class="fas fa-ticket-alt" style="color: #94a3b8;"></i> ${item.nomor_tiket}</span>
                                 <span class="badge ${kelasBadge}">${stat}</span>
                             </div>
                             
-                            <div class="pengaju-info ${kelasPengaju}"><i class="fas ${iconPengaju}"></i> Diajukan Oleh: ${namaPengaju}</div>
+                            <div class="pengaju-info ${kelasPengaju}">
+                                <i class="fas ${iconPengaju}"></i> Diajukan Oleh: ${namaPengaju}
+                            </div>
                             
-                            <div class="rincian-teks"><strong>Layanan:</strong> ${item.jenis_layanan}</div>
-                            <div class="rincian-teks"><strong>Pemohon:</strong> ${item.nama_pemohon}</div>
-                            <div class="rincian-teks"><strong>Tanggal:</strong> ${tgl}</div>
+                            <div class="grid-rincian">
+                                <div class="rincian-teks"><strong>Jenis Layanan</strong> ${item.jenis_layanan}</div>
+                                <div class="rincian-teks"><strong>Tanggal Pengajuan</strong> ${tgl}</div>
+                            </div>
                             
-                            ${item.catatan_petugas ? `<div class="catatan-petugas"><strong><i class="fas fa-comment-dots"></i> Catatan Petugas:</strong><br>${item.catatan_petugas}</div>` : ''}
+                            <div class="rincian-teks" style="margin-top: 5px;"><strong>Nama Pemohon</strong> ${item.nama_pemohon}</div>
+                            
+                            ${item.catatan_petugas ? `
+                            <div class="catatan-petugas">
+                                <strong style="color: #b45309;"><i class="fas fa-comment-dots"></i> Catatan Petugas:</strong><br>
+                                ${item.catatan_petugas}
+                            </div>` : ''}
                         </div>
                     `;
                 });
@@ -130,7 +167,7 @@
             } catch (err) {
                 alert("Gagal memuat data: " + err.message);
             } finally {
-                btn.innerHTML = "Lacak Sekarang";
+                btn.innerHTML = "<i class='fas fa-search'></i> Lacak Sekarang";
                 btn.disabled = false;
             }
         }

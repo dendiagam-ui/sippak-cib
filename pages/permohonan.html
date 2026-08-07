@@ -34,15 +34,19 @@
         .modal-box { background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 450px; text-align: center; }
         .btn-konfirmasi { background: #10b981; color: white; padding: 14px; width: 100%; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 20px; cursor: pointer; }
         .btn-batal { background: #f1f5f9; color: #475569; padding: 14px; width: 100%; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 10px; cursor: pointer; }
+
+        /* KELAS KHUSUS TANDA BINTANG WAJIB (MERAH) */
+        .wajib { color: #dc2626; font-weight: 900; margin-left: 3px; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="wadah-form" id="wadahForm">
+        <!-- PENTING: Pengiriman form akan dicegah otomatis oleh browser jika kolom Wajib belum diisi -->
         <form id="formPengajuan" onsubmit="validasiDuplikat(event)">
             
             <div class="box-layanan">
-                <label><i class="fas fa-list-check"></i> Pilih Jenis Layanan *</label>
+                <label><i class="fas fa-list-check"></i> Pilih Jenis Layanan <span class="wajib">*</span></label>
                 <select id="jenis_layanan" onchange="sesuaikanForm()" required>
                     <option value="" disabled selected>-- Ketuk untuk memilih --</option>
                     <option value="Cetak Kartu Keluarga">Cetak Kartu Keluarga (KK)</option>
@@ -55,12 +59,13 @@
 
             <div class="section-title"><i class="fas fa-user-circle"></i> 1. DATA PEMOHON</div>
             
-            <div class="form-group"><label>Nomor Induk Kependudukan (NIK) *</label><input type="number" id="nik" placeholder="Masukkan 16 Digit NIK" required></div>
-            <div class="form-group"><label>Nomor Kartu Keluarga *</label><input type="number" id="no_kk" placeholder="Masukkan 16 Digit Nomor KK" required></div>
-            <div class="form-group"><label>Nama Lengkap Pemohon *</label><input type="text" id="nama" placeholder="Sesuai KTP" required style="text-transform: uppercase;"></div>
-            <div class="form-group"><label>Nomor WhatsApp *</label><input type="text" id="no_wa" placeholder="Awalan 62/08..." onkeyup="formatWA(this)" required></div>
+            <div class="form-group"><label>Nomor Induk Kependudukan (NIK) <span class="wajib">*</span></label><input type="number" id="nik" placeholder="Masukkan 16 Digit NIK" required></div>
+            <div class="form-group"><label>Nomor Kartu Keluarga <span class="wajib">*</span></label><input type="number" id="no_kk" placeholder="Masukkan 16 Digit Nomor KK" required></div>
+            <div class="form-group"><label>Nama Lengkap Pemohon <span class="wajib">*</span></label><input type="text" id="nama" placeholder="Sesuai KTP" required style="text-transform: uppercase;"></div>
+            <div class="form-group"><label>Nomor WhatsApp <span class="wajib">*</span></label><input type="text" id="no_wa" placeholder="Awalan 62/08..." onkeyup="formatWA(this)" required></div>
             <div class="form-group"><label>Email (Opsional)</label><input type="email" id="email" placeholder="Contoh: nama@email.com"></div>
 
+            <!-- BLOK KK -->
             <div id="blokCetakKK" style="display: none;">
                 <div class="section-title"><i class="fas fa-file-alt"></i> 2. PERSYARATAN CETAK KK</div>
                 <div class="form-group"><label>Surat Kehilangan Kepolisian (Jika KK Hilang)</label><input type="file" id="file_kk_hilang"></div>
@@ -68,47 +73,48 @@
                 <div class="form-group"><label>Keterangan Tambahan</label><textarea id="keterangan" placeholder="Tuliskan keterangan jika ada..."></textarea></div>
             </div>
 
-            <!-- BLOK KTP: DILENGKAPI DENGAN UPLOAD DOKUMEN -->
+            <!-- BLOK KTP -->
             <div id="blokCetakKTP" style="display: none;">
                 <div class="section-title"><i class="fas fa-id-card"></i> 2. PERSYARATAN CETAK KTP</div>
-                <div class="form-group"><label>NIK KTP yang diajukan *</label><input type="number" id="nik_pengajuan"></div>
-                <div class="form-group"><label>Nama KTP yang diajukan *</label><input type="text" id="nama_pengajuan"></div>
-                <div class="form-group"><label>Alasan Cetak Ulang *</label>
-                    <select id="alasan_pengajuan"><option value="Hilang">KTP Hilang</option><option value="Rusak">KTP Rusak / Patah</option></select>
+                <div class="form-group"><label>NIK KTP yang diajukan <span class="wajib">*</span></label><input type="number" id="nik_pengajuan" class="dinamis-wajib"></div>
+                <div class="form-group"><label>Nama KTP yang diajukan <span class="wajib">*</span></label><input type="text" id="nama_pengajuan" class="dinamis-wajib"></div>
+                <div class="form-group"><label>Alasan Cetak Ulang <span class="wajib">*</span></label>
+                    <select id="alasan_pengajuan" class="dinamis-wajib"><option value="Hilang">KTP Hilang</option><option value="Rusak">KTP Rusak / Patah</option></select>
                 </div>
                 
                 <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #94a3b8; margin-bottom: 15px;">
-                    <div class="form-group"><label>Upload KTP Fisik / Surat Kehilangan *</label><input type="file" id="file_ktp"></div>
-                    <div class="form-group"><label>Upload KK / Surat Kehilangan *</label><input type="file" id="file_kk"></div>
+                    <div class="form-group"><label>Upload KTP Fisik / Surat Kehilangan <span class="wajib">*</span></label><input type="file" id="file_ktp" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Upload KK / Surat Kehilangan <span class="wajib">*</span></label><input type="file" id="file_kk" class="dinamis-wajib"></div>
                 </div>
 
-                <!-- Box Informasi -->
                 <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 15px; border-radius: 8px; margin-top: 15px;">
                     <p style="color: #d97706; font-size: 14px; font-weight: 600; margin-bottom: 5px;"><i class="fas fa-info-circle"></i> Informasi Penting Pengambilan</p>
                     <p style="color: #92400e; font-size: 13px; line-height: 1.5;">Pengambilan KTP-EL yang baru dilakukan langsung di <strong>Kantor Kecamatan Cimahi Selatan</strong>. <br>Syarat wajib yang harus dibawa saat pengambilan: <strong>Membawa KTP fisik yang rusak</strong> ATAU <strong>Surat Kehilangan Asli dari Kepolisian</strong>.</p>
                 </div>
             </div>
 
+            <!-- BLOK PERBAIKAN -->
             <div id="blokPerbaikan" style="display: none;">
                 <div class="section-title"><i class="fas fa-user-edit"></i> 2. FORMULIR PERBAIKAN DATA</div>
-                <div class="form-group"><label>NIK yang diperbaiki *</label><input type="number" id="nik_perbaikan"></div>
-                <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="nama_perbaikan"></div>
-                <div class="form-group"><label>Penjelasan Perbaikan (Contoh: Ubah Status Kawin) *</label><textarea id="keterangan_perbaikan"></textarea></div>
-                <div class="form-group"><label>Upload Formulir F1.06 (Bermaterai) *</label><input type="file" id="file_f106"></div>
-                <div class="form-group"><label>Upload Dokumen Bukti Perbaikan *</label><input type="file" id="dokumen_tambahan_perbaikan"></div>
+                <div class="form-group"><label>NIK yang diperbaiki <span class="wajib">*</span></label><input type="number" id="nik_perbaikan" class="dinamis-wajib"></div>
+                <div class="form-group"><label>Nama Lengkap <span class="wajib">*</span></label><input type="text" id="nama_perbaikan" class="dinamis-wajib"></div>
+                <div class="form-group"><label>Penjelasan Perbaikan (Contoh: Ubah Status Kawin) <span class="wajib">*</span></label><textarea id="keterangan_perbaikan" class="dinamis-wajib"></textarea></div>
+                <div class="form-group"><label>Upload Formulir F1.06 (Bermaterai) <span class="wajib">*</span></label><input type="file" id="file_f106" class="dinamis-wajib"></div>
+                <div class="form-group"><label>Upload Dokumen Bukti Perbaikan <span class="wajib">*</span></label><input type="file" id="dokumen_tambahan_perbaikan" class="dinamis-wajib"></div>
                 <div class="form-group"><label>Dokumen Pendukung 1 (Opsional)</label><input type="file" id="dokumen_pendukung_1"></div>
                 <div class="form-group"><label>Dokumen Pendukung 2 (Opsional)</label><input type="file" id="dokumen_pendukung_2"></div>
             </div>
 
+            <!-- BLOK PINDAH -->
             <div id="blokPindah" style="display: none;">
                 <div class="section-title"><i class="fas fa-truck-moving"></i> 2. FORMULIR PINDAH KELUAR</div>
-                <div class="form-group"><label>Alamat Asal (Lengkap) *</label><textarea id="alamat_asal"></textarea></div>
-                <div class="form-group"><label>Alamat Tujuan Pindah (Lengkap) *</label><textarea id="alamat_tujuan"></textarea></div>
-                <div class="form-group"><label>Alasan Pindah *</label>
-                    <select id="alasan_pindah"><option value="Pekerjaan">Pekerjaan</option><option value="Pendidikan">Pendidikan</option><option value="Keluarga">Keluarga</option><option value="Lainnya">Lainnya</option></select>
+                <div class="form-group"><label>Alamat Asal (Lengkap) <span class="wajib">*</span></label><textarea id="alamat_asal" class="dinamis-wajib"></textarea></div>
+                <div class="form-group"><label>Alamat Tujuan Pindah (Lengkap) <span class="wajib">*</span></label><textarea id="alamat_tujuan" class="dinamis-wajib"></textarea></div>
+                <div class="form-group"><label>Alasan Pindah <span class="wajib">*</span></label>
+                    <select id="alasan_pindah" class="dinamis-wajib"><option value="Pekerjaan">Pekerjaan</option><option value="Pendidikan">Pendidikan</option><option value="Keluarga">Keluarga</option><option value="Lainnya">Lainnya</option></select>
                 </div>
-                <div class="form-group"><label>Upload Kartu Keluarga (KK) Asli *</label><input type="file" id="file_kk_pindah"></div>
-                <div class="form-group"><label>Upload KTP Asli *</label><input type="file" id="file_ktp_pindah"></div>
+                <div class="form-group"><label>Upload Kartu Keluarga (KK) Asli <span class="wajib">*</span></label><input type="file" id="file_kk_pindah" class="dinamis-wajib"></div>
+                <div class="form-group"><label>Upload KTP Asli <span class="wajib">*</span></label><input type="file" id="file_ktp_pindah" class="dinamis-wajib"></div>
                 
                 <h4 style="margin: 25px 0 10px 0; color: #1e40af; font-size: 14px;">Anggota Keluarga Yang Pindah</h4>
                 <div class="form-group">
@@ -123,45 +129,46 @@
                 <div id="wadahAnggotaPindah"></div>
             </div>
 
+            <!-- BLOK AKTA -->
             <div id="blokAktaKelahiran" style="display: none;">
                 <div class="section-title"><i class="fas fa-users"></i> 2. DATA SAKSI</div>
                 <div class="grid-2">
-                    <div class="form-group"><label>NIK Saksi 1 *</label><input type="number" id="nik_saksi_1"></div>
-                    <div class="form-group"><label>Nama Lengkap Saksi 1 *</label><input type="text" id="nama_saksi_1"></div>
-                    <div class="form-group"><label>NIK Saksi 2 *</label><input type="number" id="nik_saksi_2"></div>
-                    <div class="form-group"><label>Nama Lengkap Saksi 2 *</label><input type="text" id="nama_saksi_2"></div>
+                    <div class="form-group"><label>NIK Saksi 1 <span class="wajib">*</span></label><input type="number" id="nik_saksi_1" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Nama Lengkap Saksi 1 <span class="wajib">*</span></label><input type="text" id="nama_saksi_1" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>NIK Saksi 2 <span class="wajib">*</span></label><input type="number" id="nik_saksi_2" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Nama Lengkap Saksi 2 <span class="wajib">*</span></label><input type="text" id="nama_saksi_2" class="dinamis-wajib"></div>
                 </div>
 
                 <div class="section-title"><i class="fas fa-user-friends"></i> 3. DATA ORANG TUA</div>
                 <div class="grid-2">
-                    <div class="form-group"><label>NIK Ayah *</label><input type="number" id="nik_ayah"></div>
-                    <div class="form-group"><label>Nama Lengkap Ayah *</label><input type="text" id="nama_ayah"></div>
-                    <div class="form-group"><label>NIK Ibu *</label><input type="number" id="nik_ibu"></div>
-                    <div class="form-group"><label>Nama Lengkap Ibu *</label><input type="text" id="nama_ibu"></div>
+                    <div class="form-group"><label>NIK Ayah <span class="wajib">*</span></label><input type="number" id="nik_ayah" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Nama Lengkap Ayah <span class="wajib">*</span></label><input type="text" id="nama_ayah" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>NIK Ibu <span class="wajib">*</span></label><input type="number" id="nik_ibu" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Nama Lengkap Ibu <span class="wajib">*</span></label><input type="text" id="nama_ibu" class="dinamis-wajib"></div>
                 </div>
 
                 <div class="section-title"><i class="fas fa-baby"></i> 4. BIODATA ANAK</div>
-                <div class="form-group"><label>Nama Lengkap Anak *</label><input type="text" id="nama_anak"></div>
+                <div class="form-group"><label>Nama Lengkap Anak <span class="wajib">*</span></label><input type="text" id="nama_anak" class="dinamis-wajib"></div>
                 <div class="grid-2">
-                    <div class="form-group"><label>Tempat Lahir *</label><input type="text" id="tempat_lahir_anak"></div>
-                    <div class="form-group"><label>Tanggal Lahir *</label><input type="date" id="tgl_lahir_anak"></div>
-                    <div class="form-group"><label>Waktu Kelahiran *</label><input type="time" id="waktu_lahir_anak"></div>
-                    <div class="form-group"><label>Kelahiran Ke- *</label><input type="number" id="anak_ke" placeholder="Contoh: 1"></div>
-                    <div class="form-group"><label>Berat Bayi (Kg) *</label><input type="number" step="0.1" id="berat_anak" placeholder="Contoh: 3.2"></div>
-                    <div class="form-group"><label>Panjang Bayi (Cm) *</label><input type="number" step="0.1" id="panjang_anak" placeholder="Contoh: 50"></div>
+                    <div class="form-group"><label>Tempat Lahir <span class="wajib">*</span></label><input type="text" id="tempat_lahir_anak" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Tanggal Lahir <span class="wajib">*</span></label><input type="date" id="tgl_lahir_anak" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Waktu Kelahiran <span class="wajib">*</span></label><input type="time" id="waktu_lahir_anak" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Kelahiran Ke- <span class="wajib">*</span></label><input type="number" id="anak_ke" placeholder="Contoh: 1" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Berat Bayi (Kg) <span class="wajib">*</span></label><input type="number" step="0.1" id="berat_anak" placeholder="Contoh: 3.2" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Panjang Bayi (Cm) <span class="wajib">*</span></label><input type="number" step="0.1" id="panjang_anak" placeholder="Contoh: 50" class="dinamis-wajib"></div>
                 </div>
                 <div class="form-group"><label>Keterangan (Opsional)</label><textarea id="keterangan_akta"></textarea></div>
 
-                <div class="section-title"><i class="fas fa-file-upload"></i> 5. UPLOAD DOKUMEN</div>
+                <div class="section-title"><i class="fas fa-file-upload"></i> 5. UPLOAD DOKUMEN WAJIB</div>
                 <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #94a3b8;">
-                    <div class="form-group"><label>Formulir F2.01 *</label><input type="file" id="file_akta_f201"></div>
-                    <div class="form-group"><label>Kartu Keluarga *</label><input type="file" id="file_akta_kk"></div>
-                    <div class="form-group"><label>Surat Keterangan Kelahiran *</label><input type="file" id="file_akta_ket_lahir"></div>
-                    <div class="form-group"><label>Buku Nikah Hal 1 *</label><input type="file" id="file_akta_buku_nikah_1"></div>
-                    <div class="form-group"><label>Buku Nikah Hal 2 *</label><input type="file" id="file_akta_buku_nikah_2"></div>
-                    <div class="form-group"><label>Buku Nikah Hal 3 *</label><input type="file" id="file_akta_buku_nikah_3"></div>
-                    <div class="form-group"><label>KTP Ibu *</label><input type="file" id="file_akta_ktp_ibu"></div>
-                    <div class="form-group"><label>KTP Ayah *</label><input type="file" id="file_akta_ktp_ayah"></div>
+                    <div class="form-group"><label>Formulir F2.01 <span class="wajib">*</span></label><input type="file" id="file_akta_f201" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Kartu Keluarga <span class="wajib">*</span></label><input type="file" id="file_akta_kk" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Surat Keterangan Kelahiran <span class="wajib">*</span></label><input type="file" id="file_akta_ket_lahir" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Buku Nikah Hal 1 <span class="wajib">*</span></label><input type="file" id="file_akta_buku_nikah_1" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Buku Nikah Hal 2 <span class="wajib">*</span></label><input type="file" id="file_akta_buku_nikah_2" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>Buku Nikah Hal 3 <span class="wajib">*</span></label><input type="file" id="file_akta_buku_nikah_3" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>KTP Ibu <span class="wajib">*</span></label><input type="file" id="file_akta_ktp_ibu" class="dinamis-wajib"></div>
+                    <div class="form-group"><label>KTP Ayah <span class="wajib">*</span></label><input type="file" id="file_akta_ktp_ayah" class="dinamis-wajib"></div>
                     <div class="form-group"><label>Dokumen Pendukung (Opsional)</label><input type="file" id="file_akta_pendukung"></div>
                     <div class="form-group"><label>Dokumen Pendukung 1 (Opsional)</label><input type="file" id="file_akta_pendukung_1"></div>
                     <div class="form-group"><label>Dokumen Pendukung 2 (Opsional)</label><input type="file" id="file_akta_pendukung_2"></div>
@@ -221,9 +228,9 @@
                 wadah.innerHTML += `
                     <div style="background:#f8fafc; padding:15px; border:1px solid #cbd5e1; border-radius:8px; margin-bottom:15px;">
                         <h4 style="color:#1e40af; margin-bottom:10px; font-size:14px;"><i class="fas fa-user-tag"></i> Anggota ke-${i}</h4>
-                        <div class="form-group"><label>NIK Anggota</label><input type="number" id="nik_anggota_${i}" required></div>
-                        <div class="form-group"><label>Nama Anggota</label><input type="text" id="nama_anggota_${i}" required></div>
-                        <div class="form-group"><label>Status Hubungan</label>
+                        <div class="form-group"><label>NIK Anggota <span class="wajib">*</span></label><input type="number" id="nik_anggota_${i}" required></div>
+                        <div class="form-group"><label>Nama Anggota <span class="wajib">*</span></label><input type="text" id="nama_anggota_${i}" required></div>
+                        <div class="form-group"><label>Status Hubungan <span class="wajib">*</span></label>
                             <select id="status_anggota_${i}" required>
                                 <option value="" disabled selected>-- Pilih --</option>
                                 <option value="Suami">Suami</option><option value="Istri">Istri</option><option value="Anak">Anak</option>
@@ -233,39 +240,39 @@
             }
         }
 
+        // SISTEM PINTAR MENGATUR KOLOM WAJIB
         function sesuaikanForm() {
             const layanan = document.getElementById('jenis_layanan').value;
 
-            const bKK = document.getElementById('blokCetakKK');
-            const bKTP = document.getElementById('blokCetakKTP');
-            const bPerbaikan = document.getElementById('blokPerbaikan');
-            const bPindah = document.getElementById('blokPindah');
-            const bAkta = document.getElementById('blokAktaKelahiran');
-            
-            if (bKK) bKK.style.display = 'none'; 
-            if (bKTP) bKTP.style.display = 'none'; 
-            if (bPerbaikan) bPerbaikan.style.display = 'none'; 
-            if (bPindah) bPindah.style.display = 'none';
-            if (bAkta) bAkta.style.display = 'none';
-            
-            const elAsal = document.getElementById('alamat_asal');
-            const elTujuan = document.getElementById('alamat_tujuan');
-            const elAlasan = document.getElementById('alasan_pindah');
-            if(elAsal) elAsal.required = false; 
-            if(elTujuan) elTujuan.required = false; 
-            if(elAlasan) elAlasan.required = false; 
+            // Kumpulkan semua blok
+            const blocks = {
+                'Cetak Kartu Keluarga': document.getElementById('blokCetakKK'),
+                'Cetak Ulang KTP-El': document.getElementById('blokCetakKTP'),
+                'Perbaikan Data': document.getElementById('blokPerbaikan'),
+                'Pindah Keluar': document.getElementById('blokPindah'),
+                'Akta Kelahiran Tanpa NIK': document.getElementById('blokAktaKelahiran')
+            };
 
-            if (layanan === 'Cetak Kartu Keluarga' && bKK) bKK.style.display = 'block'; 
-            else if (layanan === 'Cetak Ulang KTP-El' && bKTP) bKTP.style.display = 'block'; 
-            else if (layanan === 'Perbaikan Data' && bPerbaikan) bPerbaikan.style.display = 'block'; 
-            else if (layanan === 'Pindah Keluar' && bPindah) { 
-                bPindah.style.display = 'block'; 
-                if(elAsal) elAsal.required = true; 
-                if(elTujuan) elTujuan.required = true; 
-                if(elAlasan) elAlasan.required = true; 
-            }
-            else if (layanan === 'Akta Kelahiran Tanpa NIK' && bAkta) {
-                bAkta.style.display = 'block';
+            // 1. Reset (hapus required) pada semua input yang memiliki class dinamis-wajib
+            document.querySelectorAll('.dinamis-wajib').forEach(el => el.required = false);
+            
+            // 2. Bersihkan kolom dinamis anggota keluarga jika bukan pilihan Pindah Keluar
+            const wadahPindah = document.getElementById('wadahAnggotaPindah');
+            if(wadahPindah) wadahPindah.innerHTML = '';
+            const jumlahPindah = document.getElementById('jumlah_pindah');
+            if(jumlahPindah) jumlahPindah.value = '0';
+
+            // 3. Tampilkan blok yang dipilih dan aktifkan attribut 'required' HANYA pada blok tersebut
+            for (const [key, block] of Object.entries(blocks)) {
+                if (block) {
+                    if (key === layanan) {
+                        block.style.display = 'block';
+                        // Paksa input dinamis di blok ini menjadi wajib diisi (Required)
+                        block.querySelectorAll('.dinamis-wajib').forEach(el => el.required = true);
+                    } else {
+                        block.style.display = 'none';
+                    }
+                }
             }
         }
 
@@ -388,11 +395,6 @@
 
                 const { error } = await supabaseClient.from('permohonan').insert([dataFinalInsert]);
                 if (error) throw error;
-
-                // WhatsApp Otomatis ke Warga
-                const pesanWaDikirim = `Halo Bapak/Ibu ${dataDraft.nama},\n\nPermohonan administrasi Anda untuk layanan *${dataDraft.layanan}* dengan Nomor Tiket: *${dataDraft.tiket}* telah berhasil *DIKIRIM* dan diterima oleh sistem kami.\n\nSilakan cek secara berkala di menu status permohonan untuk mengetahui perkembangan dokumen Anda.\n\nTerima kasih,\nLayanan SIPPAK-CIB`;
-                const urlWADikirim = `https://wa.me/${dataDraft.no_wa}?text=${encodeURIComponent(pesanWaDikirim)}`;
-                window.open(urlWADikirim, '_blank');
 
                 modalKonten.innerHTML = `
                     <div style="text-align: center; padding: 10px;">
