@@ -60,7 +60,7 @@
         .btn-submit { color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        /* KELAS CSS UNTUK KERTAS BACKGROUND PDF (DIPERBAIKI 1 HALAMAN) */
+        /* KELAS CSS UNTUK KERTAS BACKGROUND PDF (DIPERBAIKI UNTUK MUTLAK 1 HALAMAN) */
         .kertas-surat { 
             display: none; 
             padding: 30px 60px; 
@@ -69,9 +69,10 @@
             line-height: 1.5; 
             font-size: 16px; 
             width: 210mm; /* Kunci ukuran tepat A4 */
-            height: 297mm; /* Kunci tinggi tepat A4 */
-            overflow: hidden; /* Mencegah elemen bocor ke halaman 2 */
-            box-sizing: border-box; /* Memastikan padding tidak menambah ukuran asli */
+            height: 296mm; /* Dikurangi 1mm agar tidak melebihi margin PDF */
+            max-height: 296mm; /* Batas mutlak tinggi */
+            overflow: hidden; /* Potong sisa elemen jika ada yang turun */
+            box-sizing: border-box; 
             margin: 0 auto; 
             background-image: url('../assets/img/kertas.png');
             background-size: 100% 100%; 
