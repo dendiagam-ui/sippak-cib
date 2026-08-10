@@ -49,8 +49,8 @@
         .form-group { text-align: left; margin-bottom: 15px; }
         .form-group.full-width { grid-column: 1 / -1; }
         .form-group label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #475569; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2563eb; background: white; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; outline: none; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         .form-group textarea { resize: vertical; min-height: 100px; }
 
         /* KOTAK TANDA TANGAN */
@@ -60,7 +60,7 @@
         .btn-submit { color: white; border: none; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        /* KELAS CSS UNTUK KERTAS BACKGROUND PDF */
+        /* KELAS CSS UNTUK KERTAS BACKGROUND PDF (DIPERBAIKI 1 HALAMAN) */
         .kertas-surat { 
             display: none; 
             padding: 30px 60px; 
@@ -68,9 +68,10 @@
             color: black; 
             line-height: 1.5; 
             font-size: 16px; 
-            width: 100%; 
-            max-width: 210mm; 
-            min-height: 297mm; 
+            width: 210mm; /* Kunci ukuran tepat A4 */
+            height: 297mm; /* Kunci tinggi tepat A4 */
+            overflow: hidden; /* Mencegah elemen bocor ke halaman 2 */
+            box-sizing: border-box; /* Memastikan padding tidak menambah ukuran asli */
             margin: 0 auto; 
             background-image: url('../assets/img/kertas.png');
             background-size: 100% 100%; 
@@ -771,7 +772,7 @@
             setTimeout(() => {
                 if(formatOutput === 'pdf') {
                     const opsiPDF = {
-                        margin: [0, 0, 0, 0], 
+                        margin: 0, 
                         filename: namaFile + '.pdf',
                         image: { type: 'jpeg', quality: 1 },
                         html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, 
