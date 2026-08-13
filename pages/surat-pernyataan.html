@@ -68,10 +68,10 @@
             color: black; 
             line-height: 1.5; 
             font-size: 16px; 
-            width: 210mm; /* Kunci ukuran tepat A4 */
-            height: 296mm; /* Dikurangi 1mm agar tidak melebihi margin PDF */
-            max-height: 296mm; /* Batas mutlak tinggi */
-            overflow: hidden; /* Potong sisa elemen jika ada yang turun */
+            width: 210mm; 
+            height: 296mm; 
+            max-height: 296mm; 
+            overflow: hidden; 
             box-sizing: border-box; 
             margin: 0 auto; 
             background-image: url('../assets/img/kertas.png');
@@ -105,9 +105,7 @@
             .topbar { padding: 15px 20px; }
         }
 
-        /* ======================================================== */
-        /* POPUP UCAPAN VIDEO (FULL SCREEN & RESPONSIVE) */
-        /* ======================================================== */
+        /* POPUP UCAPAN VIDEO */
         .modal-ucapan { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: rgba(15, 23, 42, 0.95); 
@@ -121,12 +119,12 @@
         }
         .modal-ucapan-content video { 
             max-width: 100%; 
-            max-height: calc(100vh - 120px); /* Sisakan ruang untuk tombol */
+            max-height: calc(100vh - 120px); 
             width: auto; height: auto; 
-            object-fit: contain; /* Kunci agar video proporsional */
+            object-fit: contain; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             border-radius: 12px;
-            background: #000; /* Latar belakang hitam untuk bingkai video */
+            background: #000; 
         }
         .btn-tutup-ucapan { 
             background: #2563eb; color: white; border: none; padding: 14px 40px; 
@@ -148,7 +146,6 @@
     <!-- WADAH POPUP UCAPAN VIDEO -->
     <div class="modal-ucapan" id="modalUcapan">
         <div class="modal-ucapan-content">
-            <!-- Menambahkan tag video dengan properti autoplay, muted, playsinline, dan loop -->
             <video id="videoUcapan" src="../assets/img/video.mp4" autoplay muted playsinline loop></video>
             <button class="btn-tutup-ucapan" onclick="tutupPopupUcapan()"><i class="fas fa-check"></i> Tutup & Kembali</button>
         </div>
@@ -202,14 +199,13 @@
                     
                     <form id="formSurat">
                         <div class="grid-form">
-                            <!-- Field Bersama (Selalu Muncul) -->
+                            <!-- Field Bersama -->
                             <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="inNama" placeholder="Sesuai KTP" required></div>
                             <div class="form-group"><label>Nomor Induk Kependudukan (NIK) *</label><input type="number" id="inNik" placeholder="16 Digit NIK" required></div>
                             <div class="form-group"><label>Tempat, Tanggal Lahir *</label><input type="text" id="inTTL" placeholder="Contoh: Cimahi, 17 Agustus 1990" required></div>
                             <div class="form-group"><label>Pekerjaan Saat Ini *</label><input type="text" id="inPekerjaan" placeholder="Sesuai KTP / Kenyataan" required></div>
                             <div class="form-group full-width"><label id="labelAlamatPemohon">Alamat Lengkap Pemohon *</label><textarea id="inAlamat" placeholder="Tuliskan alamat domisili lengkap beserta RT/RW..." required></textarea></div>
 
-                            <!-- Field Khusus: JK -->
                             <div class="form-group khusus-jk"><label>Jenis Kelamin *</label>
                                 <select id="inJk" required>
                                     <option value="" disabled selected>-- Pilih Jenis Kelamin --</option>
@@ -218,11 +214,9 @@
                                 </select>
                             </div>
 
-                            <!-- Field Khusus: Surat Belum Bekerja -->
                             <div class="form-group khusus-belum-bekerja"><label>Jumlah Tanggungan (Opsional)</label><input type="number" id="inTanggungan" placeholder="Contoh: 3"></div>
                             <div class="form-group full-width khusus-belum-bekerja"><label>Nomor Telepon / WhatsApp (Opsional)</label><input type="tel" id="inHp" placeholder="Mulai dengan 08..."></div>
 
-                            <!-- Field Khusus: Surat Usaha -->
                             <div class="form-group full-width khusus-usaha" style="display: none;"><label>Jenis Kegiatan Usaha *</label><input type="text" id="inJenisUsaha" placeholder="Contoh: Warung Kelontong / Katering Makanan"></div>
                             <div class="form-group khusus-usaha" style="display: none;"><label>Jalan Lokasi Usaha (Tanpa RT/RW) *</label><input type="text" id="inJalanUsaha" placeholder="Contoh: Jl. Mahar Martanegara No. 10"></div>
                             <div class="form-group khusus-usaha" style="display: none;">
@@ -232,10 +226,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Field Khusus: Surat Penghasilan -->
                             <div class="form-group khusus-penghasilan" style="display: none;"><label>Penghasilan Per Bulan (Rp) *</label><input type="text" id="inPenghasilan" placeholder="Contoh: 3.000.000"></div>
-                            
-                            <!-- Field Khusus: Tujuan Administrasi -->
                             <div class="form-group khusus-administrasi" style="display: none;"><label>Tujuan Keperluan Administrasi *</label><input type="text" id="inTujuanAdministrasi" placeholder="Contoh: Pengajuan KPR / Bantuan Sosial / Sekolah"></div>
 
                             <!-- Tanda Tangan -->
@@ -261,6 +252,7 @@
         </main>
     </div>
 
+    <!-- SEMUA TEMPLATE SURAT DI BAWAH INI TETAP SAMA -->
     <!-- TEMPLATE 1: SURAT BELUM BEKERJA -->
     <div id="kertasSuratBelumBekerja" class="kertas-surat">
         <div class="kop-surat">SURAT PERNYATAAN</div>
@@ -304,27 +296,20 @@
             <tr><td class="kolom-label">Pekerjaan</td><td class="kolom-titikdua">:</td><td id="uPekerjaan"></td></tr>
             <tr><td class="kolom-label">Alamat</td><td class="kolom-titikdua">:</td><td id="uAlamat"></td></tr>
         </table>
-        
         <div style="margin-left: 45px; margin-bottom: 25px;">Kelurahan Cibeureum Kecamatan Cimahi Selatan Kota Cimahi.</div>
-        
         <div class="teks-paragraf">Dengan ini menyatakan bahwa benar Saya memiliki kegiatan usaha berupa <strong><span id="uJenisUsaha"></span></strong> yang beralamat di Jl. <strong><span id="uJalanUsaha"></span></strong> RT. <strong><span id="uRtUsaha"></span></strong> RW. <strong><span id="uRwUsaha"></span></strong> Kelurahan Cibeureum Kecamatan Cimahi Selatan Kota Cimahi.</div>
-        
         <div class="teks-paragraf" style="margin-top: 20px;">Apabila Ternyata di kemudian hari diketahui Pernyataan yang Saya sampaikan tersebut tidak benar, Saya bersedia dituntut sesuai dengan ketentuan Hukum yang berlaku dengan tidak melibatkan pihak Kelurahan.</div>
-        
         <div class="teks-paragraf" style="margin-top: 20px; margin-bottom: 40px;">Demikian Surat Pernyataan ini Saya buat dengan sebenarnya.</div>
-
         <table class="area-ttd">
             <tr>
                 <td style="width: 50%;"></td> 
                 <td style="width: 50%; text-align: center;">
                     <div style="margin-bottom: 5px;">Cibeureum, <span id="uTanggal"></span></div>
                     <div style="margin-bottom: 10px;">Yang Membuat Pernyataan</div>
-                    
                     <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px;">
                         <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
                         <img id="uTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
                     </div>
-                    
                     <div><strong><span style="text-decoration: underline;" id="uNamaTtd"></span></strong></div>
                 </td>
             </tr>
@@ -338,7 +323,6 @@
             <strong>BELUM PERNAH NIKAH / KAWIN</strong>
         </div>
         <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
-        
         <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px);">
             <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="nNama"></td></tr>
             <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="nJk"></td></tr>
@@ -348,25 +332,19 @@
             <tr><td class="kolom-label">NO.KTP</td><td class="kolom-titikdua">:</td><td id="nKtp"></td></tr>
             <tr><td class="kolom-label">KEWARGANEGARAAN</td><td class="kolom-titikdua">:</td><td>Indonesia</td></tr>
         </table>
-        
         <div class="teks-paragraf" style="margin-top: 25px;">Bersama ini saya menyatakan sebenarnya bahwa sampai dengan menandatangani pernyataan ini, saya benar-benar belum pernah Nikah atau Kawin, baik melalui Kantor Urusan Agama (KUA) atau Kantor Catatan Sipil manapun juga.</div>
-        
         <div class="teks-paragraf">Apabila dikemudian hari Surat Pernyataan ini tidak benar, maka saya sanggup dituntut di muka Hakim atau yang berwajib sesuai dengan Hukum Undang-Undang yang berlaku.</div>
-        
         <div class="teks-paragraf" style="margin-bottom: 40px;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya.</div>
-
         <table class="area-ttd">
             <tr>
                 <td style="width: 50%;"></td> 
                 <td style="width: 50%; text-align: center;">
                     <div style="margin-bottom: 5px;">Cimahi, <span id="nTanggal"></span></div>
                     <div style="margin-bottom: 15px;">Yang Membuat Pernyataan</div>
-                    
                     <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 5px;">
                         <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
                         <img id="nTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
                     </div>
-                    
                     <div><strong><span style="text-decoration: underline;" id="nNamaTtd"></span></strong></div>
                 </td>
             </tr>
@@ -377,7 +355,6 @@
     <div id="kertasSuratPenghasilan" class="kertas-surat">
         <div class="kop-surat" style="font-size: 19px; margin-top: 25px; margin-bottom: 30px;">SURAT PERNYATAAN</div>
         <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
-        
         <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px); line-height: 1.8;">
             <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="pNama"></td></tr>
             <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="pJk"></td></tr>
@@ -386,25 +363,19 @@
             <tr><td class="kolom-label">PEKERJAAN</td><td class="kolom-titikdua">:</td><td id="pPekerjaan"></td></tr>
             <tr><td class="kolom-label">ALAMAT</td><td class="kolom-titikdua">:</td><td id="pAlamat"></td></tr>
         </table>
-        
         <div style="margin-left: 210px; margin-bottom: 35px; line-height: 1.5;">Kel. Cibeureum Kec.Cimahi Selatan Kota Cimahi</div>
-        
         <div class="teks-paragraf" style="margin-bottom: 25px; line-height: 1.8;">Dengan ini saya menyatakan bahwa benar saya mempunyai penghasilan per bulannya sebesar RP <strong><span id="pPenghasilan"></span></strong></div>
-        
         <div class="teks-paragraf" style="line-height: 1.8;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya, Apabila Surat Pernyataan ini tidak benar, maka saya sanggup dituntut yang berwajib sesuai dengan Hukum dan Undang-undang yang berlaku, dan surat pernyataan ini digunakan untuk melengkapi persyaratan administrasi ke <strong><span id="pTujuan"></span></strong></div>
-
         <table class="area-ttd" style="margin-top: 50px;">
             <tr>
                 <td style="width: 50%;"></td> 
                 <td style="width: 50%; text-align: center;">
                     <div style="margin-bottom: 5px;">Cibeureum, <span id="pTanggal"></span></div>
                     <div style="margin-bottom: 20px;">Yang membuat pernyataan</div>
-                    
                     <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
                         <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
                         <img id="pTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
                     </div>
-                    
                     <div><strong><span style="text-decoration: underline;" id="pNamaTtd"></span></strong></div>
                 </td>
             </tr>
@@ -415,7 +386,6 @@
     <div id="kertasSuratTidakRumah" class="kertas-surat">
         <div class="kop-surat" style="font-size: 19px; margin-top: 25px; margin-bottom: 30px;">SURAT PERNYATAAN</div>
         <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
-        
         <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px); line-height: 1.8;">
             <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="rNama"></td></tr>
             <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="rJk"></td></tr>
@@ -424,25 +394,19 @@
             <tr><td class="kolom-label">PEKERJAAN</td><td class="kolom-titikdua">:</td><td id="rPekerjaan"></td></tr>
             <tr><td class="kolom-label">ALAMAT</td><td class="kolom-titikdua">:</td><td id="rAlamat"></td></tr>
         </table>
-        
         <div style="margin-left: 210px; margin-bottom: 35px; line-height: 1.5;">Kel. Cibeureum Kec.Cimahi Selatan Kota Cimahi</div>
-        
         <div class="teks-paragraf" style="margin-bottom: 25px; line-height: 1.8;">Dengan ini saya menyatakan bahwa benar pada saat ini saya tidak memiliki rumah dan masih tinggal bersama orang tua/mengontrak.</div>
-        
         <div class="teks-paragraf" style="line-height: 1.8;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya, Apabila Surat Pernyataan ini tidak benar, maka saya sanggup dituntut yang berwajib sesuai dengan Hukum dan Undang-undang yang berlaku, dan surat pernyataan ini digunakan untuk melengkapi persyaratan administrasi ke <strong><span id="rTujuan"></span></strong></div>
-
         <table class="area-ttd" style="margin-top: 50px;">
             <tr>
                 <td style="width: 50%;"></td> 
                 <td style="width: 50%; text-align: center;">
                     <div style="margin-bottom: 5px;">Cibeureum, <span id="rTanggal"></span></div>
                     <div style="margin-bottom: 20px;">Yang membuat pernyataan</div>
-                    
                     <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
                         <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
                         <img id="rTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
                     </div>
-                    
                     <div><strong><span style="text-decoration: underline;" id="rNamaTtd"></span></strong></div>
                 </td>
             </tr>
@@ -453,7 +417,6 @@
     <div id="kertasSuratTidakAktaIjazah" class="kertas-surat">
         <div class="kop-surat" style="font-size: 19px; margin-top: 25px; margin-bottom: 30px;">SURAT PERNYATAAN</div>
         <div style="margin-bottom: 20px; padding-left: 20px;">Yang bertanda tangan di bawah ini :</div>
-        
         <table class="tabel-biodata" style="margin-left: 20px; width: calc(100% - 20px); line-height: 1.8;">
             <tr><td class="kolom-label" style="width: 35%;">NAMA</td><td class="kolom-titikdua" style="width: 3%;">:</td><td id="iNama"></td></tr>
             <tr><td class="kolom-label">JENIS KELAMIN</td><td class="kolom-titikdua">:</td><td id="iJk"></td></tr>
@@ -462,61 +425,39 @@
             <tr><td class="kolom-label">PEKERJAAN</td><td class="kolom-titikdua">:</td><td id="iPekerjaan"></td></tr>
             <tr><td class="kolom-label">ALAMAT</td><td class="kolom-titikdua">:</td><td id="iAlamat"></td></tr>
         </table>
-        
         <div style="margin-left: 210px; margin-bottom: 35px; line-height: 1.5;">Kel. Cibeureum Kec.Cimahi Selatan Kota Cimahi</div>
-        
         <div class="teks-paragraf" style="margin-bottom: 25px; line-height: 1.8;">Dengan ini saya menyatakan bahwa benar pada saat ini saya tidak memiliki Akta Kelahiran dan Ijazah Sekolah.</div>
-        
         <div class="teks-paragraf" style="line-height: 1.8;">Demikian Surat Pernyataan ini saya buat dengan sebenarnya, Apabila dikemudian hari diketahui pernyataan yang saya buat tidak benar saya bersedia dituntut sesuai dengan hukum yang berlaku dengan tidak melibatkan pihak Kelurahan Cibeureum, dan surat pernyataan ini digunakan untuk melengkapi persyaratan administrasi ke <strong><span id="iTujuan"></span></strong></div>
-
         <table class="area-ttd" style="margin-top: 50px;">
             <tr>
                 <td style="width: 50%;"></td> 
                 <td style="width: 50%; text-align: center;">
                     <div style="margin-bottom: 5px;">Cibeureum, <span id="iTanggal"></span></div>
                     <div style="margin-bottom: 20px;">Yang membuat pernyataan</div>
-                    
                     <div style="display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px;">
                         <img src="../assets/img/meterai.png" alt="Materai" style="width: 75px; height: auto; position: relative; z-index: 1;">
                         <img id="iTtdImage" src="" alt="Tanda Tangan" style="display: none; height: 95px; width: auto; max-width: 150px; margin-left: -40px; position: relative; z-index: 2;">
                     </div>
-                    
                     <div><strong><span style="text-decoration: underline;" id="iNamaTtd"></span></strong></div>
                 </td>
             </tr>
         </table>
     </div>
 
+    <!-- SCRIPT SUPABASE & WATCHDOG DITAMBAHKAN DI SINI -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
+        const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
+        const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
+
         // ==========================================
-        // SISTEM SESI LOGIN 6 JAM & MUAT HALAMAN
+        // SISTEM SESI LOGIN & DETEKSI FORCE LOGOUT
         // ==========================================
         document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
             const waktuLogin = localStorage.getItem('login_time');
-            
-        // =======================================================
-        // FOOLPROOF WATCHDOG (DETEKSI PAKSA LOGOUT SETIAP 3 DETIK)
-        // =======================================================
-        const mySessionId = localStorage.getItem('active_session_id');
-        
-        if (mySessionId) {
-            setInterval(async () => {
-                // Mengecek apakah baris sesi milik kita masih ada di database
-                const { data, error } = await supabaseClient
-                    .from('sesi_login')
-                    .select('id')
-                    .eq('id', mySessionId)
-                    .single();
-
-                // Error PGRST116 berarti "0 rows returned" (Data sudah dihapus Super Admin)
-                if (error && error.code === 'PGRST116') {
-                    alert("⚠️ AKSES DIPUTUS!\n\nSesi Anda telah di-logout secara paksa oleh Admin Utama. Silakan login kembali.");
-                    localStorage.clear();
-                    window.location.href = "login.html";
-                }
-            }, 3000); // 3000 ms = 3 detik
-        }
+            const mySessionId = localStorage.getItem('active_session_id'); // ID Sesi untuk pengecekan
             
             // Cek jika belum login
             if(!roleSaatIni || !waktuLogin) { 
@@ -526,8 +467,7 @@
             
             // Logika kedaluwarsa 6 Jam
             const waktuSekarang = new Date().getTime();
-            const batasSesiMilis = 6 * 60 * 60 * 1000; // 6 Jam
-            
+            const batasSesiMilis = 6 * 60 * 60 * 1000; 
             if (waktuSekarang - parseInt(waktuLogin) > batasSesiMilis) {
                 alert("⏱️ Sesi login Anda telah habis (Lebih dari 6 Jam).\nSilakan login kembali demi keamanan.");
                 localStorage.clear();
@@ -535,28 +475,59 @@
                 return;
             }
             
-            
             // Lanjutkan jika sesi aman
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
             document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
 
+            // Menu dinamis (Ditambahkan fungsi logoutSistem() pada tombol keluar)
             const menuList = document.getElementById('menuDinamis');
             if (roleSaatIni === 'superadmin') {
                 menuList.innerHTML = `
                     <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
                     <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
                     <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                    <li style="margin-top: 30px;"><a href="#" onclick="logoutSistem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
                 `;
             } else {
                 menuList.innerHTML = `
                     <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
                     <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                    <li style="margin-top: 30px;"><a href="#" onclick="logoutSistem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
                 `;
             }
+            
             initSignaturePad();
+
+            // =======================================================
+            // FOOLPROOF WATCHDOG (POLLING DATABASE SETIAP 3 DETIK)
+            // =======================================================
+            if (mySessionId) {
+                setInterval(async () => {
+                    const { data, error } = await supabaseClient
+                        .from('sesi_login')
+                        .select('id')
+                        .eq('id', mySessionId)
+                        .single();
+
+                    // Jika error PGRST116 (0 rows returned), artinya Super Admin telah menghapus sesi
+                    if (error && error.code === 'PGRST116') {
+                        alert("⚠️ AKSES DIPUTUS!\n\nSesi Anda telah di-logout secara paksa oleh Admin Utama. Silakan login kembali.");
+                        localStorage.clear();
+                        window.location.href = "login.html";
+                    }
+                }, 3000); 
+            }
         });
+
+        // FUNGSI LOGOUT NORMAL (MENGHAPUS SESI SENDIRI SEBELUM KELUAR)
+        async function logoutSistem() {
+            const mySessionId = localStorage.getItem('active_session_id');
+            if (mySessionId) {
+                await supabaseClient.from('sesi_login').delete().eq('id', mySessionId);
+            }
+            localStorage.clear();
+            window.location.href = "../index.html";
+        }
 
         // FUNGSI GANTI JENIS SURAT DINAMIS
         function gantiFormSurat() {
@@ -570,14 +541,12 @@
             const judulForm = document.getElementById('judulFormSurat');
             const labelAlamat = document.getElementById('labelAlamatPemohon');
 
-            // Sembunyikan semua field tambahan dulu
             fieldBelumBekerja.forEach(el => el.style.display = 'none');
             fieldUsaha.forEach(el => el.style.display = 'none');
             fieldJk.forEach(el => el.style.display = 'none');
             fieldPenghasilan.forEach(el => el.style.display = 'none');
             fieldAdministrasi.forEach(el => el.style.display = 'none');
 
-            // Reset requirement
             document.getElementById('inJk').required = false;
             document.getElementById('inJenisUsaha').required = false;
             document.getElementById('inJalanUsaha').required = false;
@@ -592,7 +561,6 @@
                 fieldBelumBekerja.forEach(el => el.style.display = 'block');
                 fieldJk.forEach(el => el.style.display = 'block');
                 document.getElementById('inJk').required = true;
-
             } else if (jenis === 'usaha') {
                 judulForm.innerHTML = '<i class="fas fa-store" style="color: #10b981;"></i> Form Cetak Surat Pernyataan Memiliki Usaha';
                 labelAlamat.innerText = 'Alamat Rumah Pemilik *';
@@ -601,13 +569,11 @@
                 document.getElementById('inJalanUsaha').required = true;
                 document.getElementById('inRtUsaha').required = true;
                 document.getElementById('inRwUsaha').required = true;
-
             } else if (jenis === 'belum_nikah') {
                 judulForm.innerHTML = '<i class="fas fa-heart-broken" style="color: #ec4899;"></i> Form Cetak Surat Pernyataan Belum Pernah Nikah';
                 labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
                 fieldJk.forEach(el => el.style.display = 'block');
                 document.getElementById('inJk').required = true;
-                
             } else if (jenis === 'penghasilan') {
                 judulForm.innerHTML = '<i class="fas fa-money-bill-wave" style="color: #059669;"></i> Form Cetak Surat Pernyataan Penghasilan';
                 labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
@@ -617,7 +583,6 @@
                 document.getElementById('inJk').required = true;
                 document.getElementById('inPenghasilan').required = true;
                 document.getElementById('inTujuanAdministrasi').required = true;
-                
             } else if (jenis === 'tidak_punya_rumah') {
                 judulForm.innerHTML = '<i class="fas fa-home" style="color: #6366f1;"></i> Form Cetak Surat Pernyataan Tidak Memiliki Rumah';
                 labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
@@ -625,7 +590,6 @@
                 fieldAdministrasi.forEach(el => el.style.display = 'block');
                 document.getElementById('inJk').required = true;
                 document.getElementById('inTujuanAdministrasi').required = true;
-
             } else if (jenis === 'tidak_punya_akta_ijazah') {
                 judulForm.innerHTML = '<i class="fas fa-file-alt" style="color: #8b5cf6;"></i> Form Cetak Surat Pernyataan Tidak Memiliki Akta/Ijazah';
                 labelAlamat.innerText = 'Alamat Lengkap Pemohon *';
@@ -709,7 +673,6 @@
             namaFile += nama.replace(/\s+/g, '_');
             
             const dataTtd = canvas.toDataURL('image/png');
-
             let elemenSurat;
 
             if (jenisSurat === 'belum_bekerja') {
@@ -726,7 +689,6 @@
                 document.getElementById('bTanggal').innerText = tanggalCetak;
                 document.getElementById('bTtdImage').src = dataTtd;
                 document.getElementById('bTtdImage').style.display = 'inline-block';
-                
             } else if (jenisSurat === 'usaha') {
                 elemenSurat = document.getElementById('kertasSuratUsaha');
                 document.getElementById('uNama').innerText = nama;
@@ -742,7 +704,6 @@
                 document.getElementById('uTanggal').innerText = tanggalCetak;
                 document.getElementById('uTtdImage').src = dataTtd;
                 document.getElementById('uTtdImage').style.display = 'inline-block';
-                
             } else if (jenisSurat === 'belum_nikah') {
                 elemenSurat = document.getElementById('kertasSuratBelumNikah');
                 document.getElementById('nNama').innerText = nama;
@@ -756,7 +717,6 @@
                 document.getElementById('nTanggal').innerText = tanggalCetak;
                 document.getElementById('nTtdImage').src = dataTtd;
                 document.getElementById('nTtdImage').style.display = 'inline-block';
-                
             } else if (jenisSurat === 'penghasilan') {
                 elemenSurat = document.getElementById('kertasSuratPenghasilan');
                 document.getElementById('pNama').innerText = nama;
@@ -771,7 +731,6 @@
                 document.getElementById('pTanggal').innerText = tanggalCetak;
                 document.getElementById('pTtdImage').src = dataTtd;
                 document.getElementById('pTtdImage').style.display = 'inline-block';
-                
             } else if (jenisSurat === 'tidak_punya_rumah') {
                 elemenSurat = document.getElementById('kertasSuratTidakRumah');
                 document.getElementById('rNama').innerText = nama;
@@ -785,7 +744,6 @@
                 document.getElementById('rTanggal').innerText = tanggalCetak;
                 document.getElementById('rTtdImage').src = dataTtd;
                 document.getElementById('rTtdImage').style.display = 'inline-block';
-
             } else if (jenisSurat === 'tidak_punya_akta_ijazah') {
                 elemenSurat = document.getElementById('kertasSuratTidakAktaIjazah');
                 document.getElementById('iNama').innerText = nama;
@@ -809,15 +767,12 @@
             setTimeout(() => {
                 if(formatOutput === 'pdf') {
                     const opsiPDF = {
-                        margin: 0, 
-                        filename: namaFile + '.pdf',
-                        image: { type: 'jpeg', quality: 1 },
+                        margin: 0, filename: namaFile + '.pdf', image: { type: 'jpeg', quality: 1 },
                         html2canvas: { scale: 2, useCORS: true, scrollY: 0 }, 
                         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                     };
                     html2pdf().set(opsiPDF).from(elemenSurat).save().then(() => {
-                        kembalikanTampilan();
-                        tampilkanPopupUcapan(); // Memunculkan popup dan memutar video
+                        kembalikanTampilan(); tampilkanPopupUcapan(); 
                     });
                 } 
                 else if (formatOutput === 'jpg') {
@@ -826,8 +781,7 @@
                         link.download = namaFile + '.jpg';
                         link.href = canvasTarget.toDataURL('image/jpeg', 1.0);
                         link.click();
-                        kembalikanTampilan();
-                        tampilkanPopupUcapan(); // Memunculkan popup dan memutar video
+                        kembalikanTampilan(); tampilkanPopupUcapan(); 
                     });
                 }
             }, 400); 
@@ -840,19 +794,20 @@
             }
         }
 
-        // FUNGSI UNTUK MENAMPILKAN & MENUTUP POPUP VIDEO
+        // FUNGSI POPUP VIDEO
         function tampilkanPopupUcapan() {
             document.getElementById('modalUcapan').style.display = 'flex';
             const vid = document.getElementById('videoUcapan');
-            vid.currentTime = 0; // Memastikan video mulai dari awal
+            vid.currentTime = 0; 
             vid.play().catch(e => console.log("Gagal auto-play video: ", e));
         }
 
         function tutupPopupUcapan() {
             document.getElementById('modalUcapan').style.display = 'none';
-            document.getElementById('videoUcapan').pause(); // Hentikan video saat popup ditutup
+            document.getElementById('videoUcapan').pause(); 
         }
 
+        // UI TOGGLE
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
         document.addEventListener('click', function(e) {
             const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay');
