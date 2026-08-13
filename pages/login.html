@@ -109,6 +109,46 @@
                 if (error || !data) {
                     throw new Error("Username atau Password salah!");
                 }
+                
+// ========================================================
+        // 2. KODE TAMBAHAN UNTUK MENCATAT SESI AKTIF KE SUPABASE
+        // ========================================================
+        const dataSesiBaru = {
+            user_id: data.id,
+            username: data.username,
+            nama_lengkap: data.nama_lengkap,
+            role: data.role,
+            token_sesi: 'TOKEN_' + Math.random().toString(36.substring(2)) + new Date().getTime()
+        };
+
+        // Simpan sesi ke tabel sesi_login dan ambil ID-nya kembali (.select())
+        const { data: resSesi, error: errSesi } = await supabaseClient
+            .from('sesi_login')
+            .insert([dataSesiBaru])
+            .select()
+            .single();
+
+        if (errSesi) throw errSesi;
+
+        // Simpan informasi penting ke localStorage browser perangkat ini
+        localStorage.setItem('user_id', data.id);
+        localStorage.setItem('user_nama', data.nama_lengkap);
+        localStorage.setItem('user_role', data.role);
+        localStorage.setItem('login_time', new Date().getTime());
+        localStorage.setItem('active_session_id', resSesi.id); // <- ID Sesi unik untuk pemantauan logout paksa
+
+        // 3. Alihkan halaman sesuai role
+        alert("Login Berhasil! Selamat datang, " + data.nama_lengkap);
+        if (data.role === 'superadmin') {
+            window.location.href = "dashboard-master.html";
+        } else {
+            window.location.href = "dashboard-master.html";
+        }
+
+    } catch (err) {
+        alert("Terjadi kesalahan saat login: " + err.message);
+    }
+}
 
                 // SIMPAN DATA LOGIN & WAKTU UNTUK KEDALUWARSA 6 JAM
                 localStorage.setItem('user_role', data.role);
