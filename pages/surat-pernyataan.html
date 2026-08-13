@@ -489,54 +489,49 @@
 
     <script>
         // ==========================================
-        // SISTEM SESI LOGIN & DETEKSI FORCE LOGOUT
+        // SISTEM SESI LOGIN 6 JAM & MUAT HALAMAN
         // ==========================================
         document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
             const waktuLogin = localStorage.getItem('login_time');
-            const mySessionId = localStorage.getItem('active_session_id'); // Ambil ID Sesi
             
-            // 1. Cek jika belum login
+            // Cek jika belum login
             if(!roleSaatIni || !waktuLogin) { 
                 window.location.href = "login.html"; 
                 return; 
             } 
             
-            // 2. Logika kedaluwarsa 6 Jam otomatis
+            // Logika kedaluwarsa 6 Jam
             const waktuSekarang = new Date().getTime();
-            const batasSesiMilis = 6 * 60 * 60 * 1000; 
+            const batasSesiMilis = 6 * 60 * 60 * 1000; // 6 Jam
             
             if (waktuSekarang - parseInt(waktuLogin) > batasSesiMilis) {
-                alert("⏱️ Sesi login Anda telah habis (Lebih dari 6 Jam).\nSilakan login kembali.");
+                alert("⏱️ Sesi login Anda telah habis (Lebih dari 6 Jam).\nSilakan login kembali demi keamanan.");
                 localStorage.clear();
                 window.location.href = "login.html";
                 return;
             }
-
-            // 3. SETTING TAMPILAN PROFIL & MENU UI
-            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
             
-            // Note: Kode untuk menu dinamis (menuList.innerHTML = ...) biarkan tetap sesuai yang ada di file Anda masing-masing, tidak perlu diubah.
+            // Lanjutkan jika sesi aman
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
+            document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
 
-            // =======================================================
-            // 4. PENJAGA REALTIME: DETEKSI FORCE LOGOUT DARI SUPER ADMIN
-            // =======================================================
-            if (mySessionId) {
-                supabaseClient
-                    .channel('cek_kick_' + mySessionId)
-                    .on('postgres_changes', { 
-                        event: 'DELETE', 
-                        schema: 'public', 
-                        table: 'sesi_login', 
-                        filter: `id=eq.${mySessionId}` // Memantau baris ID milik kita sendiri
-                    }, () => {
-                        // Jika baris sesi kita dihapus Super Admin dari halaman lain
-                        alert("⚠️ AKSES DIPUTUS!\n\nSesi Anda telah di-logout secara paksa oleh Admin Utama.\nSilakan login kembali.");
-                        localStorage.clear();
-                        window.location.href = "login.html"; // Tendang ke halaman login
-                    })
-                    .subscribe();
+            const menuList = document.getElementById('menuDinamis');
+            if (roleSaatIni === 'superadmin') {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+                    <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+                    <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
+            } else {
+                menuList.innerHTML = `
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+                    <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                `;
             }
+            initSignaturePad();
         });
 
         // FUNGSI GANTI JENIS SURAT DINAMIS

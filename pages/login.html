@@ -3,117 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Staf | SIPPAK-CIB</title>
+    <title>Login Petugas | SIPPAK-CIB</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
+        body { background: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #1e293b; }
         
-        body { background-color: var(--bg); display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
+        .login-wadah { width: 100%; max-width: 400px; padding: 20px; }
+        .login-box { background: #fff; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: center; }
         
-        .login-card { background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; width: 100%; max-width: 420px; padding: 40px; text-align: center; }
-        .login-header i { font-size: 40px; color: #2563eb; margin-bottom: 15px; }
-        .login-header h2 { font-size: 24px; font-weight: 800; color: var(--teks-gelap); margin-bottom: 5px; }
-        .login-header p { font-size: 14px; color: var(--teks-pudar); margin-bottom: 30px; font-weight: 600; }
-        
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #475569; }
-        .form-group input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; outline: none; }
-        .form-group input:focus { border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-        
-        .btn-login { background: #2563eb; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+        .logo-icon { font-size: 45px; color: #2563eb; margin-bottom: 10px; }
+        .login-box h2 { font-size: 24px; font-weight: 900; color: #0f172a; margin-bottom: 5px; }
+        .login-box p { font-size: 14px; color: #64748b; margin-bottom: 30px; }
+
+        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
+        .form-group label { display: block; font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 8px; }
+        .form-group i { position: absolute; left: 15px; top: 40px; color: #94a3b8; font-size: 16px; }
+        .form-group input { width: 100%; padding: 14px 14px 14px 45px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; outline: none; }
+        .form-group input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-group input:focus + i { color: #2563eb; }
+
+        .btn-login { background: #2563eb; color: white; padding: 15px; width: 100%; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
         .btn-login:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
-        
-        .back-link { display: block; margin-top: 20px; font-size: 14px; color: var(--teks-pudar); text-decoration: none; font-weight: 600; transition: 0.2s; }
-        .back-link:hover { color: var(--primer); }
+        .btn-login:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .link-kembali { display: inline-block; margin-top: 25px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .link-kembali:hover { color: #2563eb; }
     </style>
 </head>
 <body>
 
-    <div class="login-card">
-        <div class="login-header">
-            <i class="fas fa-landmark"></i>
+    <div class="login-wadah">
+        <div class="login-box">
+            <i class="fas fa-landmark logo-icon"></i>
             <h2>SIPPAK-CIB</h2>
-            <p>Silakan login menggunakan akun staf Anda</p>
+            <p>Portal Login Petugas Kelurahan</p>
+
+            <form id="formLogin" onsubmit="prosesLogin(event)">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="inpUsername" placeholder="Masukkan username..." required autocomplete="off">
+                    <i class="fas fa-user"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="inpPassword" placeholder="Masukkan password..." required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                
+                <button type="submit" class="btn-login" id="btnLogin"><i class="fas fa-sign-in-alt"></i> Masuk Sistem</button>
+            </form>
+
+            <a href="../index.html" class="link-kembali"><i class="fas fa-arrow-left"></i> Kembali ke Beranda Warga</a>
         </div>
-
-        <form onsubmit="prosesLogin(event)">
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" id="username" placeholder="Masukkan username..." required autocomplete="off">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="Masukkan password..." required>
-            </div>
-            <button type="submit" class="btn-login" id="btnLogin">
-                <i class="fas fa-sign-in-alt"></i> Masuk Sistem
-            </button>
-        </form>
-
-        <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke Beranda Utama</a>
     </div>
 
-    <!-- Script Supabase -->
+    <!-- SCRIPT SUPABASE & LOGIKA LOGIN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // Inisialisasi Supabase
         const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
         const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-        async function prosesLogin(e) {
-            e.preventDefault();
+        // Cek jika pengguna sudah login & sesi masih berlaku (6 Jam)
+        document.addEventListener("DOMContentLoaded", function() {
+            const role = localStorage.getItem('user_role');
+            const loginTime = localStorage.getItem('login_time');
+            
+            if (role && loginTime) {
+                const waktuSekarang = new Date().getTime();
+                const batasSesiMilis = 6 * 60 * 60 * 1000;
+                
+                if (waktuSekarang - parseInt(loginTime) <= batasSesiMilis) {
+                    window.location.href = "dashboard-master.html";
+                } else {
+                    localStorage.clear(); // Bersihkan sesi kedaluwarsa
+                }
+            }
+        });
+
+        // Proses Login menggunakan Supabase
+        async function prosesLogin(event) {
+            event.preventDefault();
             const btn = document.getElementById('btnLogin');
-            const userInp = document.getElementById('username').value.trim();
-            const passInp = document.getElementById('password').value.trim();
+            const teksAsli = btn.innerHTML;
+            
+            const user = document.getElementById('inpUsername').value;
+            const pass = document.getElementById('inpPassword').value;
 
             btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memeriksa...";
             btn.disabled = true;
 
             try {
-                // 1. Cek kecocokan data ke tabel 'pengguna'
+                // Memanggil data dari tabel 'pengguna' di Supabase
+                // (Ubah 'pengguna' menjadi nama tabel Anda jika berbeda)
                 const { data, error } = await supabaseClient
                     .from('pengguna')
                     .select('*')
-                    .eq('username', userInp)
-                    .eq('password', passInp)
+                    .eq('username', user)
+                    .eq('password', pass)
                     .single();
 
                 if (error || !data) {
                     throw new Error("Username atau Password salah!");
                 }
 
-                // 2. Simpan profil ke localStorage
-                localStorage.setItem('user_id', data.id);
-                localStorage.setItem('user_nama', data.nama_lengkap);
+                // SIMPAN DATA LOGIN & WAKTU UNTUK KEDALUWARSA 6 JAM
                 localStorage.setItem('user_role', data.role);
+                localStorage.setItem('user_nama', data.nama);
                 localStorage.setItem('login_time', new Date().getTime());
 
-                // 3. DAFTARKAN SESI KE TABEL sesi_login
-                const tokenUnikSesi = 'sess_' + Math.random().toString(36).substring(2) + Date.now();
-                const { data: dataSesi, error: errorSesi } = await supabaseClient
-                    .from('sesi_login')
-                    .insert([{
-                        user_id: data.id,
-                        username: data.username,
-                        nama_lengkap: data.nama_lengkap,
-                        role: data.role,
-                        token_sesi: tokenUnikSesi
-                    }])
-                    .select()
-                    .single();
-
-                if (!errorSesi && dataSesi) {
-                    // Simpan ID sesi dari database ke browser ini
-                    localStorage.setItem('active_session_id', dataSesi.id);
-                }
-
-                // 4. Redirect ke dashboard
+                // Arahkan ke Dasbor
                 window.location.href = "dashboard-master.html";
 
             } catch (err) {
-                alert("⚠️ Gagal Login: " + err.message);
-                btn.innerHTML = "<i class='fas fa-sign-in-alt'></i> Masuk Sistem";
+                alert("⚠️ Akses Ditolak!\n" + err.message);
+                btn.innerHTML = teksAsli;
                 btn.disabled = false;
             }
         }
