@@ -147,12 +147,37 @@
 
                 // Error PGRST116 berarti "0 rows returned" (Data sudah dihapus Super Admin)
                 if (error && error.code === 'PGRST116') {
-                    alert("⚠️ AKSES DIPUTUS!\n\nSesi Anda telah di-logout secara paksa oleh Admin Utama. Silakan login kembali.");
+                    alert("⚠️ AKSES DIPUTUS!\n\nFITUR UPDATE! SILAHKAN LOGIN KEMBALI, TERIMA KASIH");
                     localStorage.clear();
                     window.location.href = "login.html";
                 }
             }, 3000); // 3000 ms = 3 detik
         }
+        
+        // =======================================================
+        // PENDENGAR NOTIFIKASI REAL-TIME DARI SUPER ADMIN
+        // =======================================================
+        // Catat ID notifikasi terakhir yang sudah dibaca agar tidak muncul berulang
+        let lastNotifId = localStorage.getItem('last_notif_id') || '';
+        
+        setInterval(async () => {
+            const { data, error } = await supabaseClient
+                .from('pengumuman')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single();
+
+            if (!error && data) {
+                if (lastNotifId !== data.id) {
+                    // Jika ada pengumuman baru yang belum pernah dilihat di browser ini
+                    lastNotifId = data.id;
+                    localStorage.setItem('last_notif_id', data.id);
+                    
+                    alert("📢 PENGUMUMAN PENTING DARI SUPER ADMIN:\n\n" + data.pesan);
+                }
+            }
+        }, 4000); // Mengecek setiap 4 detik
             
             // Cek jika belum login
             if(!roleSaatIni || !waktuLogin) { 
