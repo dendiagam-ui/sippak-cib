@@ -495,6 +495,29 @@
             const roleSaatIni = localStorage.getItem('user_role');
             const waktuLogin = localStorage.getItem('login_time');
             
+        // =======================================================
+        // FOOLPROOF WATCHDOG (DETEKSI PAKSA LOGOUT SETIAP 3 DETIK)
+        // =======================================================
+        const mySessionId = localStorage.getItem('active_session_id');
+        
+        if (mySessionId) {
+            setInterval(async () => {
+                // Mengecek apakah baris sesi milik kita masih ada di database
+                const { data, error } = await supabaseClient
+                    .from('sesi_login')
+                    .select('id')
+                    .eq('id', mySessionId)
+                    .single();
+
+                // Error PGRST116 berarti "0 rows returned" (Data sudah dihapus Super Admin)
+                if (error && error.code === 'PGRST116') {
+                    alert("⚠️ AKSES DIPUTUS!\n\nSesi Anda telah di-logout secara paksa oleh Admin Utama. Silakan login kembali.");
+                    localStorage.clear();
+                    window.location.href = "login.html";
+                }
+            }, 3000); // 3000 ms = 3 detik
+        }
+            
             // Cek jika belum login
             if(!roleSaatIni || !waktuLogin) { 
                 window.location.href = "login.html"; 
@@ -511,6 +534,7 @@
                 window.location.href = "login.html";
                 return;
             }
+            
             
             // Lanjutkan jika sesi aman
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
