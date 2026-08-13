@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Staf & Sesi Aktif | SIPPAK-CIB</title>
+    <title>Kelola Staf & Sesi | SIPPAK-CIB</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
         :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
         
         body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
-        
-        /* SIDEBAR */
         .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
         .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; display: flex; align-items: center; gap: 10px; }
         .sidebar-header i { color: #3b82f6; }
@@ -19,10 +17,8 @@
         .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 16px 30px; color: #94a3b8; text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; border-left: 4px solid transparent; }
         .menu-list li a:hover, .menu-list li a.active { background-color: rgba(255,255,255,0.05); color: #fff; border-left: 4px solid #3b82f6; }
         
-        /* MAIN CONTENT */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 280px); }
         .topbar { background-color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
-        .toggle-btn { font-size: 24px; cursor: pointer; color: var(--teks-gelap); display: none; }
         .user-profile { display: flex; align-items: center; gap: 15px; }
         .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
         
@@ -33,87 +29,66 @@
         .grid-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; margin-bottom: 25px; }
         @media (max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
         
-        /* CARD & FORM */
         .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; margin-bottom: 25px; }
         .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; align-items: center; gap:10px; }
         
         .form-group { margin-bottom: 20px; text-align: left; }
         .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #475569; }
-        .form-group select, .form-group input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; outline: none; }
-        .form-group select:focus, .form-group input:focus { border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-group select, .form-group input { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; outline: none; }
+        .btn-submit { background: #10b981; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; }
         
-        .btn-submit { background: #10b981; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .btn-submit:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
-        
-        /* TABEL */
         .tabel-antrean { width: 100%; border-collapse: collapse; }
         .tabel-antrean th, .tabel-antrean td { padding: 16px; border-bottom: 1px solid #f1f5f9; text-align: left; font-size: 14px; }
-        .tabel-antrean th { background: #f8fafc; font-weight: 700; color: #475569; border-top: 1px solid #e2e8f0; border-bottom: 2px solid #e2e8f0; }
-        .tabel-antrean tr { transition: 0.2s; }
-        .tabel-antrean tr:hover { background: #f8fafc; }
+        .tabel-antrean th { background: #f8fafc; font-weight: 700; color: #475569; border-bottom: 2px solid #e2e8f0; }
         
-        .btn-hapus { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-hapus:hover { background: #ef4444; color: white; transform: translateY(-2px); }
-
-        .btn-logout-paksa { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-logout-paksa:hover { background: #d97706; color: white; transform: translateY(-2px); }
-        
-        .badge-role { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; display: inline-block; white-space: nowrap; }
+        .btn-hapus { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .btn-logout-paksa { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #dcfce7; color: #166534; display: inline-flex; align-items: center; gap: 5px; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
-        .overlay.active { display: block; }
-        
-        @media (max-width: 900px) {
-            .sidebar { position: fixed; left: -280px; height: 100%; } 
-            .sidebar.active { left: 0; } 
-            .main-content { width: 100%; }
-            .toggle-btn { display: block; } 
-            .content-area { padding: 20px; }
-            .topbar { padding: 15px 20px; }
-        }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay"></div>
-
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
-        <ul class="menu-list" id="menuDinamis"></ul>
+        <ul class="menu-list" id="menuDinamis">
+            <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+            <li><a href="kelola-pengguna.html" class="active"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+            <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
+            <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+            <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+        </ul>
     </nav>
 
     <main class="main-content">
         <header class="topbar">
-            <div class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+            <div></div>
             <div class="user-profile">
                 <div style="text-align: right;">
-                    <div style="font-size: 15px; font-weight: 700;" id="namaUser">Petugas</div>
-                    <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600;" id="roleUser">SUPER ADMIN</div>
+                    <div style="font-size: 15px; font-weight: 700;" id="namaUser">Admin</div>
+                    <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600;">SUPER ADMIN</div>
                 </div>
                 <div class="user-avatar"><i class="fas fa-user-tie"></i></div>
             </div>
         </header>
 
         <div class="content-area">
-            <div class="page-title"><h2><i class="fas fa-user-shield" style="color: #2563eb; margin-right: 10px;"></i> Manajemen Hak Akses & Sesi Staf</h2></div>
+            <div class="page-title"><h2><i class="fas fa-user-shield"></i> Manajemen Akses & Sesi</h2></div>
 
-            <!-- KARTU PEMANTAU AKUN YANG SEDANG LOGIN -->
+            <!-- KARTU PEMANTAU SESI AKTIF -->
             <div class="card">
-                <div class="card-header"><i class="fas fa-signal" style="color: #10b981;"></i> Pemantau Akun Staf yang Sedang Aktif (Online)</div>
+                <div class="card-header"><i class="fas fa-signal" style="color: #10b981;"></i> Staf Sedang Online</div>
                 <div style="overflow-x: auto;">
                     <table class="tabel-antrean">
                         <thead>
                             <tr>
                                 <th>Nama Lengkap</th>
                                 <th>Username</th>
-                                <th>Peran (Role)</th>
-                                <th>Status Sesi</th>
+                                <th>Status</th>
                                 <th>Aksi Kontrol</th>
                             </tr>
                         </thead>
                         <tbody id="tabelSesiAktif">
-                            <tr><td colspan="5" style="text-align: center; padding: 20px;">Memuat sesi aktif...</td></tr>
+                            <tr><td colspan="4" style="text-align: center;">Memuat sesi...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -124,46 +99,32 @@
                 <div class="card" style="height: fit-content;">
                     <div class="card-header"><i class="fas fa-user-plus" style="color: #10b981;"></i> Tambah Staf Baru</div>
                     <form onsubmit="tambahStaf(event)">
+                        <div class="form-group"><label>Nama Lengkap</label><input type="text" id="inpNama" required></div>
+                        <div class="form-group"><label>Username</label><input type="text" id="inpUser" required></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="inpPass" required></div>
                         <div class="form-group">
-                            <label>Nama Lengkap</label>
-                            <input type="text" id="inpNama" placeholder="Nama lengkap petugas..." required>
-                        </div>
-                        <div class="form-group">
-                            <label>Username (Untuk Login)</label>
-                            <input type="text" id="inpUser" placeholder="Username tanpa spasi..." required autocomplete="off">
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" id="inpPass" placeholder="Minimal 6 karakter..." required>
-                        </div>
-                        <div class="form-group">
-                            <label>Pilih Hak Akses (Role)</label>
+                            <label>Hak Akses (Role)</label>
                             <select id="inpRole" required>
                                 <option value="" disabled selected>-- Pilih Peran --</option>
-                                <option value="superadmin">Super Admin (Akses Penuh)</option>
-                                <option value="petugas_loket">Petugas Loket (Input & Cetak Surat)</option>
-                                <option value="petugas_proses">Petugas Pemrosesan (ACC & Upload Dokumen)</option>
+                                <option value="superadmin">Super Admin</option>
+                                <option value="petugas_loket">Petugas Loket</option>
+                                <option value="petugas_proses">Petugas Pemrosesan</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-submit" id="btnSimpan"><i class="fas fa-save"></i> Simpan Akses</button>
+                        <button type="submit" class="btn-submit" id="btnSimpan">Simpan Akses</button>
                     </form>
                 </div>
 
-                <!-- TABEL STAF -->
+                <!-- TABEL STAF TERDAFTAR -->
                 <div class="card">
                     <div class="card-header"><i class="fas fa-users" style="color: #64748b;"></i> Daftar Staf Terdaftar</div>
                     <div style="overflow-x: auto;">
                         <table class="tabel-antrean">
                             <thead>
-                                <tr>
-                                    <th>Nama Lengkap</th>
-                                    <th>Username</th>
-                                    <th>Hak Akses</th>
-                                    <th>Aksi</th>
-                                </tr>
+                                <tr><th>Nama Lengkap</th><th>Username</th><th>Aksi</th></tr>
                             </thead>
                             <tbody id="tabelStaf">
-                                <tr><td colspan="4" style="text-align: center; padding: 20px;">Memuat data...</td></tr>
+                                <tr><td colspan="3" style="text-align: center;">Memuat data...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -178,63 +139,25 @@
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
         const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-        // ==========================================
-        // CEK SESI & LISTENER REALTIME LOGOUT
-        // ==========================================
         document.addEventListener("DOMContentLoaded", function() {
-            const roleSaatIni = localStorage.getItem('user_role');
-            const waktuLogin = localStorage.getItem('login_time');
-            const mySessionId = localStorage.getItem('active_session_id');
-            
-            if(!roleSaatIni || !waktuLogin) { 
-                window.location.href = "login.html"; 
-                return; 
-            } 
-
-            if(roleSaatIni !== 'superadmin') { 
-                alert("⛔ Akses Ditolak! Hanya Super Admin yang diizinkan."); 
-                window.location.href = "dashboard-master.html"; 
-                return; 
-            } 
-            
-            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
-            
-            const menuList = document.getElementById('menuDinamis');
-            menuList.innerHTML = `
-                <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
-                <li><a href="kelola-pengguna.html" class="active"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
-                <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
-                <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-                <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
-            `;
-
-            muatDataStaf();
-            muatSesiAktif();
-
-            // Berlangganan Realtime Supabase (Mendeteksi jika sesi ini dihapus/di-logout-kan oleh Super Admin)
-            if (mySessionId) {
-                supabaseClient
-                    .channel('cek_logout_pribadi')
-                    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'sesi_login', filter: `id=eq.${mySessionId}` }, () => {
-                        alert("⚠️ Sesi Anda telah di-logout-kan oleh Super Admin.\nSilakan login kembali.");
-                        localStorage.clear();
-                        window.location.href = "login.html";
-                    })
-                    .subscribe();
+            if(localStorage.getItem('user_role') !== 'superadmin') { 
+                window.location.href = "dashboard-master.html"; return; 
             }
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama');
+            
+            muatSesiAktif();
+            muatDataStaf();
 
-            // Realtime umum untuk memperbarui tabel sesi secara otomatis
+            // Dengarkan perubahan langsung pada tabel sesi_login
             supabaseClient
-                .channel('pemantau_sesi_global')
+                .channel('pemantau_sesi_admin')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'sesi_login' }, () => {
-                    muatSesiAktif();
+                    muatSesiAktif(); // Refresh otomatis jika ada login/logout
                 })
                 .subscribe();
         });
 
-        // ==========================================
-        // FUNGSI MUAT SESI AKTIF (YANG SEDANG LOGIN)
-        // ==========================================
+        // 1. FUNGSI TAMPILKAN SESI AKTIF
         async function muatSesiAktif() {
             try {
                 const { data, error } = await supabaseClient.from('sesi_login').select('*').order('created_at', { ascending: false });
@@ -242,78 +165,58 @@
 
                 let html = '';
                 if(data.length === 0) {
-                    html = `<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">Tidak ada staf yang sedang aktif login.</td></tr>`;
+                    html = `<tr><td colspan="4" style="text-align: center; color: #64748b;">Tidak ada staf yang sedang online.</td></tr>`;
                 } else {
                     data.forEach(item => {
-                        let roleTeks = (item.role === 'superadmin') ? 'Super Admin' : (item.role === 'petugas_loket') ? 'Petugas Loket' : 'Petugas Proses';
-                        let roleWarna = (item.role === 'superadmin') ? 'background:#fef3c7; color:#d97706; border: 1px solid #fde68a;' : 'background:#e0f2fe; color:#0284c7; border: 1px solid #bae6fd;';
-                        
+                        const isSesiSendiri = (item.id === localStorage.getItem('active_session_id'));
+                        const btnAksi = isSesiSendiri ? 
+                            '<span style="font-size:12px; color:#94a3b8; font-weight:bold;">Sesi Anda Saat Ini</span>' : 
+                            `<button class="btn-logout-paksa" onclick="logoutPaksa('${item.id}', '${item.nama_lengkap}')"><i class="fas fa-power-off"></i> Paksa Logout</button>`;
+
                         html += `<tr>
-                            <td style="font-weight:bold; color: #1e293b;">${item.nama_lengkap}</td>
-                            <td style="color: #475569;">${item.username}</td>
-                            <td><span class="badge-role" style="${roleWarna}">${roleTeks}</span></td>
-                            <td><span class="badge-status"><i class="fas fa-circle" style="font-size:8px; color:#10b981;"></i> Aktif (Online)</span></td>
-                            <td>
-                                <button class="btn-logout-paksa" onclick="logoutPaksa('${item.id}', '${item.nama_lengkap}')">
-                                    <i class="fas fa-power-off"></i> Paksa Logout
-                                </button>
-                            </td>
+                            <td style="font-weight:bold;">${item.nama_lengkap}</td>
+                            <td>${item.username}</td>
+                            <td><span class="badge-status"><i class="fas fa-circle" style="font-size:8px;"></i> Online</span></td>
+                            <td>${btnAksi}</td>
                         </tr>`;
                     });
                 }
                 document.getElementById('tabelSesiAktif').innerHTML = html;
-            } catch(err) {
-                document.getElementById('tabelSesiAktif').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;">Gagal memuat sesi: ${err.message}</td></tr>`;
-            }
+            } catch(err) { console.error("Gagal muat sesi:", err); }
         }
 
-        // ==========================================
-        // FUNGSI PAKSA LOGOUT STAF
-        // ==========================================
-        async function logoutPaksa(sessionId, namaStaf) {
-            if(!confirm(`⚠️ Yakin ingin memutus sesi login ${namaStaf} secara paksa?`)) return;
-
+        // 2. FUNGSI PAKSA LOGOUT
+        async function logoutPaksa(idSesi, namaStaf) {
+            if(!confirm(`⚠️ Keluarkan ${namaStaf} dari sistem secara paksa?`)) return;
             try {
-                const { error } = await supabaseClient.from('sesi_login').delete().eq('id', sessionId);
+                const { error } = await supabaseClient.from('sesi_login').delete().eq('id', idSesi);
                 if(error) throw error;
-                muatSesiAktif();
-            } catch(err) {
-                alert("Gagal melakukan logout paksa: " + err.message);
-            }
+            } catch(err) { alert("Gagal logout paksa: " + err.message); }
         }
 
+        // 3. FUNGSI MUAT DATA STAF
         async function muatDataStaf() {
             try {
-                const { data, error } = await supabaseClient.from('pengguna').select('*').order('created_at', { ascending: false });
+                const { data, error } = await supabaseClient.from('pengguna').select('*');
                 if(error) throw error;
                 
                 let html = '';
                 data.forEach(item => {
-                    let roleTeks = (item.role === 'superadmin') ? 'Super Admin' : (item.role === 'petugas_loket') ? 'Petugas Loket' : 'Petugas Proses';
-                    let roleWarna = (item.role === 'superadmin') ? 'background:#fef3c7; color:#d97706; border: 1px solid #fde68a;' : (item.role === 'petugas_loket') ? 'background:#e0f2fe; color:#0284c7; border: 1px solid #bae6fd;' : 'background:#dcfce7; color:#166534; border: 1px solid #bbf7d0;';
-                    
                     html += `<tr>
-                        <td style="font-weight:bold; color: #1e293b;">${item.nama_lengkap}</td>
-                        <td style="color: #475569;">${item.username}</td>
-                        <td><span class="badge-role" style="${roleWarna}">${roleTeks}</span></td>
+                        <td style="font-weight:bold;">${item.nama_lengkap}</td>
+                        <td>${item.username}</td>
                         <td>
-                            ${item.role !== 'superadmin' ? `<button class="btn-hapus" onclick="hapusStaf('${item.id}')"><i class="fas fa-trash-alt"></i> Cabut Akses</button>` : '<span style="font-size:12px; color:#94a3b8; font-weight:bold;">Akses Tetap</span>'}
+                            ${item.role !== 'superadmin' ? `<button class="btn-hapus" onclick="hapusStaf('${item.id}')">Cabut Akses</button>` : '<span style="font-size:12px; color:#94a3b8; font-weight:bold;">Akses Tetap</span>'}
                         </td>
                     </tr>`;
                 });
                 document.getElementById('tabelStaf').innerHTML = html;
-            } catch(err) { 
-                document.getElementById('tabelStaf').innerHTML = `<tr><td colspan="4" style="color:#dc2626; font-weight:bold; text-align:center; padding: 20px;">Gagal memuat: ${err.message}</td></tr>`; 
-            }
+            } catch(err) { console.error("Gagal muat staf:", err); }
         }
 
+        // 4. FUNGSI TAMBAH STAF
         async function tambahStaf(e) {
             e.preventDefault();
-            const btn = document.getElementById('btnSimpan');
-            const btnText = btn.innerHTML;
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Menyimpan...";
-            btn.disabled = true;
-
             try {
                 const dataSimpan = {
                     nama_lengkap: document.getElementById('inpNama').value,
@@ -323,32 +226,20 @@
                 };
                 const { error } = await supabaseClient.from('pengguna').insert([dataSimpan]);
                 if(error) throw error;
-                
-                alert("✅ Staf berhasil ditambahkan!");
+                alert("Staf ditambahkan!");
                 window.location.reload();
-            } catch(err) { 
-                alert("⚠️ Gagal menyimpan: " + err.message); 
-                btn.innerHTML = btnText; 
-                btn.disabled = false; 
-            }
+            } catch(err) { alert("Gagal menyimpan: " + err.message); }
         }
 
+        // 5. FUNGSI HAPUS STAF
         async function hapusStaf(id) {
-            if(!confirm("⚠️ PERINGATAN!\nApakah Anda yakin ingin mencabut dan menghapus akses staf ini secara permanen?")) return;
+            if(!confirm("Yakin ingin menghapus staf ini permanen?")) return;
             try {
                 const { error } = await supabaseClient.from('pengguna').delete().eq('id', id);
                 if(error) throw error;
                 muatDataStaf();
-            } catch(err) { 
-                alert("⚠️ Gagal menghapus: " + err.message); 
-            }
+            } catch(err) { alert("Gagal menghapus: " + err.message); }
         }
-
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay');
-            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btn.contains(e.target)) { sidebar.classList.remove('active'); overlay.classList.remove('active'); }
-        });
     </script>
 </body>
 </html>
