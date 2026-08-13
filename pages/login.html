@@ -83,13 +83,13 @@
                     throw new Error("Username atau Password salah!");
                 }
 
-                // 2. Simpan identitas sesi ke localStorage (Sesi 6 jam)
+                // 2. Simpan profil ke localStorage
                 localStorage.setItem('user_id', data.id);
                 localStorage.setItem('user_nama', data.nama_lengkap);
                 localStorage.setItem('user_role', data.role);
                 localStorage.setItem('login_time', new Date().getTime());
 
-                // 3. Catat sesi aktif ke tabel 'sesi_login' untuk pemantauan Super Admin
+                // 3. DAFTARKAN SESI KE TABEL sesi_login
                 const tokenUnikSesi = 'sess_' + Math.random().toString(36).substring(2) + Date.now();
                 const { data: dataSesi, error: errorSesi } = await supabaseClient
                     .from('sesi_login')
@@ -104,10 +104,11 @@
                     .single();
 
                 if (!errorSesi && dataSesi) {
+                    // Simpan ID sesi dari database ke browser ini
                     localStorage.setItem('active_session_id', dataSesi.id);
                 }
 
-                // 4. Redirect ke dashboard utama
+                // 4. Redirect ke dashboard
                 window.location.href = "dashboard-master.html";
 
             } catch (err) {
