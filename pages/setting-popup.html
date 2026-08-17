@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setting Popup | SIPPAK-CIB</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
+        :root { --primer: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --teks-gelap: #1e293b; --teks-pudar: #64748b; }
+        
+        body { background-color: var(--bg); display: flex; height: 100vh; overflow: hidden; color: var(--teks-gelap); }
+        .sidebar { width: 280px; background-color: var(--sidebar); color: #fff; display: flex; flex-direction: column; transition: 0.3s ease; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 30px 25px; font-size: 24px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; }
+        .sidebar-header i { color: #3b82f6; }
+        .menu-list { list-style: none; padding: 20px 0; flex-grow: 1; overflow-y: auto; }
+        .menu-list li a { display: flex; align-items: center; gap: 15px; padding: 16px 30px; color: #94a3b8; text-decoration: none; font-size: 15px; font-weight: 600; transition: 0.3s; border-left: 4px solid transparent; }
+        .menu-list li a:hover, .menu-list li a.active { background-color: rgba(255,255,255,0.05); color: #fff; border-left: 4px solid #3b82f6; }
+        
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; width: calc(100% - 280px); }
+        .topbar { background-color: #fff; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); z-index: 10; }
+        .user-profile { display: flex; align-items: center; gap: 15px; }
+        .user-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+        
+        .content-area { padding: 40px; overflow-y: auto; flex-grow: 1; }
+        .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .page-title h2 { font-size: 28px; font-weight: 800; }
+        
+        .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; max-width: 600px; }
+        .card-header { font-size: 18px; font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; align-items: center; gap:10px; }
+        
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        .form-group select { width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; outline: none; cursor: pointer; }
+        .form-group select:focus { border-color: #2563eb; }
+        
+        .btn-submit { background: #2563eb; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; }
+        .btn-submit:hover { background: #1d4ed8; }
+
+        .info-box { background: #eff6ff; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 20px; font-size: 13px; color: #1e40af; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
+        <ul class="menu-list">
+            <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+            <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+            <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
+            <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+            <li><a href="setting-popup.html" class="active"><i class="fas fa-cogs"></i> Setting Popup</a></li>
+            <li style="margin-top: 30px;"><a href="#" onclick="logoutSistem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div></div>
+            <div class="user-profile">
+                <div style="text-align: right;">
+                    <div style="font-size: 15px; font-weight: 700;" id="namaUser">Admin</div>
+                    <div style="font-size: 12px; color: var(--teks-pudar); font-weight: 600;">SUPER ADMIN</div>
+                </div>
+                <div class="user-avatar"><i class="fas fa-user-tie"></i></div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            <div class="page-title"><h2><i class="fas fa-cogs" style="color: #2563eb; margin-right: 10px;"></i> Konfigurasi Popup Generator</h2></div>
+            
+            <div class="card">
+                <div class="card-header"><i class="fas fa-sliders-h" style="color: #10b981;"></i> Atur Media Popup Ucapan</div>
+                
+                <div class="info-box">
+                    <strong>Catatan Direktori File:</strong><br>
+                    Pastikan file yang dipilih sudah tersedia di folder server Anda:<br>
+                    - assets/img/gambar-popup.png<br>
+                    - assets/img/gambar-popup.jpg<br>
+                    - assets/img/video-popup.mp4
+                </div>
+
+                <form onsubmit="simpanPengaturan(event)">
+                    <div class="form-group">
+                        <label>Status Fitur Popup</label>
+                        <select id="inpStatus">
+                            <option value="true">🟢 AKTIF (Tampilkan Popup)</option>
+                            <option value="false">🔴 MATI (Jangan Tampilkan Popup)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pilihan Media Tampilan</label>
+                        <select id="inpMedia">
+                            <option value="png">🖼️ File Gambar (.png)</option>
+                            <option value="jpg">🖼️ File Gambar (.jpg)</option>
+                            <option value="video">🎥 File Video (.mp4)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btnSimpan"><i class="fas fa-save"></i> Simpan Pengaturan</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
+        const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
+        const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
+
+        document.addEventListener("DOMContentLoaded", async function() {
+            if(localStorage.getItem('user_role') !== 'superadmin') { 
+                alert('Hanya Super Admin yang bisa mengakses halaman ini.');
+                window.location.href = "dashboard-master.html"; return; 
+            }
+            document.getElementById('namaUser').innerText = localStorage.getItem('user_nama');
+            
+            // Muat data saat ini dari DB
+            try {
+                const { data, error } = await supabaseClient.from('pengaturan_popup').select('*').eq('id', 1).single();
+                if (data) {
+                    document.getElementById('inpStatus').value = data.is_aktif.toString();
+                    document.getElementById('inpMedia').value = data.tipe_media;
+                }
+            } catch (err) {
+                console.log("Gagal memuat settingan awal: ", err);
+            }
+        });
+
+        async function simpanPengaturan(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpan');
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Menyimpan...";
+            btn.disabled = true;
+
+            const isAktif = document.getElementById('inpStatus').value === 'true';
+            const tipeMedia = document.getElementById('inpMedia').value;
+
+            try {
+                const { error } = await supabaseClient.from('pengaturan_popup')
+                    .update({ is_aktif: isAktif, tipe_media: tipeMedia })
+                    .eq('id', 1);
+                
+                if(error) throw error;
+                alert("✅ Pengaturan Popup berhasil disimpan!");
+            } catch(err) { 
+                alert("⚠️ Gagal menyimpan pengaturan: " + err.message); 
+            } finally {
+                btn.innerHTML = "<i class='fas fa-save'></i> Simpan Pengaturan";
+                btn.disabled = false;
+            }
+        }
+
+        async function logoutSistem() {
+            const mySessionId = localStorage.getItem('active_session_id');
+            if (mySessionId) await supabaseClient.from('sesi_login').delete().eq('id', mySessionId);
+            localStorage.clear();
+            window.location.href = "../index.html";
+        }
+    </script>
+</body>
+</html>

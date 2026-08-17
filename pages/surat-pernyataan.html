@@ -105,7 +105,7 @@
             .topbar { padding: 15px 20px; }
         }
 
-        /* POPUP UCAPAN VIDEO */
+        /* POPUP DINAMIS */
         .modal-ucapan { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: rgba(15, 23, 42, 0.95); 
@@ -117,14 +117,15 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             animation: zoomMuncul 0.3s ease-out; 
         }
-        .modal-ucapan-content video { 
+        /* Style ini berlaku otomatis untuk img atau video yang di-inject */
+        .modal-ucapan-content .media-dinamis { 
             max-width: 100%; 
             max-height: calc(100vh - 120px); 
             width: auto; height: auto; 
             object-fit: contain; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             border-radius: 12px;
-            background: #000; 
+            background: transparent; 
         }
         .btn-tutup-ucapan { 
             background: #2563eb; color: white; border: none; padding: 14px 40px; 
@@ -143,10 +144,10 @@
 </head>
 <body>
 
-    <!-- WADAH POPUP UCAPAN VIDEO -->
+    <!-- WADAH POPUP UCAPAN -->
     <div class="modal-ucapan" id="modalUcapan">
-        <div class="modal-ucapan-content">
-            <video id="videoUcapan" src="../assets/img/video.mp4" autoplay muted playsinline loop></video>
+        <div class="modal-ucapan-content" id="wadahMediaPopup">
+            <!-- Elemen Media img/video akan disuntikkan secara dinamis ke sini -->
             <button class="btn-tutup-ucapan" onclick="tutupPopupUcapan()"><i class="fas fa-check"></i> Tutup & Kembali</button>
         </div>
     </div>
@@ -156,7 +157,9 @@
 
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
-            <ul class="menu-list" id="menuDinamis"></ul>
+            <ul class="menu-list" id="menuDinamis">
+                <!-- Menu akan di-load via JS -->
+            </ul>
         </nav>
 
         <main class="main-content">
@@ -444,53 +447,49 @@
         </table>
     </div>
 
-    <!-- SCRIPT SUPABASE & WATCHDOG DITAMBAHKAN DI SINI -->
+    <!-- SCRIPT SUPABASE & PENGATURAN POPUP -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
         const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-        // ==========================================
-        // SISTEM SESI LOGIN & DETEKSI FORCE LOGOUT
-        // ==========================================
-        document.addEventListener("DOMContentLoaded", function() {
+        // Objek untuk menyimpan konfigurasi popup yang ditarik dari database
+        let configPopup = { aktif: true, tipe: 'video' };
+
+        document.addEventListener("DOMContentLoaded", async function() {
             const roleSaatIni = localStorage.getItem('user_role');
             const waktuLogin = localStorage.getItem('login_time');
-            const mySessionId = localStorage.getItem('active_session_id'); // ID Sesi untuk pengecekan
+            const mySessionId = localStorage.getItem('active_session_id'); 
             
-            // Cek jika belum login
-            if(!roleSaatIni || !waktuLogin) { 
-                window.location.href = "login.html"; 
-                return; 
-            } 
+            if(!roleSaatIni || !waktuLogin) { window.location.href = "login.html"; return; } 
             
-            // Logika kedaluwarsa 6 Jam
             const waktuSekarang = new Date().getTime();
-            const batasSesiMilis = 6 * 60 * 60 * 1000; 
-            if (waktuSekarang - parseInt(waktuLogin) > batasSesiMilis) {
-                alert("⏱️ Sesi login Anda telah habis (Lebih dari 6 Jam).\nSilakan login kembali demi keamanan.");
-                localStorage.clear();
-                window.location.href = "login.html";
-                return;
+            if (waktuSekarang - parseInt(waktuLogin) > (6 * 60 * 60 * 1000)) {
+                alert("⏱️ Sesi login Anda telah habis.\nSilakan login kembali.");
+                localStorage.clear(); window.location.href = "login.html"; return;
             }
             
-            // Lanjutkan jika sesi aman
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
             document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
 
-            // Menu dinamis (Ditambahkan fungsi logoutSistem() pada tombol keluar)
+            // MENYESUAIKAN MENU SIDEBAR SEPERTI GAMBAR 1001008066.jpg 
+            // Dan menyisipkan menu 'Setting Popup' untuk Super Admin
             const menuList = document.getElementById('menuDinamis');
             if (roleSaatIni === 'superadmin') {
                 menuList.innerHTML = `
-                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+                    <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
                     <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+                    <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
                     <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li><a href="setting-popup.html"><i class="fas fa-cogs"></i> Setting Popup</a></li>
                     <li style="margin-top: 30px;"><a href="#" onclick="logoutSistem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
                 `;
             } else {
                 menuList.innerHTML = `
                     <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+                    <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+                    <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
                     <li><a href="surat-pernyataan.html" class="active"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
                     <li style="margin-top: 30px;"><a href="#" onclick="logoutSistem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
                 `;
@@ -498,63 +497,33 @@
             
             initSignaturePad();
 
-            // =======================================================
-            // FOOLPROOF WATCHDOG (POLLING DATABASE SETIAP 3 DETIK)
-            // =======================================================
+            // AMBIL PENGATURAN POPUP DARI DATABASE
+            try {
+                const { data, error } = await supabaseClient.from('pengaturan_popup').select('*').eq('id', 1).single();
+                if (data) {
+                    configPopup.aktif = data.is_aktif;
+                    configPopup.tipe = data.tipe_media;
+                }
+            } catch (e) { console.log("Gagal memuat setting popup", e); }
+
+            // WATCHDOG PAKSA LOGOUT
             if (mySessionId) {
                 setInterval(async () => {
-                    const { data, error } = await supabaseClient
-                        .from('sesi_login')
-                        .select('id')
-                        .eq('id', mySessionId)
-                        .single();
-
-                    // Jika error PGRST116 (0 rows returned), artinya Super Admin telah menghapus sesi
+                    const { error } = await supabaseClient.from('sesi_login').select('id').eq('id', mySessionId).single();
                     if (error && error.code === 'PGRST116') {
-                        alert("⚠️ AKSES DIPUTUS!\n\nUPDATE FITUR!!! SILAHKAN LOGIN KEMBALI, TERIMA KASIH!");
-                        localStorage.clear();
-                        window.location.href = "login.html";
+                        alert("⚠️ AKSES DIPUTUS!\n\nSesi Anda telah di-logout secara paksa oleh Admin Utama. Silakan login kembali.");
+                        localStorage.clear(); window.location.href = "login.html";
                     }
                 }, 3000); 
             }
         });
-        
-        // =======================================================
-        // PENDENGAR NOTIFIKASI REAL-TIME DARI SUPER ADMIN
-        // =======================================================
-        // Catat ID notifikasi terakhir yang sudah dibaca agar tidak muncul berulang
-        let lastNotifId = localStorage.getItem('last_notif_id') || '';
-        
-        setInterval(async () => {
-            const { data, error } = await supabaseClient
-                .from('pengumuman')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .single();
 
-            if (!error && data) {
-                if (lastNotifId !== data.id) {
-                    // Jika ada pengumuman baru yang belum pernah dilihat di browser ini
-                    lastNotifId = data.id;
-                    localStorage.setItem('last_notif_id', data.id);
-                    
-                    alert("📢 PENGUMUMAN PENTING DARI SUPER ADMIN:\n\n" + data.pesan);
-                }
-            }
-        }, 4000); // Mengecek setiap 4 detik
-
-        // FUNGSI LOGOUT NORMAL (MENGHAPUS SESI SENDIRI SEBELUM KELUAR)
         async function logoutSistem() {
             const mySessionId = localStorage.getItem('active_session_id');
-            if (mySessionId) {
-                await supabaseClient.from('sesi_login').delete().eq('id', mySessionId);
-            }
-            localStorage.clear();
-            window.location.href = "../index.html";
+            if (mySessionId) await supabaseClient.from('sesi_login').delete().eq('id', mySessionId);
+            localStorage.clear(); window.location.href = "../index.html";
         }
 
-        // FUNGSI GANTI JENIS SURAT DINAMIS
         function gantiFormSurat() {
             const jenis = document.getElementById('jenisSurat').value;
             const fieldBelumBekerja = document.querySelectorAll('.khusus-belum-bekerja');
@@ -562,7 +531,6 @@
             const fieldJk = document.querySelectorAll('.khusus-jk');
             const fieldPenghasilan = document.querySelectorAll('.khusus-penghasilan');
             const fieldAdministrasi = document.querySelectorAll('.khusus-administrasi');
-            
             const judulForm = document.getElementById('judulFormSurat');
             const labelAlamat = document.getElementById('labelAlamatPemohon');
 
@@ -627,16 +595,12 @@
 
         const canvas = document.getElementById('canvasTtd');
         const ctx = canvas.getContext('2d');
-        let isDrawing = false;
-        let hasDrawn = false; 
+        let isDrawing = false; let hasDrawn = false; 
 
         function initSignaturePad() {
-            resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
+            resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+            canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing); canvas.addEventListener('mouseout', stopDrawing);
             canvas.addEventListener('touchstart', startDrawing, { passive: false });
             canvas.addEventListener('touchmove', draw, { passive: false });
             canvas.addEventListener('touchend', stopDrawing);
@@ -649,8 +613,7 @@
         function startDrawing(e) { isDrawing = true; hasDrawn = true; draw(e); }
         function stopDrawing() { isDrawing = false; ctx.beginPath(); }
         function draw(e) {
-            if (!isDrawing) return;
-            e.preventDefault(); 
+            if (!isDrawing) return; e.preventDefault(); 
             let clientX, clientY;
             if (e.type.includes('touch')) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; } 
             else { clientX = e.clientX; clientY = e.clientY; }
@@ -671,7 +634,6 @@
                 } 
             });
             if(!isValid) return;
-
             if (!hasDrawn) { alert("Mohon isi tanda tangan terlebih dahulu!"); return; }
 
             const jenisSurat = document.getElementById('jenisSurat').value;
@@ -702,86 +664,49 @@
 
             if (jenisSurat === 'belum_bekerja') {
                 elemenSurat = document.getElementById('kertasSuratBelumBekerja');
-                document.getElementById('bNama').innerText = nama;
-                document.getElementById('bNamaTtd').innerText = nama.toUpperCase(); 
-                document.getElementById('bNik').innerText = document.getElementById('inNik').value;
-                document.getElementById('bJk').innerText = document.getElementById('inJk').value;
-                document.getElementById('bTTL').innerText = document.getElementById('inTTL').value;
-                document.getElementById('bPekerjaan').innerText = document.getElementById('inPekerjaan').value;
-                document.getElementById('bTanggungan').innerText = document.getElementById('inTanggungan').value || '-';
-                document.getElementById('bHp').innerText = document.getElementById('inHp').value || '-';
-                document.getElementById('bAlamat').innerText = document.getElementById('inAlamat').value;
-                document.getElementById('bTanggal').innerText = tanggalCetak;
-                document.getElementById('bTtdImage').src = dataTtd;
-                document.getElementById('bTtdImage').style.display = 'inline-block';
+                document.getElementById('bNama').innerText = nama; document.getElementById('bNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('bNik').innerText = document.getElementById('inNik').value; document.getElementById('bJk').innerText = document.getElementById('inJk').value;
+                document.getElementById('bTTL').innerText = document.getElementById('inTTL').value; document.getElementById('bPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('bTanggungan').innerText = document.getElementById('inTanggungan').value || '-'; document.getElementById('bHp').innerText = document.getElementById('inHp').value || '-';
+                document.getElementById('bAlamat').innerText = document.getElementById('inAlamat').value; document.getElementById('bTanggal').innerText = tanggalCetak;
+                document.getElementById('bTtdImage').src = dataTtd; document.getElementById('bTtdImage').style.display = 'inline-block';
             } else if (jenisSurat === 'usaha') {
                 elemenSurat = document.getElementById('kertasSuratUsaha');
-                document.getElementById('uNama').innerText = nama;
-                document.getElementById('uNamaTtd').innerText = nama.toUpperCase(); 
-                document.getElementById('uTTL').innerText = document.getElementById('inTTL').value;
-                document.getElementById('uNik').innerText = document.getElementById('inNik').value;
-                document.getElementById('uPekerjaan').innerText = document.getElementById('inPekerjaan').value;
-                document.getElementById('uAlamat').innerText = document.getElementById('inAlamat').value;
-                document.getElementById('uJenisUsaha').innerText = document.getElementById('inJenisUsaha').value;
-                document.getElementById('uJalanUsaha').innerText = document.getElementById('inJalanUsaha').value;
-                document.getElementById('uRtUsaha').innerText = document.getElementById('inRtUsaha').value.padStart(2, '0');
-                document.getElementById('uRwUsaha').innerText = document.getElementById('inRwUsaha').value.padStart(2, '0');
-                document.getElementById('uTanggal').innerText = tanggalCetak;
-                document.getElementById('uTtdImage').src = dataTtd;
-                document.getElementById('uTtdImage').style.display = 'inline-block';
+                document.getElementById('uNama').innerText = nama; document.getElementById('uNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('uTTL').innerText = document.getElementById('inTTL').value; document.getElementById('uNik').innerText = document.getElementById('inNik').value;
+                document.getElementById('uPekerjaan').innerText = document.getElementById('inPekerjaan').value; document.getElementById('uAlamat').innerText = document.getElementById('inAlamat').value;
+                document.getElementById('uJenisUsaha').innerText = document.getElementById('inJenisUsaha').value; document.getElementById('uJalanUsaha').innerText = document.getElementById('inJalanUsaha').value;
+                document.getElementById('uRtUsaha').innerText = document.getElementById('inRtUsaha').value.padStart(2, '0'); document.getElementById('uRwUsaha').innerText = document.getElementById('inRwUsaha').value.padStart(2, '0');
+                document.getElementById('uTanggal').innerText = tanggalCetak; document.getElementById('uTtdImage').src = dataTtd; document.getElementById('uTtdImage').style.display = 'inline-block';
             } else if (jenisSurat === 'belum_nikah') {
                 elemenSurat = document.getElementById('kertasSuratBelumNikah');
-                document.getElementById('nNama').innerText = nama;
-                document.getElementById('nNamaTtd').innerText = nama.toUpperCase(); 
-                const jk = document.getElementById('inJk').value;
-                document.getElementById('nJk').innerText = (jk === 'Laki-laki') ? 'Pria' : 'Wanita';
-                document.getElementById('nTTL').innerText = document.getElementById('inTTL').value;
-                document.getElementById('nPekerjaan').innerText = document.getElementById('inPekerjaan').value;
-                document.getElementById('nAlamat').innerText = document.getElementById('inAlamat').value;
-                document.getElementById('nKtp').innerText = document.getElementById('inNik').value;
-                document.getElementById('nTanggal').innerText = tanggalCetak;
-                document.getElementById('nTtdImage').src = dataTtd;
-                document.getElementById('nTtdImage').style.display = 'inline-block';
+                document.getElementById('nNama').innerText = nama; document.getElementById('nNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('nJk').innerText = (document.getElementById('inJk').value === 'Laki-laki') ? 'Pria' : 'Wanita';
+                document.getElementById('nTTL').innerText = document.getElementById('inTTL').value; document.getElementById('nPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('nAlamat').innerText = document.getElementById('inAlamat').value; document.getElementById('nKtp').innerText = document.getElementById('inNik').value;
+                document.getElementById('nTanggal').innerText = tanggalCetak; document.getElementById('nTtdImage').src = dataTtd; document.getElementById('nTtdImage').style.display = 'inline-block';
             } else if (jenisSurat === 'penghasilan') {
                 elemenSurat = document.getElementById('kertasSuratPenghasilan');
-                document.getElementById('pNama').innerText = nama;
-                document.getElementById('pNamaTtd').innerText = nama.toUpperCase(); 
-                document.getElementById('pJk').innerText = document.getElementById('inJk').value;
-                document.getElementById('pTTL').innerText = document.getElementById('inTTL').value;
-                document.getElementById('pNik').innerText = document.getElementById('inNik').value;
-                document.getElementById('pPekerjaan').innerText = document.getElementById('inPekerjaan').value;
-                document.getElementById('pAlamat').innerText = document.getElementById('inAlamat').value;
-                document.getElementById('pPenghasilan').innerText = document.getElementById('inPenghasilan').value;
-                document.getElementById('pTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
-                document.getElementById('pTanggal').innerText = tanggalCetak;
-                document.getElementById('pTtdImage').src = dataTtd;
-                document.getElementById('pTtdImage').style.display = 'inline-block';
+                document.getElementById('pNama').innerText = nama; document.getElementById('pNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('pJk').innerText = document.getElementById('inJk').value; document.getElementById('pTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('pNik').innerText = document.getElementById('inNik').value; document.getElementById('pPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('pAlamat').innerText = document.getElementById('inAlamat').value; document.getElementById('pPenghasilan').innerText = document.getElementById('inPenghasilan').value;
+                document.getElementById('pTujuan').innerText = document.getElementById('inTujuanAdministrasi').value; document.getElementById('pTanggal').innerText = tanggalCetak;
+                document.getElementById('pTtdImage').src = dataTtd; document.getElementById('pTtdImage').style.display = 'inline-block';
             } else if (jenisSurat === 'tidak_punya_rumah') {
                 elemenSurat = document.getElementById('kertasSuratTidakRumah');
-                document.getElementById('rNama').innerText = nama;
-                document.getElementById('rNamaTtd').innerText = nama.toUpperCase(); 
-                document.getElementById('rJk').innerText = document.getElementById('inJk').value;
-                document.getElementById('rTTL').innerText = document.getElementById('inTTL').value;
-                document.getElementById('rNik').innerText = document.getElementById('inNik').value;
-                document.getElementById('rPekerjaan').innerText = document.getElementById('inPekerjaan').value;
-                document.getElementById('rAlamat').innerText = document.getElementById('inAlamat').value;
-                document.getElementById('rTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
-                document.getElementById('rTanggal').innerText = tanggalCetak;
-                document.getElementById('rTtdImage').src = dataTtd;
-                document.getElementById('rTtdImage').style.display = 'inline-block';
+                document.getElementById('rNama').innerText = nama; document.getElementById('rNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('rJk').innerText = document.getElementById('inJk').value; document.getElementById('rTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('rNik').innerText = document.getElementById('inNik').value; document.getElementById('rPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('rAlamat').innerText = document.getElementById('inAlamat').value; document.getElementById('rTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
+                document.getElementById('rTanggal').innerText = tanggalCetak; document.getElementById('rTtdImage').src = dataTtd; document.getElementById('rTtdImage').style.display = 'inline-block';
             } else if (jenisSurat === 'tidak_punya_akta_ijazah') {
                 elemenSurat = document.getElementById('kertasSuratTidakAktaIjazah');
-                document.getElementById('iNama').innerText = nama;
-                document.getElementById('iNamaTtd').innerText = nama.toUpperCase(); 
-                document.getElementById('iJk').innerText = document.getElementById('inJk').value;
-                document.getElementById('iTTL').innerText = document.getElementById('inTTL').value;
-                document.getElementById('iNik').innerText = document.getElementById('inNik').value;
-                document.getElementById('iPekerjaan').innerText = document.getElementById('inPekerjaan').value;
-                document.getElementById('iAlamat').innerText = document.getElementById('inAlamat').value;
-                document.getElementById('iTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
-                document.getElementById('iTanggal').innerText = tanggalCetak;
-                document.getElementById('iTtdImage').src = dataTtd;
-                document.getElementById('iTtdImage').style.display = 'inline-block';
+                document.getElementById('iNama').innerText = nama; document.getElementById('iNamaTtd').innerText = nama.toUpperCase(); 
+                document.getElementById('iJk').innerText = document.getElementById('inJk').value; document.getElementById('iTTL').innerText = document.getElementById('inTTL').value;
+                document.getElementById('iNik').innerText = document.getElementById('inNik').value; document.getElementById('iPekerjaan').innerText = document.getElementById('inPekerjaan').value;
+                document.getElementById('iAlamat').innerText = document.getElementById('inAlamat').value; document.getElementById('iTujuan').innerText = document.getElementById('inTujuanAdministrasi').value;
+                document.getElementById('iTanggal').innerText = tanggalCetak; document.getElementById('iTtdImage').src = dataTtd; document.getElementById('iTtdImage').style.display = 'inline-block';
             }
 
             const appLayout = document.getElementById('appLayout');
@@ -799,37 +724,53 @@
                     html2pdf().set(opsiPDF).from(elemenSurat).save().then(() => {
                         kembalikanTampilan(); tampilkanPopupUcapan(); 
                     });
-                } 
-                else if (formatOutput === 'jpg') {
+                } else if (formatOutput === 'jpg') {
                     html2canvas(elemenSurat, { scale: 2, useCORS: true, scrollY: 0 }).then(canvasTarget => {
-                        let link = document.createElement('a');
-                        link.download = namaFile + '.jpg';
-                        link.href = canvasTarget.toDataURL('image/jpeg', 1.0);
-                        link.click();
+                        let link = document.createElement('a'); link.download = namaFile + '.jpg'; link.href = canvasTarget.toDataURL('image/jpeg', 1.0); link.click();
                         kembalikanTampilan(); tampilkanPopupUcapan(); 
                     });
                 }
             }, 400); 
 
             function kembalikanTampilan() {
-                elemenSurat.style.display = 'none';
-                appLayout.style.display = 'flex'; 
+                elemenSurat.style.display = 'none'; appLayout.style.display = 'flex'; 
                 btnPDF.innerHTML = teksPDFAsli; btnJPG.innerHTML = teksJPGAsli;
                 btnPDF.disabled = false; btnJPG.disabled = false;
             }
         }
 
-        // FUNGSI POPUP VIDEO
+        // FUNGSI INJEKSI POPUP DINAMIS DARI PENGATURAN SUPABASE
         function tampilkanPopupUcapan() {
+            // Cek pengaturan, jika OFF (false), batalkan penampilan popup
+            if (configPopup.aktif === false) return;
+
+            const wadah = document.getElementById('wadahMediaPopup');
+            
+            // Hapus media lama jika ada sebelum menampilkan yang baru
+            const elemenLama = document.getElementById('elemenDinamis');
+            if (elemenLama) elemenLama.remove();
+
+            let strukturHTML = '';
+            
+            if (configPopup.tipe === 'png') {
+                strukturHTML = `<img id="elemenDinamis" class="media-dinamis" src="../assets/img/gambar-popup.png" alt="Popup">`;
+            } else if (configPopup.tipe === 'jpg') {
+                strukturHTML = `<img id="elemenDinamis" class="media-dinamis" src="../assets/img/gambar-popup.jpg" alt="Popup">`;
+            } else if (configPopup.tipe === 'video') {
+                strukturHTML = `<video id="elemenDinamis" class="media-dinamis" src="../assets/img/video-popup.mp4" autoplay muted playsinline loop></video>`;
+            }
+
+            // Sisipkan elemen HTML (gambar/video) ke atas tombol tutup
+            wadah.insertAdjacentHTML('afterbegin', strukturHTML);
             document.getElementById('modalUcapan').style.display = 'flex';
-            const vid = document.getElementById('videoUcapan');
-            vid.currentTime = 0; 
-            vid.play().catch(e => console.log("Gagal auto-play video: ", e));
         }
 
         function tutupPopupUcapan() {
             document.getElementById('modalUcapan').style.display = 'none';
-            document.getElementById('videoUcapan').pause(); 
+            const elemenDinamis = document.getElementById('elemenDinamis');
+            if (elemenDinamis && elemenDinamis.tagName === 'VIDEO') {
+                elemenDinamis.pause(); 
+            }
         }
 
         // UI TOGGLE
