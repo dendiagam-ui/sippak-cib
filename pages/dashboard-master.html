@@ -151,7 +151,7 @@
             <!-- Tabel Antrean Permohonan -->
             <div class="card">
                 <div class="card-header">
-                    <div><i class="fas fa-list-ul" style="color: #64748b;"></i> Data Permohonan (jenis_layanan)</div>
+                    <div><i class="fas fa-list-ul" style="color: #64748b;"></i> Data Permohonan </div>
                     <a href="permohonan.html" style="font-size: 14px; color: #2563eb; text-decoration: none; font-weight: 600;"><i class="fas fa-plus"></i> Input Baru</a>
                 </div>
                 <div style="overflow-x: auto;">
@@ -251,7 +251,7 @@
             try {
                 // MENGGUNAKAN NAMA TABEL: jenis_layanan
                 const { data, error } = await supabaseClient
-                    .from('jenis_layanan') 
+                    .from('permohonan') 
                     .select('*')
                     .order('created_at', { ascending: false })
                     .limit(20);
@@ -319,7 +319,7 @@
 
             } catch (err) {
                 console.error("Error mengambil layanan:", err);
-                document.getElementById('tabelAntreanBody').innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Gagal memuat data dari database. Pastikan tabel 'jenis_layanan' sudah dibuat.</td></tr>`;
+                document.getElementById('tabelAntreanBody').innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Gagal memuat data dari database. Pastikan tabel 'permohonan sudah dibuat.</td></tr>`;
             }
         }
 
@@ -329,7 +329,7 @@
         async function aksiVerifikasi(idLayanan) {
             if(!confirm("Yakin ingin memverifikasi dan memproses permohonan ini?")) return;
             try {
-                const { error } = await supabaseClient.from('jenis_layanan').update({ status: 'Sedang Diproses' }).eq('id', idLayanan);
+                const { error } = await supabaseClient.from('permohonan').update({ status: 'Sedang Diproses' }).eq('id', idLayanan);
                 if(error) throw error;
                 muatAntrean(); // Refresh UI seketika
             } catch(err) { alert("Gagal memperbarui status: " + err.message); }
@@ -362,7 +362,7 @@
                 // Contoh: await supabaseClient.storage.from('dokumen_hasil').upload(fileName, fileInput);
                 
                 // Setelah upload fisik selesai, perbarui status baris layanan
-                const { error } = await supabaseClient.from('jenis_layanan')
+                const { error } = await supabaseClient.from('permohonan')
                     .update({ status: 'Selesai Dicetak' }) // Anda juga bisa menambahkan field { url_berkas: linkFile } jika punya kolom tersebut
                     .eq('id', id);
                 
