@@ -74,7 +74,7 @@
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
         <ul class="menu-list" id="menuDinamis">
-            <!-- Menu Di-Generate Otomatis oleh JavaScript -->
+            <!-- Menu Di-Generate Otomatis -->
         </ul>
     </nav>
 
@@ -95,26 +95,26 @@
                 <h2><i class="fas fa-desktop" style="color: #2563eb; margin-right: 10px;"></i> Dasbor Utama</h2>
             </div>
 
-            <!-- Bagian Kartu Statistik Pendek -->
+            <!-- Kartu Statistik -->
             <div class="grid-statistik">
                 <div class="stat-card">
                     <div class="stat-icon biru"><i class="fas fa-file-alt"></i></div>
                     <div class="stat-info">
-                        <h3>124</h3>
+                        <h3 id="statTotal">-</h3>
                         <p>Total Surat Tercetak</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon hijau"><i class="fas fa-check-circle"></i></div>
                     <div class="stat-info">
-                        <h3>89</h3>
+                        <h3 id="statSelesai">-</h3>
                         <p>Permohonan Selesai</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon kuning"><i class="fas fa-clock"></i></div>
                     <div class="stat-info">
-                        <h3>12</h3>
+                        <h3 id="statMenunggu">-</h3>
                         <p>Menunggu Antrean</p>
                     </div>
                 </div>
@@ -130,29 +130,15 @@
                     <table class="tabel-antrean">
                         <thead>
                             <tr>
-                                <th>No. Antrean</th>
+                                <th>No.</th>
                                 <th>Nama Pemohon</th>
                                 <th>Jenis Surat</th>
                                 <th>Waktu Input</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Data Dummy (Nanti bisa dihubungkan ke Database) -->
-                            <tr>
-                                <td style="font-weight: bold;">#001</td>
-                                <td>Budi Santoso</td>
-                                <td>Surat Pernyataan Belum Bekerja</td>
-                                <td>Hari ini, 09:30</td>
-                                <td><span class="badge-status badge-pending">Menunggu Antrean</span></td>
-                            </tr>
-                            <tr>
-                                <td style="font-weight: bold;">#002</td>
-                                <td>Siti Aminah</td>
-                                <td>Surat Keterangan Usaha</td>
-                                <td>Hari ini, 08:15</td>
-                                <td><span class="badge-status badge-sukses">Selesai Dicetak</span></td>
-                            </tr>
+                        <tbody id="tabelAntreanBody">
+                            <tr><td colspan="5" style="text-align: center; padding: 20px;">Memuat data dari database... <i class='fas fa-spinner fa-spin'></i></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -211,7 +197,12 @@
                 `;
             }
 
-            // 5. FOOLPROOF WATCHDOG (Pendeteksi Paksa Logout dari Super Admin)
+            // 5. MUAT DATA ANTREAN DARI DATABASE
+            muatAntrean();
+            // Refresh tabel antrean setiap 5 detik secara otomatis
+            setInterval(muatAntrean, 5000);
+
+            // 6. FOOLPROOF WATCHDOG (Pendeteksi Paksa Logout)
             if (mySessionId) {
                 setInterval(async () => {
                     const { error } = await supabaseClient
@@ -225,10 +216,10 @@
                         localStorage.clear();
                         window.location.href = "login.html";
                     }
-                }, 3000); // Cek setiap 3 detik
+                }, 3000); 
             }
 
-            // 6. PENERIMA NOTIFIKASI BROADCAST REAL-TIME
+            // 7. PENERIMA NOTIFIKASI BROADCAST REAL-TIME
             let lastNotifId = localStorage.getItem('last_notif_id') || '';
             setInterval(async () => {
                 const { data, error } = await supabaseClient
@@ -245,21 +236,88 @@
                         alert("📢 PENGUMUMAN PENTING DARI SUPER ADMIN:\n\n" + data.pesan);
                     }
                 }
-            }, 4000); // Cek pesan baru setiap 4 detik
+            }, 4000); 
         });
+
+        // ==========================================
+        // FUNGSI UTAMA UNTUK MENGAMBIL DATA ANTREAN
+        // ==========================================
+        async function muatAntrean() {
+            try {
+                // Mengambil 20 data terbaru dari tabel 'permohonan'
+                const { data, error } = await supabaseClient
+                    .from('permohonan') 
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('tabelAntreanBody');
+                let html = '';
+                let totalSelesai = 0;
+                let totalMenunggu = 0;
+
+                if (!data || data.length === 0) {
+                    html = `<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 20px;">Belum ada antrean permohonan yang masuk.</td></tr>`;
+                } else {
+                    data.forEach((item, index) => {
+                        // Memformat Tanggal
+                        let tgl = new Date(item.created_at);
+                        let waktuFormated = tgl.toLocaleDateString('id-ID') + ' - ' + tgl.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                        
+                        // Menyesuaikan Status dengan Badge CSS
+                        let statusTeks = item.status || 'Menunggu Antrean';
+                        let statusBadge = '';
+                        
+                        if(statusTeks.toLowerCase().includes('menunggu')) {
+                            statusBadge = `<span class="badge-status badge-pending">${statusTeks}</span>`;
+                            totalMenunggu++;
+                        } else if (statusTeks.toLowerCase().includes('selesai')) {
+                            statusBadge = `<span class="badge-status badge-sukses">${statusTeks}</span>`;
+                            totalSelesai++;
+                        } else {
+                            statusBadge = `<span class="badge-status" style="background:#e2e8f0; color:#475569;">${statusTeks}</span>`;
+                        }
+
+                        // Asumsi kolom di tabel Supabase adalah nama_pemohon dan jenis_surat
+                        let nama = item.nama_pemohon || item.nama_lengkap || 'Tanpa Nama';
+                        let jenis = item.jenis_surat || 'Surat Pernyataan';
+
+                        html += `<tr>
+                            <td style="font-weight: bold;">#${String(data.length - index).padStart(3, '0')}</td>
+                            <td>${nama}</td>
+                            <td>${jenis}</td>
+                            <td>${waktuFormated}</td>
+                            <td>${statusBadge}</td>
+                        </tr>`;
+                    });
+                }
+                tbody.innerHTML = html;
+
+                // Update Angka Statistik di bagian atas
+                // (Untuk aplikasi nyata, sebaiknya Anda melakukan .count() langsung dari Supabase)
+                document.getElementById('statTotal').innerText = data.length || 0;
+                document.getElementById('statSelesai').innerText = totalSelesai;
+                document.getElementById('statMenunggu').innerText = totalMenunggu;
+
+            } catch (err) {
+                console.error("Error mengambil antrean:", err);
+                document.getElementById('tabelAntreanBody').innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Gagal memuat data dari database. Pastikan tabel 'permohonan' sudah dibuat.</td></tr>`;
+            }
+        }
 
         // FUNGSI KELUAR SISTEM
         async function logoutSistem() {
             const mySessionId = localStorage.getItem('active_session_id');
             if (mySessionId) {
-                // Hapus data sesi di database sebelum keluar
                 await supabaseClient.from('sesi_login').delete().eq('id', mySessionId);
             }
             localStorage.clear();
             window.location.href = "../index.html";
         }
 
-        // FUNGSI UI SIDEBAR (Untuk tampilan Mobile/HP)
+        // FUNGSI UI SIDEBAR
         function toggleSidebar() { 
             document.getElementById('sidebar').classList.toggle('active'); 
             const overlay = document.getElementById('overlay');
