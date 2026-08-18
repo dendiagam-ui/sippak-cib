@@ -30,7 +30,7 @@
         .page-title { margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
         .page-title h2 { font-size: 28px; color: var(--teks-gelap); font-weight: 800; }
 
-        /* KARTU STATISTIK */
+        /* STATISTIK & TABEL */
         .grid-statistik { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: #fff; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 20px; }
         .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; }
@@ -40,39 +40,35 @@
         .stat-info h3 { font-size: 24px; font-weight: 800; color: var(--teks-gelap); margin-bottom: 5px; }
         .stat-info p { font-size: 14px; color: var(--teks-pudar); font-weight: 600; }
         
-        /* KARTU TABEL */
         .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; margin-bottom: 25px; }
         .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         
         .tabel-antrean { width: 100%; border-collapse: collapse; }
-        .tabel-antrean th, .tabel-antrean td { padding: 16px; border-bottom: 1px solid #f1f5f9; text-align: left; font-size: 14px; vertical-align: middle; }
+        .tabel-antrean th, .tabel-antrean td { padding: 16px; border-bottom: 1px solid #f1f5f9; text-align: left; font-size: 14px; }
         .tabel-antrean th { background: #f8fafc; font-weight: 700; color: #475569; border-top: 1px solid #e2e8f0; border-bottom: 2px solid #e2e8f0; }
-        .tabel-antrean tr { transition: 0.2s; }
-        .tabel-antrean tr:hover { background: #f8fafc; }
-
+        
+        /* BADGES & BUTTONS */
         .badge-status { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; }
         .badge-pending { background: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
-        .badge-proses { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
         .badge-sukses { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 
-        /* TOMBOL AKSI */
-        .btn-aksi { border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
-        .btn-verif { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
-        .btn-verif:hover { background: #2563eb; color: white; }
-        .btn-upload { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
-        .btn-upload:hover { background: #9333ea; color: white; }
+        .btn-aksi { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+        .btn-aksi:hover { background: #1d4ed8; }
+        .btn-lihat { background: #10b981; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+        .btn-lihat:hover { background: #059669; }
 
-        /* OVERLAY & MODAL UPLOAD */
+        /* MODAL UPLOAD */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
         .overlay.active { display: block; }
-
-        .modal-box { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: #fff; width: 90%; max-width: 450px; border-radius: 16px; padding: 30px; z-index: 10000; opacity: 0; pointer-events: none; transition: 0.3s; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .modal-box.active { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
-        .modal-box h3 { font-size: 20px; margin-bottom: 10px; color: #1e293b; }
-        .modal-box p { font-size: 14px; color: #64748b; margin-bottom: 20px; }
-        .modal-box input[type="file"] { width: 100%; padding: 12px; border: 2px dashed #cbd5e1; border-radius: 8px; margin-bottom: 20px; font-size: 14px; cursor: pointer; }
-        .btn-submit { background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; margin-bottom: 10px; }
-        .btn-batal { background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: #fff; width: 90%; max-width: 450px; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; display: none; opacity: 0; transition: 0.3s; padding: 30px; }
+        .modal.active { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .modal h3 { margin-bottom: 15px; color: var(--teks-gelap); font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .form-group-modal { margin-bottom: 20px; }
+        .form-group-modal label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #475569; }
+        .form-group-modal input[type="file"] { width: 100%; padding: 12px; border: 2px dashed #cbd5e1; border-radius: 8px; background: #f8fafc; cursor: pointer; }
+        .btn-group-modal { display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-batal { background: #f1f5f9; color: #475569; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-upload-submit { background: #2563eb; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
         @media (max-width: 900px) {
             .sidebar { position: fixed; left: -280px; height: 100%; } 
@@ -86,24 +82,29 @@
 </head>
 <body>
 
-    <div class="overlay" id="overlay"></div>
+    <div class="overlay" id="overlay" onclick="tutupModal()"></div>
 
-    <!-- MODAL UPLOAD DOKUMEN HASIL -->
-    <div class="overlay" id="overlayModal" style="z-index: 9999;"></div>
-    <div class="modal-box" id="modalUpload">
-        <h3><i class="fas fa-file-upload" style="color: #9333ea;"></i> Upload Hasil Dokumen</h3>
-        <p>Pilih file dokumen PDF / Gambar hasil cetak yang sudah disahkan untuk dikirim kembali kepada pemohon.</p>
-        <input type="hidden" id="idLayananUpload">
-        <input type="file" id="fileDokumen" accept=".pdf, .jpg, .png">
-        <button class="btn-submit" onclick="prosesUploadDokumen()" id="btnProsesUpload">Selesaikan Permohonan</button>
-        <button class="btn-batal" onclick="tutupModalUpload()">Batal</button>
+    <!-- MODAL UPLOAD DOKUMEN -->
+    <div class="modal" id="modalUpload">
+        <h3><i class="fas fa-file-upload" style="color: #2563eb;"></i> Verifikasi & Upload Dokumen</h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Upload file surat yang telah selesai diproses untuk permohonan atas nama <strong id="modalNamaPemohon">...</strong>.</p>
+        
+        <form id="formUploadDoc" onsubmit="prosesUploadDokumen(event)">
+            <input type="hidden" id="idPermohonanUpload">
+            <div class="form-group-modal">
+                <label>Pilih Dokumen (PDF, JPG, PNG)</label>
+                <input type="file" id="fileDokumen" accept=".pdf, .jpg, .jpeg, .png" required>
+            </div>
+            <div class="btn-group-modal">
+                <button type="button" class="btn-batal" onclick="tutupModal()">Batal</button>
+                <button type="submit" class="btn-upload-submit" id="btnSubmitUpload"><i class="fas fa-upload"></i> Upload & Selesai</button>
+            </div>
+        </form>
     </div>
 
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
-        <ul class="menu-list" id="menuDinamis">
-            <!-- Menu Di-Generate Otomatis -->
-        </ul>
+        <ul class="menu-list" id="menuDinamis"></ul>
     </nav>
 
     <main class="main-content">
@@ -127,31 +128,22 @@
             <div class="grid-statistik">
                 <div class="stat-card">
                     <div class="stat-icon biru"><i class="fas fa-file-alt"></i></div>
-                    <div class="stat-info">
-                        <h3 id="statTotal">-</h3>
-                        <p>Total Permohonan</p>
-                    </div>
+                    <div class="stat-info"><h3 id="statTotal">-</h3><p>Total Permohonan</p></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon hijau"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-info">
-                        <h3 id="statSelesai">-</h3>
-                        <p>Selesai Dicetak</p>
-                    </div>
+                    <div class="stat-info"><h3 id="statSelesai">-</h3><p>Selesai & Terverifikasi</p></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon kuning"><i class="fas fa-clock"></i></div>
-                    <div class="stat-info">
-                        <h3 id="statMenunggu">-</h3>
-                        <p>Belum Diproses</p>
-                    </div>
+                    <div class="stat-info"><h3 id="statMenunggu">-</h3><p>Menunggu Proses</p></div>
                 </div>
             </div>
 
             <!-- Tabel Antrean Permohonan -->
             <div class="card">
                 <div class="card-header">
-                    <div><i class="fas fa-list-ul" style="color: #64748b;"></i> Data Permohonan </div>
+                    <div><i class="fas fa-list-ul" style="color: #64748b;"></i> Antrean Permohonan Terbaru</div>
                     <a href="permohonan.html" style="font-size: 14px; color: #2563eb; text-decoration: none; font-weight: 600;"><i class="fas fa-plus"></i> Input Baru</a>
                 </div>
                 <div style="overflow-x: auto;">
@@ -160,14 +152,14 @@
                             <tr>
                                 <th>No.</th>
                                 <th>Nama Pemohon</th>
-                                <th>Jenis Layanan / Surat</th>
+                                <th>Jenis Surat</th>
                                 <th>Waktu Input</th>
                                 <th>Status</th>
-                                <th style="text-align: center;">Aksi Kontrol</th>
+                                <th>Aksi / Dokumen</th>
                             </tr>
                         </thead>
                         <tbody id="tabelAntreanBody">
-                            <tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data dari database... <i class='fas fa-spinner fa-spin'></i></td></tr>
+                            <tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data... <i class='fas fa-spinner fa-spin'></i></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -175,34 +167,33 @@
         </div>
     </main>
 
-    <!-- KONEKSI SUPABASE & JAVASCRIPT UTAMA -->
+    <!-- SUPABASE & SCRIPT UTAMA -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
         const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
-        
-        let userRoleSistem = '';
+
+        // Variabel global role untuk cek akses upload
+        let userRoleGlobal = '';
 
         document.addEventListener("DOMContentLoaded", function() {
-            userRoleSistem = localStorage.getItem('user_role');
+            const roleSaatIni = localStorage.getItem('user_role');
             const waktuLogin = localStorage.getItem('login_time');
             const mySessionId = localStorage.getItem('active_session_id');
             
-            if(!userRoleSistem || !waktuLogin) { window.location.href = "login.html"; return; } 
-            
-            const waktuSekarang = new Date().getTime();
-            if (waktuSekarang - parseInt(waktuLogin) > (6 * 60 * 60 * 1000)) {
-                alert("⏱️ Sesi login Anda telah habis.\nSilakan login kembali.");
-                localStorage.clear(); window.location.href = "login.html"; return;
+            if(!roleSaatIni || !waktuLogin) { window.location.href = "login.html"; return; } 
+            if (new Date().getTime() - parseInt(waktuLogin) > (6 * 60 * 60 * 1000)) {
+                alert("Sesi login Anda telah habis."); localStorage.clear(); window.location.href = "login.html"; return;
             }
             
+            userRoleGlobal = roleSaatIni;
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
-            document.getElementById('roleUser').innerText = userRoleSistem === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
+            document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
 
-            // GENERATE MENU
+            // MENU DINAMIS
             const menuList = document.getElementById('menuDinamis');
-            if (userRoleSistem === 'superadmin') {
+            if (roleSaatIni === 'superadmin') {
                 menuList.innerHTML = `
                     <li><a href="dashboard-master.html" class="active"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
                     <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
@@ -221,41 +212,15 @@
             }
 
             muatAntrean();
-            setInterval(muatAntrean, 5000); // Auto refresh data setiap 5 detik
-
-            // WATCHDOG Paksa Logout & Notifikasi
-            if (mySessionId) {
-                setInterval(async () => {
-                    const { error } = await supabaseClient.from('sesi_login').select('id').eq('id', mySessionId).single();
-                    if (error && error.code === 'PGRST116') {
-                        alert("⚠️ AKSES DIPUTUS!\n\nSesi Anda telah di-logout secara paksa oleh Admin Utama.");
-                        localStorage.clear(); window.location.href = "login.html";
-                    }
-                }, 3000); 
-            }
-
-            let lastNotifId = localStorage.getItem('last_notif_id') || '';
-            setInterval(async () => {
-                const { data, error } = await supabaseClient.from('pengumuman').select('*').order('created_at', { ascending: false }).limit(1).single();
-                if (!error && data && lastNotifId !== data.id) {
-                    lastNotifId = data.id; localStorage.setItem('last_notif_id', data.id);
-                    alert("📢 PENGUMUMAN PENTING DARI SUPER ADMIN:\n\n" + data.pesan);
-                }
-            }, 4000); 
+            setInterval(muatAntrean, 5000); // Auto refresh data tiap 5 detik
         });
 
         // ==========================================
-        // FUNGSI MUAT DATA TABEL jenis_layanan
+        // FUNGSI MUAT DATA & RENDER AKSI TABEL
         // ==========================================
         async function muatAntrean() {
             try {
-                // MENGGUNAKAN NAMA TABEL: jenis_layanan
-                const { data, error } = await supabaseClient
-                    .from('permohonan') 
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(20);
-
+                const { data, error } = await supabaseClient.from('permohonan').select('*').order('created_at', { ascending: false }).limit(20);
                 if (error) throw error;
 
                 const tbody = document.getElementById('tabelAntreanBody');
@@ -263,7 +228,7 @@
                 let totalSelesai = 0, totalMenunggu = 0;
 
                 if (!data || data.length === 0) {
-                    html = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Belum ada layanan / permohonan yang masuk.</td></tr>`;
+                    html = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Belum ada antrean permohonan.</td></tr>`;
                 } else {
                     data.forEach((item, index) => {
                         let tgl = new Date(item.created_at);
@@ -271,35 +236,31 @@
                         
                         let statusTeks = item.status || 'Menunggu Antrean';
                         let statusBadge = '';
-                        let btnAksi = '';
                         
-                        // Deteksi Status & Penentuan Tombol Aksi
                         if(statusTeks.toLowerCase().includes('menunggu')) {
                             statusBadge = `<span class="badge-status badge-pending">${statusTeks}</span>`;
                             totalMenunggu++;
-                            // Jika Superadmin atau Petugas Proses, bisa klik Verifikasi
-                            if(userRoleSistem === 'superadmin' || userRoleSistem === 'petugas_proses') {
-                                btnAksi = `<button class="btn-aksi btn-verif" onclick="aksiVerifikasi('${item.id}')"><i class="fas fa-check-double"></i> Verifikasi</button>`;
-                            } else { btnAksi = `<span style="font-size:12px; color:#94a3b8;">Menunggu Proses</span>`; }
-                        
-                        } else if (statusTeks.toLowerCase().includes('diproses') || statusTeks.toLowerCase().includes('verifikasi')) {
-                            statusBadge = `<span class="badge-status badge-proses">${statusTeks}</span>`;
-                            if(userRoleSistem === 'superadmin' || userRoleSistem === 'petugas_proses') {
-                                btnAksi = `<button class="btn-aksi btn-upload" onclick="bukaModalUpload('${item.id}')"><i class="fas fa-upload"></i> Upload Hasil</button>`;
-                            } else { btnAksi = `<span style="font-size:12px; color:#94a3b8;">Sedang Dikerjakan</span>`; }
-                        
                         } else if (statusTeks.toLowerCase().includes('selesai')) {
                             statusBadge = `<span class="badge-status badge-sukses">${statusTeks}</span>`;
                             totalSelesai++;
-                            btnAksi = `<span style="font-size:12px; color:#10b981; font-weight:bold;"><i class="fas fa-check-circle"></i> Selesai</span>`;
-                        
                         } else {
                             statusBadge = `<span class="badge-status" style="background:#e2e8f0; color:#475569;">${statusTeks}</span>`;
-                            btnAksi = '-';
                         }
 
                         let nama = item.nama_pemohon || item.nama_lengkap || 'Tanpa Nama';
-                        let jenis = item.jenis_surat || item.nama_layanan || 'Surat Pernyataan'; // Menyesuaikan kolom
+                        let jenis = item.jenis_surat || 'Surat Pernyataan';
+                        
+                        // LOGIKA TOMBOL AKSI BERDASARKAN ROLE & STATUS
+                        let actionHtml = `<span style="color:#94a3b8; font-size:12px;">Menunggu Proses</span>`;
+                        
+                        // Jika sudah ada URL file hasil, munculkan tombol lihat dokumen untuk semua role
+                        if (item.file_hasil) {
+                            actionHtml = `<a href="${item.file_hasil}" target="_blank" class="btn-lihat"><i class="fas fa-file-download"></i> Unduh Dokumen</a>`;
+                        } 
+                        // Jika belum ada file dan role adalah superadmin
+                        else if (userRoleGlobal === 'superadmin' && statusTeks.toLowerCase().includes('menunggu')) {
+                            actionHtml = `<button class="btn-aksi" onclick="bukaModalUpload('${item.id}', '${nama.replace(/'/g, "\\'")}')"><i class="fas fa-upload"></i> Verifikasi</button>`;
+                        }
 
                         html += `<tr>
                             <td style="font-weight: bold;">#${String(data.length - index).padStart(3, '0')}</td>
@@ -307,7 +268,7 @@
                             <td>${jenis}</td>
                             <td>${waktuFormated}</td>
                             <td>${statusBadge}</td>
-                            <td style="text-align: center;">${btnAksi}</td>
+                            <td>${actionHtml}</td>
                         </tr>`;
                     });
                 }
@@ -316,89 +277,96 @@
                 document.getElementById('statTotal').innerText = data.length || 0;
                 document.getElementById('statSelesai').innerText = totalSelesai;
                 document.getElementById('statMenunggu').innerText = totalMenunggu;
-
             } catch (err) {
-                console.error("Error mengambil layanan:", err);
-                document.getElementById('tabelAntreanBody').innerHTML = `<tr><td colspan="6" style="text-align: center; color: red;">Gagal memuat data dari database. Pastikan tabel 'permohonan sudah dibuat.</td></tr>`;
+                console.error("Error:", err);
             }
         }
 
         // ==========================================
-        // FUNGSI AKSI: VERIFIKASI & UPLOAD DOKUMEN
+        // FUNGSI MODAL & UPLOAD KE SUPABASE STORAGE
         // ==========================================
-        async function aksiVerifikasi(idLayanan) {
-            if(!confirm("Yakin ingin memverifikasi dan memproses permohonan ini?")) return;
-            try {
-                const { error } = await supabaseClient.from('permohonan').update({ status: 'Sedang Diproses' }).eq('id', idLayanan);
-                if(error) throw error;
-                muatAntrean(); // Refresh UI seketika
-            } catch(err) { alert("Gagal memperbarui status: " + err.message); }
-        }
-
-        function bukaModalUpload(idLayanan) {
-            document.getElementById('idLayananUpload').value = idLayanan;
-            document.getElementById('fileDokumen').value = '';
-            document.getElementById('overlayModal').classList.add('active');
+        function bukaModalUpload(idPermohonan, namaPemohon) {
+            document.getElementById('idPermohonanUpload').value = idPermohonan;
+            document.getElementById('modalNamaPemohon').innerText = namaPemohon;
+            document.getElementById('overlay').classList.add('active');
             document.getElementById('modalUpload').classList.add('active');
         }
 
-        function tutupModalUpload() {
-            document.getElementById('overlayModal').classList.remove('active');
+        function tutupModal() {
+            document.getElementById('overlay').classList.remove('active');
             document.getElementById('modalUpload').classList.remove('active');
+            document.getElementById('formUploadDoc').reset();
         }
+        
+        async function prosesUploadDokumen(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileDokumen');
+            const idPermohonan = document.getElementById('idPermohonanUpload').value;
+            const btnSubmit = document.getElementById('btnSubmitUpload');
+            
+            if (fileInput.files.length === 0) return;
+            const file = fileInput.files[0];
 
-        async function prosesUploadDokumen() {
-            const id = document.getElementById('idLayananUpload').value;
-            const fileInput = document.getElementById('fileDokumen').files[0];
-            const btn = document.getElementById('btnProsesUpload');
-
-            if(!fileInput) { alert("Silakan pilih file terlebih dahulu!"); return; }
-
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Memproses Upload...";
-            btn.disabled = true;
+            btnSubmit.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mengupload...";
+            btnSubmit.disabled = true;
 
             try {
-                // [OPSIONAL] Jika Anda menggunakan Supabase Storage, letakkan logika upload file ke bucket di sini
-                // Contoh: await supabaseClient.storage.from('dokumen_hasil').upload(fileName, fileInput);
+                // Gunakan bucket 'dokumen' sesuai milik Anda
+                const namaFileUnik = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
                 
-                // Setelah upload fisik selesai, perbarui status baris layanan
-                const { error } = await supabaseClient.from('permohonan')
-                    .update({ status: 'Selesai Dicetak' }) // Anda juga bisa menambahkan field { url_berkas: linkFile } jika punya kolom tersebut
-                    .eq('id', id);
+                const { data: uploadData, error: uploadError } = await supabaseClient
+                    .storage
+                    .from('dokumen') // <-- Sudah disesuaikan ke 'dokumen'
+                    .upload(namaFileUnik, file);
+
+                if (uploadError) throw uploadError;
+
+                // Dapatkan Public URL
+                const { data: publicUrlData } = supabaseClient
+                    .storage
+                    .from('dokumen') // <-- Sudah disesuaikan ke 'dokumen'
+                    .getPublicUrl(namaFileUnik);
                 
-                if(error) throw error;
-                
-                alert("✅ Dokumen berhasil diupload dan permohonan diselesaikan!");
-                tutupModalUpload();
-                muatAntrean(); // Refresh UI
-            } catch(err) { 
-                alert("Gagal melakukan proses upload: " + err.message); 
+                const urlFile = publicUrlData.publicUrl;
+
+                // Update status dan link file di database
+                const { error: updateError } = await supabaseClient
+                    .from('permohonan')
+                    .update({ 
+                        status: 'Selesai Diproses', 
+                        file_hasil: urlFile 
+                    })
+                    .eq('id', idPermohonan);
+
+                if (updateError) throw updateError;
+
+                alert("Dokumen berhasil di-upload ke bucket 'dokumen'!");
+                tutupModal();
+                muatAntrean();
+
+            } catch (err) {
+                alert("Gagal mengupload dokumen: " + err.message + "\nPastikan bucket 'dokumen' bersifat Public.");
+                console.error(err);
             } finally {
-                btn.innerHTML = "Selesaikan Permohonan";
-                btn.disabled = false;
+                btnSubmit.innerHTML = "<i class='fas fa-upload'></i> Upload & Selesai";
+                btnSubmit.disabled = false;
             }
         }
 
-        // FUNGSI KELUAR
+        // FUNGSI KELUAR SISTEM & TOGGLE
         async function logoutSistem() {
             const mySessionId = localStorage.getItem('active_session_id');
             if (mySessionId) await supabaseClient.from('sesi_login').delete().eq('id', mySessionId);
             localStorage.clear(); window.location.href = "../index.html";
         }
 
-        // FUNGSI UI
         function toggleSidebar() { 
             document.getElementById('sidebar').classList.toggle('active'); 
             const overlay = document.getElementById('overlay');
-            if(overlay) overlay.classList.toggle('active'); 
-        }
-        document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('sidebar'), btn = document.querySelector('.toggle-btn'), overlay = document.getElementById('overlay');
-            if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !btn.contains(e.target)) { 
-                sidebar.classList.remove('active'); 
-                if(overlay) overlay.classList.remove('active'); 
+            if(overlay && !document.getElementById('modalUpload').classList.contains('active')) {
+                overlay.classList.toggle('active'); 
             }
-        });
+        }
     </script>
 </body>
 </html>
