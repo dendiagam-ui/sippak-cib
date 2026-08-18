@@ -41,7 +41,7 @@
         .stat-info p { font-size: 14px; color: var(--teks-pudar); font-weight: 600; }
         
         .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; padding: 30px; margin-bottom: 25px; }
-        .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .card-header { font-size: 18px; color: var(--teks-gelap); font-weight: 800; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         
         .tabel-antrean { width: 100%; border-collapse: collapse; }
         .tabel-antrean th, .tabel-antrean td { padding: 16px; border-bottom: 1px solid #f1f5f9; text-align: left; font-size: 14px; }
@@ -52,10 +52,17 @@
         .badge-pending { background: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
         .badge-sukses { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 
-        .btn-aksi { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+        .btn-aksi { background: #2563eb; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; margin-right: 4px; margin-bottom: 4px; }
         .btn-aksi:hover { background: #1d4ed8; }
-        .btn-lihat { background: #10b981; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+        
+        .btn-detail { background: #0ea5e9; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; margin-right: 4px; margin-bottom: 4px; }
+        .btn-detail:hover { background: #0284c7; }
+
+        .btn-lihat { background: #10b981; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; margin-right: 4px; margin-bottom: 4px; }
         .btn-lihat:hover { background: #059669; }
+
+        .btn-hapus-semua { background: #fee2e2; color: #dc2626; border: 1px solid #f87171; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .btn-hapus-semua:hover { background: #ef4444; color: #fff; }
 
         /* MODAL UPLOAD */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; backdrop-filter: blur(3px); }
@@ -144,12 +151,10 @@
             <div class="card">
                 <div class="card-header">
                     <div><i class="fas fa-list-ul" style="color: #64748b;"></i> Antrean Permohonan Terbaru</div>
-                    <div>
-                        <a href="permohonan.html" style="font-size: 14px; color: #2563eb; text-decoration: none; font-weight: 600; margin-right: 15px;"><i class="fas fa-plus"></i> Input Baru</a>
-                        <!-- TOMBOL HAPUS SEMUA (Khusus Super Admin) -->
-                        <button onclick="hapusSemuaSelesai()" id="btnHapusSemua" style="display: none; background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">
-                            <i class="fas fa-trash"></i> Hapus Semua Selesai
-                        </button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <!-- Tombol Hapus Semua Selesai khusus Super Admin -->
+                        <div id="wadahTombolHapusSelesai"></div>
+                        <a href="permohonan.html" class="btn-aksi" style="background: #10b981; margin:0;"><i class="fas fa-plus"></i> Input Baru</a>
                     </div>
                 </div>
                 <div style="overflow-x: auto;">
@@ -161,11 +166,11 @@
                                 <th>Jenis Surat</th>
                                 <th>Waktu Input</th>
                                 <th>Status</th>
-                                <th>Aksi</th>
+                                <th>Aksi / Dokumen</th>
                             </tr>
                         </thead>
                         <tbody id="tabelAntreanBody">
-                            <tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data...</td></tr>
+                            <tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data... <i class='fas fa-spinner fa-spin'></i></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -180,13 +185,11 @@
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
         const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-        // Variabel global role untuk cek akses upload
         let userRoleGlobal = '';
 
         document.addEventListener("DOMContentLoaded", function() {
             const roleSaatIni = localStorage.getItem('user_role');
             const waktuLogin = localStorage.getItem('login_time');
-            const mySessionId = localStorage.getItem('active_session_id');
             
             if(!roleSaatIni || !waktuLogin) { window.location.href = "login.html"; return; } 
             if (new Date().getTime() - parseInt(waktuLogin) > (6 * 60 * 60 * 1000)) {
@@ -196,6 +199,15 @@
             userRoleGlobal = roleSaatIni;
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama') || 'Admin';
             document.getElementById('roleUser').innerText = roleSaatIni === 'superadmin' ? 'SUPER ADMIN' : 'PETUGAS';
+
+            // Tampilkan tombol Hapus Semua Selesai jika Super Admin
+            if (roleSaatIni === 'superadmin') {
+                document.getElementById('wadahTombolHapusSelesai').innerHTML = `
+                    <button class="btn-hapus-semua" onclick="hapusSemuaSelesai()">
+                        <i class="fas fa-trash-alt"></i> Hapus Semua Selesai
+                    </button>
+                `;
+            }
 
             // MENU DINAMIS
             const menuList = document.getElementById('menuDinamis');
@@ -218,7 +230,7 @@
             }
 
             muatAntrean();
-            setInterval(muatAntrean, 5000); // Auto refresh data tiap 5 detik
+            setInterval(muatAntrean, 5000); 
         });
 
         // ==========================================
@@ -256,16 +268,16 @@
                         let nama = item.nama_pemohon || item.nama_lengkap || 'Tanpa Nama';
                         let jenis = item.jenis_surat || 'Surat Pernyataan';
                         
-                        // LOGIKA TOMBOL AKSI BERDASARKAN ROLE & STATUS
-                        let actionHtml = `<span style="color:#94a3b8; font-size:12px;">Menunggu Proses</span>`;
+                        // TOMBOL AKSI: Tombol Detail selalu tampil untuk Super Admin & Petugas
+                        let actionHtml = `<a href="detail.html?id=${item.id}" class="btn-detail"><i class="fas fa-eye"></i> Detail</a>`;
                         
-                        // Jika sudah ada URL file hasil, munculkan tombol lihat dokumen untuk semua role
+                        // Jika sudah ada file hasil, tambahkan tombol Unduh Dokumen
                         if (item.file_hasil) {
-                            actionHtml = `<a href="${item.file_hasil}" target="_blank" class="btn-lihat"><i class="fas fa-file-download"></i> Unduh Dokumen</a>`;
+                            actionHtml += `<a href="${item.file_hasil}" target="_blank" class="btn-lihat"><i class="fas fa-file-download"></i> Unduh</a>`;
                         } 
-                        // Jika belum ada file dan role adalah superadmin
+                        // Jika belum ada file dan role adalah superadmin, tampilkan tombol Verifikasi (Upload)
                         else if (userRoleGlobal === 'superadmin' && statusTeks.toLowerCase().includes('menunggu')) {
-                            actionHtml = `<button class="btn-aksi" onclick="bukaModalUpload('${item.id}', '${nama.replace(/'/g, "\\'")}')"><i class="fas fa-upload"></i> Verifikasi</button>`;
+                            actionHtml += `<button class="btn-aksi" onclick="bukaModalUpload('${item.id}', '${nama.replace(/'/g, "\\'")}')"><i class="fas fa-upload"></i> Verifikasi</button>`;
                         }
 
                         html += `<tr>
@@ -289,6 +301,31 @@
         }
 
         // ==========================================
+        // FUNGSI HAPUS SEMUA PERMOHONAN YANG SELESAI
+        // ==========================================
+        async function hapusSemuaSelesai() {
+            if (!confirm("⚠️ PERINGATAN!\nApakah Anda yakin ingin menghapus SEMUA permohonan yang sudah selesai dan mengosongkan data tersebut dari database?")) {
+                return;
+            }
+
+            try {
+                // Menghapus data permohonan yang statusnya mengandung kata 'selesai'
+                const { error } = await supabaseClient
+                    .from('permohonan')
+                    .delete()
+                    .ilike('status', '%selesai%');
+
+                if (error) throw error;
+
+                alert("✅ Semua permohonan yang selesai berhasil dihapus dari database!");
+                muatAntrean(); // Refresh tabel
+            } catch (err) {
+                alert("Gagal menghapus data: " + err.message);
+                console.error(err);
+            }
+        }
+
+        // ==========================================
         // FUNGSI MODAL & UPLOAD KE SUPABASE STORAGE
         // ==========================================
         function bukaModalUpload(idPermohonan, namaPemohon) {
@@ -303,7 +340,7 @@
             document.getElementById('modalUpload').classList.remove('active');
             document.getElementById('formUploadDoc').reset();
         }
-        
+
         async function prosesUploadDokumen(e) {
             e.preventDefault();
             const fileInput = document.getElementById('fileDokumen');
@@ -317,25 +354,22 @@
             btnSubmit.disabled = true;
 
             try {
-                // Gunakan bucket 'dokumen' sesuai milik Anda
                 const namaFileUnik = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
                 
-                const { data: uploadData, error: uploadError } = await supabaseClient
+                const { error: uploadError } = await supabaseClient
                     .storage
-                    .from('dokumen') // <-- Sudah disesuaikan ke 'dokumen'
+                    .from('dokumen') 
                     .upload(namaFileUnik, file);
 
                 if (uploadError) throw uploadError;
 
-                // Dapatkan Public URL
                 const { data: publicUrlData } = supabaseClient
                     .storage
-                    .from('dokumen') // <-- Sudah disesuaikan ke 'dokumen'
+                    .from('dokumen') 
                     .getPublicUrl(namaFileUnik);
                 
                 const urlFile = publicUrlData.publicUrl;
 
-                // Update status dan link file di database
                 const { error: updateError } = await supabaseClient
                     .from('permohonan')
                     .update({ 
