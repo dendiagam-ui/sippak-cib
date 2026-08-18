@@ -144,7 +144,13 @@
             <div class="card">
                 <div class="card-header">
                     <div><i class="fas fa-list-ul" style="color: #64748b;"></i> Antrean Permohonan Terbaru</div>
-                    <a href="permohonan.html" style="font-size: 14px; color: #2563eb; text-decoration: none; font-weight: 600;"><i class="fas fa-plus"></i> Input Baru</a>
+                    <div>
+                        <a href="permohonan.html" style="font-size: 14px; color: #2563eb; text-decoration: none; font-weight: 600; margin-right: 15px;"><i class="fas fa-plus"></i> Input Baru</a>
+                        <!-- TOMBOL HAPUS SEMUA (Khusus Super Admin) -->
+                        <button onclick="hapusSemuaSelesai()" id="btnHapusSemua" style="display: none; background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold;">
+                            <i class="fas fa-trash"></i> Hapus Semua Selesai
+                        </button>
+                    </div>
                 </div>
                 <div style="overflow-x: auto;">
                     <table class="tabel-antrean">
@@ -155,11 +161,11 @@
                                 <th>Jenis Surat</th>
                                 <th>Waktu Input</th>
                                 <th>Status</th>
-                                <th>Aksi / Dokumen</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="tabelAntreanBody">
-                            <tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data... <i class='fas fa-spinner fa-spin'></i></td></tr>
+                            <tr><td colspan="6" style="text-align: center; padding: 20px;">Memuat data...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -218,39 +224,67 @@
         // ==========================================
         // FUNGSI MUAT DATA & RENDER AKSI TABEL
         // ==========================================
+        // 1. UPDATE FUNGSI MUAT ANTREAN
         async function muatAntrean() {
             try {
-                const { data, error } = await supabaseClient.from('permohonan').select('*').order('created_at', { ascending: false }).limit(20);
+                const { data, error } = await supabaseClient.from('permohonan').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
 
                 const tbody = document.getElementById('tabelAntreanBody');
                 let html = '';
-                let totalSelesai = 0, totalMenunggu = 0;
+                let adaDataSelesai = false;
 
-                if (!data || data.length === 0) {
-                    html = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">Belum ada antrean permohonan.</td></tr>`;
-                } else {
-                    data.forEach((item, index) => {
-                        let tgl = new Date(item.created_at);
-                        let waktuFormated = tgl.toLocaleDateString('id-ID') + ' - ' + tgl.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-                        
-                        let statusTeks = item.status || 'Menunggu Antrean';
-                        let statusBadge = '';
-                        
-                        if(statusTeks.toLowerCase().includes('menunggu')) {
-                            statusBadge = `<span class="badge-status badge-pending">${statusTeks}</span>`;
-                            totalMenunggu++;
-                        } else if (statusTeks.toLowerCase().includes('selesai')) {
-                            statusBadge = `<span class="badge-status badge-sukses">${statusTeks}</span>`;
-                            totalSelesai++;
-                        } else {
-                            statusBadge = `<span class="badge-status" style="background:#e2e8f0; color:#475569;">${statusTeks}</span>`;
-                        }
+                data.forEach((item, index) => {
+                    let statusTeks = item.status || 'Menunggu Antrean';
+                    if(statusTeks.toLowerCase().includes('selesai')) adaDataSelesai = true;
 
-                        let nama = item.nama_pemohon || item.nama_lengkap || 'Tanpa Nama';
-                        let jenis = item.jenis_surat || 'Surat Pernyataan';
-                        
-                        // LOGIKA TOMBOL AKSI BERDASARKAN ROLE & STATUS
+                    // Tombol Detail (Muncul untuk semua role)
+                    let actionHtml = `<a href="detail.html?id=${item.id}" class="btn-lihat" style="background: #6366f1;"><i class="fas fa-eye"></i> Detail</a> `;
+                    
+                    // Tombol Upload (Hanya untuk Admin jika belum selesai)
+                    if (userRoleGlobal === 'superadmin' && statusTeks.toLowerCase().includes('menunggu')) {
+                        actionHtml += `<button class="btn-aksi" onclick="bukaModalUpload('${item.id}', '${item.nama_pemohon}')"><i class="fas fa-upload"></i> Verifikasi</button>`;
+                    } else if (item.file_hasil) {
+                        actionHtml += `<a href="${item.file_hasil}" target="_blank" class="btn-lihat" style="margin-left:5px;"><i class="fas fa-download"></i></a>`;
+                    }
+
+                    html += `<tr>
+                        <td>#${index + 1}</td>
+                        <td>${item.nama_pemohon}</td>
+                        <td>${item.jenis_surat}</td>
+                        <td>${new Date(item.created_at).toLocaleDateString('id-ID')}</td>
+                        <td>${statusTeks.includes('Selesai') ? '<span class="badge-status badge-sukses">Selesai</span>' : '<span class="badge-status badge-pending">Proses</span>'}</td>
+                        <td>${actionHtml}</td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+
+                // Tampilkan tombol hapus hanya untuk superadmin dan jika ada data selesai
+                if (userRoleGlobal === 'superadmin' && adaDataSelesai) {
+                    document.getElementById('btnHapusSemua').style.display = 'inline-block';
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // 2. FUNGSI HAPUS SEMUA DATA SELESAI
+        async function hapusSemuaSelesai() {
+            if(!confirm("⚠️ Yakin ingin menghapus SEMUA permohonan yang sudah selesai? Data ini tidak bisa dikembalikan.")) return;
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('permohonan')
+                    .delete()
+                    .ilike('status', '%Selesai%'); // Menghapus semua yang statusnya mengandung kata 'Selesai'
+
+                if(error) throw error;
+                alert("✅ Semua data selesai telah dihapus.");
+                muatAntrean();
+            } catch(err) {
+                alert("Gagal menghapus: " + err.message);
+            }
+        }
+        
+        // LOGIKA TOMBOL AKSI BERDASARKAN ROLE & STATUS
                         let actionHtml = `<span style="color:#94a3b8; font-size:12px;">Menunggu Proses</span>`;
                         
                         // Jika sudah ada URL file hasil, munculkan tombol lihat dokumen untuk semua role
