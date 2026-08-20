@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengingat Tugas Masyarakat</title>
+    <style>
+        /* =======================================================
+           VARIABEL TEMA: TELEGRAM DARK & LIGHT MODE
+           ======================================================= */
+        :root {
+            --bg-body: #0e1621; --bg-header: #17212b; --text-main: #ffffff;
+            --text-muted: #7f91a4; --bg-chat: #0e1621; --bubble-sys: #182533;
+            --bubble-user: #2b5278; --bg-input: #17212b; --input-field: #242f3d;
+            --btn-theme: #242f3d; --btn-send: #5288c1; --action-btn: #5288c1;
+        }
+        .light-mode {
+            --bg-body: #e5ebe8; --bg-header: #5288c1; --text-main: #000000;
+            --text-muted: #8d9cae; --bg-chat: #e5ebe8; --bubble-sys: #ffffff;
+            --bubble-user: #effedd; --bg-input: #ffffff; --input-field: #f1f3f4;
+            --btn-theme: #f1f3f4; --btn-send: #5288c1; --action-btn: #5288c1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body); margin: 0; padding: 0; display: flex; 
+            flex-direction: column; height: 100vh; color: var(--text-main); transition: background-color 0.3s;
+        }
+
+        /* HEADER ALA TELEGRAM */
+        .header {
+            background-color: var(--bg-header); padding: 10px 15px; color: #ffffff;
+            font-weight: 600; font-size: 1.1rem; display: flex; align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); z-index: 10; transition: background-color 0.3s;
+        }
+        .header .bot-avatar {
+            width: 42px; height: 42px; background-color: #38b6ff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 1.4rem;
+            overflow: hidden;
+        }
+        .header .bot-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .header-info { flex: 1; overflow: hidden; }
+        .header-info span { display: block; font-size: 1.1rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .header-info small { display: block; color: #7cbcf0; font-size: 0.8rem; font-weight: normal; margin-top: 2px;}
+        .light-mode .header-info small { color: #cbe4fb; }
+        
+        .header-options {
+            font-size: 1.5rem; cursor: pointer; padding: 5px 10px; margin-left: 5px;
+        }
+
+        /* CHAT AREA */
+        .chat-container {
+            flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+            background-color: var(--bg-chat);
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="rgba(127,145,164,0.15)"/></svg>');
+        }
+        
+        .bubble {
+            max-width: 80%; padding: 8px 12px 6px 12px; border-radius: 16px; font-size: 0.95rem; line-height: 1.4;
+            word-wrap: break-word; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.15); display: flex; flex-direction: column;
+        }
+        .bubble.system { background-color: var(--bubble-sys); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .bubble.user { background-color: var(--bubble-user); color: var(--text-main); align-self: flex-end; border-bottom-right-radius: 4px; }
+        .light-mode .bubble.user { color: #000000; }
+        .msg-time { font-size: 0.65rem; color: var(--text-muted); text-align: right; margin-top: 4px; }
+        .light-mode .bubble.user .msg-time { color: #6db174; }
+
+        /* TOMBOL INTERAKTIF & MENU */
+        .action-btn {
+            background-color: var(--action-btn); color: white; border: none; padding: 8px 14px;
+            border-radius: 8px; margin-top: 10px; margin-right: 8px; cursor: pointer;
+            font-weight: 600; font-size: 0.85rem; transition: background 0.2s; display: inline-block;
+        }
+        .action-btn:active { opacity: 0.8; }
+        .action-btn.red { background-color: #e53e3e; }
+        .action-btn.green { background-color: #28a745; }
+
+        .quick-replies {
+            display: flex; gap: 8px; padding: 10px 15px; background-color: var(--bg-input);
+            overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+        }
+        .quick-replies::-webkit-scrollbar { display: none; }
+        .chip {
+            background-color: var(--bubble-sys); color: var(--text-main); border: 1px solid var(--text-muted); padding: 6px 14px;
+            border-radius: 16px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; opacity: 0.9;
+        }
+        
+        /* AREA INPUT */
+        .input-area {
+            display: flex; padding: 10px 15px 15px 15px; background-color: var(--bg-input); align-items: center;
+        }
+        input[type="text"] {
+            flex: 1; padding: 12px 18px; border-radius: 24px; border: none; outline: none;
+            background: var(--input-field); color: var(--text-main); font-size: 0.95rem; margin-right: 10px;
+        }
+        input[type="text"]::placeholder { color: var(--text-muted); }
+        button.btn-send {
+            background-color: var(--btn-send); border: none; color: white; border-radius: 50%;
+            cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+            width: 45px; height: 45px; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        button.btn-theme {
+            background-color: var(--btn-theme); color: var(--text-main); border: none;
+            border-radius: 50%; width: 45px; height: 45px; margin-right: 8px; cursor: pointer; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* MODAL (PENGATURAN & CETAK) */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background-color: var(--bg-input); color: var(--text-main); padding: 25px; 
+            border-radius: 16px; width: 85%; max-width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            max-height: 80vh; overflow-y: auto;
+        }
+        .modal-content h3 { margin-top: 0; margin-bottom: 20px; font-size: 1.2rem; color: var(--action-btn); }
+        .modal-content label { display: block; font-size: 0.85rem; margin-bottom: 6px; color: var(--text-muted); }
+        .modal-content input {
+            width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box;
+            background: var(--input-field); color: var(--text-main); border: 1px solid var(--text-muted);
+            border-radius: 8px; outline: none;
+        }
+        .modal-btn {
+            background-color: var(--action-btn); color: white; border: none; padding: 10px;
+            border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 8px;
+        }
+        .modal-btn.cancel { background-color: transparent; border: 1px solid var(--text-muted); color: var(--text-main); }
+
+        /* TAMPILAN KHUSUS PRINTER THERMAL 58mm (DIHEMAT KERTASNYA) */
+        @media print {
+            @page { margin: 0; padding: 0; }
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { 
+                position: absolute; left: 0; top: 0; 
+                width: 100%; max-width: 58mm; /* Ukuran khusus 58mm */
+                color: #000; background: #fff; text-align: center;
+                font-family: 'Courier New', Courier, monospace; 
+                padding: 0; margin: 0;
+            }
+            .modal-btn, .modal-content { background: #fff !important; box-shadow: none !important; }
+            .modal-btn { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MODAL PENGATURAN BOT -->
+    <div id="botSettingsModal" class="modal">
+        <div class="modal-content">
+            <h3>⚙️ Pengaturan Bot</h3>
+            <label>Nama Bot</label>
+            <input type="text" id="editBotName" placeholder="Contoh: Pengingat Masyarakat">
+            <label>Foto Profil (Emoji / URL Gambar)</label>
+            <input type="text" id="editBotAvatar" placeholder="Contoh: 🤖 atau https://...">
+            <label>Status Bot</label>
+            <input type="text" id="editBotStatus" placeholder="Contoh: Online / melayani warga">
+            <button class="modal-btn" onclick="saveBotSettings()">Simpan Perubahan</button>
+            <button class="modal-btn cancel" onclick="toggleBotSettings()">Batal</button>
+        </div>
+    </div>
+
+    <!-- MODAL CETAK TIKET BATCH -->
+    <div id="printKtpModal" class="modal">
+        <div class="modal-content" style="background: #ffffff; color: #000000; text-align: center;">
+            <div id="printArea" style="padding: 10px 0;">
+                <!-- Tiket List akan di-generate di sini oleh JavaScript -->
+            </div>
+            <button class="modal-btn green" onclick="window.print()">🖨️ Print Tiket</button>
+            <button class="modal-btn cancel" onclick="closePrintModal()" style="border-color:#000; color:#000;">Tutup</button>
+        </div>
+    </div>
+
+    <!-- HEADER UTAMA -->
+    <div class="header">
+        <div class="bot-avatar" id="botAvatar">🤖</div>
+        <div class="header-info">
+            <span id="botName">Pengingat Tugas Masyarakat</span>
+            <small><span id="botStatus">bot</span> • <span id="taskCount">0</span> tugas aktif</small>
+        </div>
+        <div class="header-options" onclick="toggleBotSettings()">⋮</div>
+    </div>
+    
+    <!-- AREA CHAT -->
+    <div class="chat-container" id="chatContainer"></div>
+
+    <!-- QUICK REPLIES -->
+    <div class="quick-replies">
+        <div class="chip" onclick="sendQuickReply('Lihat data')">📋 Lihat Data</div>
+        <div class="chip" onclick="sendQuickReply('Hapus data')">🗑️ Hapus Data</div>
+        <div class="chip" onclick="sendQuickReply('Setting nama')">⚙️ Nama Saya</div>
+        <div class="chip" onclick="testAudioManual()">🔊 Tes Suara</div>
+    </div>
+
+    <!-- AREA INPUT -->
+    <div class="input-area">
+        <button class="btn-theme" id="themeBtn" onclick="toggleTheme()">☀️</button>
+        <input type="text" id="textInput" placeholder="Message..." autocomplete="off">
+        <button class="btn-send" onclick="handleSend()">➤</button>
+    </div>
+
+    <script>
+        // ========================================================
+        // ⚙️ PENGATURAN DURASI WAKTU 
+        // ========================================================
+        const MODE_TESTING = true; // TRUE = 10 Detik (Tes). FALSE = 24 Jam (Real).
+        const DELAY_24_JAM = MODE_TESTING ? 10000 : (24 * 60 * 60 * 1000); 
+        const DELAY_30_MNT = MODE_TESTING ? 15000 : (30 * 60 * 1000); 
+
+        // ========================================================
+        // 💾 DATABASE & PENGATURAN BOT
+        // ========================================================
+        let activeTasks = [];
+        let chatHistory = [];
+        let userName = 'Kak';
+        let botConfig = { name: "Pengingat Tugas Masyarakat", avatar: "🤖", status: "bot" };
+
+        try {
+            activeTasks = JSON.parse(localStorage.getItem('dukcapil_bot_tasks')) || [];
+            chatHistory = JSON.parse(localStorage.getItem('dukcapil_bot_chat')) || [];
+            userName = localStorage.getItem('dukcapil_user_name') || 'Kak';
+            const savedBotConfig = JSON.parse(localStorage.getItem('dukcapil_bot_config'));
+            if(savedBotConfig) botConfig = savedBotConfig;
+        } catch (e) { localStorage.clear(); }
+
+        const teksInfoDokumen = `<b>Nama Dokumen Yang Dapat Dicatat :</b><br>
+        - Kartu Keluarga<br>
+        - KTP<br>
+        - Perubahan Data<br>
+        - Pindah Keluar<br>
+        - Pindah Datang<br>
+        - Akta Kelahiran<br>
+        - Akta Kematian<br><br>
+        <b>Cara Input :</b><br>
+        <i>Mengajukan [Dokumen] Atas [NAMA]</i><br><br>
+        <b>Khusus Untuk Dokumen KTP :</b><br>
+        <i>Mengajukan KTP Atas [NAMA] Dengan [NIK]</i>`;
+
+        function applyBotConfig() {
+            document.getElementById('botName').innerText = botConfig.name;
+            document.getElementById('botStatus').innerText = botConfig.status;
+            const avatarDiv = document.getElementById('botAvatar');
+            if(botConfig.avatar.startsWith('http') || botConfig.avatar.startsWith('data:image')) {
+                avatarDiv.innerHTML = `<img src="${botConfig.avatar}" alt="Bot Avatar">`;
+            } else { avatarDiv.innerHTML = botConfig.avatar; }
+        }
+
+        function toggleBotSettings() {
+            const modal = document.getElementById('botSettingsModal');
+            if(modal.style.display === 'flex') modal.style.display = 'none';
+            else {
+                document.getElementById('editBotName').value = botConfig.name;
+                document.getElementById('editBotAvatar').value = botConfig.avatar;
+                document.getElementById('editBotStatus').value = botConfig.status;
+                modal.style.display = 'flex';
+            }
+        }
+        function saveBotSettings() {
+            botConfig.name = document.getElementById('editBotName').value || "Pengingat Tugas Masyarakat";
+            botConfig.avatar = document.getElementById('editBotAvatar').value || "🤖";
+            botConfig.status = document.getElementById('editBotStatus').value || "bot";
+            localStorage.setItem('dukcapil_bot_config', JSON.stringify(botConfig));
+            applyBotConfig(); toggleBotSettings();
+        }
+
+        function saveTasksToStorage() {
+            localStorage.setItem('dukcapil_bot_tasks', JSON.stringify(activeTasks));
+            updateTaskBadge();
+        }
+        function saveChatToStorage() { localStorage.setItem('dukcapil_bot_chat', JSON.stringify(chatHistory)); }
+        
+        function updateTaskBadge() {
+            const activeOnly = activeTasks.filter(t => t.status !== 'SELESAI');
+            const badge = document.getElementById('taskCount');
+            if(badge) badge.innerText = activeOnly.length;
+        }
+        function formatTime(ms) {
+            const date = new Date(ms || Date.now());
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        // ========================================================
+        // 🌓 TEMA GELAP / TERANG
+        // ========================================================
+        let isLightMode = localStorage.getItem('theme_light') === 'true';
+        function applyTheme() {
+            document.body.classList.toggle('light-mode', isLightMode);
+            const btn = document.getElementById('themeBtn');
+            if(btn) btn.innerText = isLightMode ? '🌙' : '☀️';
+        }
+        applyTheme();
+        function toggleTheme() { 
+            isLightMode = !isLightMode; 
+            localStorage.setItem('theme_light', isLightMode); applyTheme(); 
+        }
+
+        // ========================================================
+        // 🎙️ SUARA GOOGLE ASSISTANT (UPDATE NATURAL)
+        // ========================================================
+        let voices = [];
+        window.speechSynthesis.onvoiceschanged = () => { voices = window.speechSynthesis.getVoices(); };
+        
+        document.body.addEventListener('click', function unlockAudio() {
+            let unlockUtterance = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(unlockUtterance);
+            setTimeout(checkDailyGreeting, 500);
+            document.body.removeEventListener('click', unlockAudio);
+        }, { once: true });
+
+        function testAudioManual() {
+            speakText(`Halo, ini adalah pengujian suara dari ${botConfig.name}. Sistem bekerja dengan baik.`);
+        }
+
+        function speakText(text) {
+            let cleanText = text.replace(/<[^>]*>?/gm, '').replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+            if (!cleanText.trim()) return; 
+
+            try {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(cleanText);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.95; 
+                utterance.pitch = 1.0;
+
+                if (voices.length === 0) voices = window.speechSynthesis.getVoices();
+                let indonesianVoices = voices.filter(v => v.lang.includes('id'));
+                if (indonesianVoices.length > 0) {
+                    let naturalVoice = indonesianVoices.find(v => v.name.toLowerCase().includes('network') || v.name.toLowerCase().includes('online') || v.name.includes('Google'));
+                    utterance.voice = naturalVoice ? naturalVoice : indonesianVoices[0];
+                }
+                window.speechSynthesis.speak(utterance);
+            } catch(err) { console.error("TTS gagal:", err); }
+        }
+
+        // ========================================================
+        // 💬 CHAT UI CORE
+        // ========================================================
+        const chatContainer = document.getElementById('chatContainer');
+        const textInput = document.getElementById('textInput');
+
+        function loadChatHistory() {
+            if(!chatContainer) return;
+            chatContainer.innerHTML = '';
+            if (chatHistory.length === 0) {
+                addMessageToUI(`Halo ${userName}! Saya ${botConfig.name}.<br><br>${teksInfoDokumen}`, 'system', Date.now());
+            } else {
+                chatHistory.forEach(msg => addMessageToUI(msg.text, msg.sender, msg.time));
+            }
+        }
+
+        function addMessageToUI(text, sender, timeMs) {
+            if(!chatContainer) return;
+            const bubble = document.createElement('div');
+            bubble.className = `bubble ${sender}`;
+            bubble.innerHTML = `<div>${text}</div><div class="msg-time">${formatTime(timeMs)}</div>`;
+            chatContainer.appendChild(bubble);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addMessage(text, sender) {
+            const currentTime = Date.now();
+            chatHistory.push({ text: text, sender: sender, time: currentTime });
+            if (chatHistory.length > 150) chatHistory.shift(); 
+            saveChatToStorage();
+            addMessageToUI(text, sender, currentTime);
+        }
+
+        function botReply(text, withVoice = true) {
+            setTimeout(() => {
+                addMessage(text, 'system');
+                if (withVoice) speakText(text);
+            }, 300);
+        }
+
+        function handleSend() {
+            if(!textInput) return;
+            const text = textInput.value.trim();
+            if (!text) return;
+            addMessage(text, 'user');
+            textInput.value = '';
+            processBotLogic(text.toLowerCase(), text); 
+        }
+
+        function sendQuickReply(text) {
+            addMessage(text, 'user');
+            processBotLogic(text.toLowerCase(), text);
+        }
+
+        if(textInput) textInput.addEventListener('keypress', e => { if (e.key === 'Enter') handleSend(); });
+
+        function checkDailyGreeting() {
+            let today = new Date().toLocaleDateString('id-ID');
+            let lastGreeting = localStorage.getItem('last_greeting_date');
+            if (lastGreeting !== today) {
+                botReply(`Selamat datang kembali, ${userName}! Ini hari baru, ${botConfig.name} siap Mencatat!<br><br>${teksInfoDokumen}`, true);
+                localStorage.setItem('last_greeting_date', today);
+            }
+        }
+
+        applyBotConfig(); loadChatHistory(); updateTaskBadge();
+
+        // ========================================================
+        // 👆 LOGIKA TOMBOL & BOT ALUR DUKCAPIL
+        // ========================================================
+        function handleButtonAction(taskId, type, action) {
+            let task = activeTasks.find(t => t.id === taskId);
+            if (!task) return botReply(`Maaf ${userName}, data tugas ini sudah tidak ditemukan.`, false);
+
+            if (type === 'pengajuan') {
+                if (task.status !== 'MENUNGGU_JAWABAN_USER') return;
+                if (action === 'sudah') {
+                    task.status = 'TUNGGU_SELESAI'; task.triggerTime = Date.now() + DELAY_24_JAM; 
+                    addMessage("✅ Sudah diajukan", 'user'); botReply(`Terima kasih! Status ditulis <b>Menunggu Selesai</b>.`);
+                } else {
+                    task.status = 'TUNGGU_PENGAJUAN'; task.triggerTime = Date.now() + DELAY_30_MNT; 
+                    addMessage("❌ Belum mengajukan", 'user'); botReply(`Baik, akan saya ingatkan kembali nanti.`);
+                }
+            }
+            else if (type === 'selesai') {
+                if (task.status !== 'MENUNGGU_JAWABAN_SELESAI') return;
+                if (action === 'sudah') {
+                    if (task.docType === 'KTP') {
+                        task.status = 'TUNGGU_PENGAMBILAN'; task.triggerTime = Date.now() + DELAY_24_JAM;
+                        addMessage("✅ Sudah Selesai", 'user'); botReply(`KTP dicetak. Data telah digeser ke kategori siap ambil dan cetak tiket.`);
+                    } else if (task.docType === 'Akta Kematian') {
+                        task.status = 'TUNGGU_PENYERAHAN'; task.triggerTime = Date.now() + DELAY_24_JAM;
+                        addMessage("✅ Sudah Selesai", 'user'); botReply(`Akta selesai. Saya akan mengingatkan penyerahan berkas.`);
+                    } else {
+                        task.status = 'SELESAI'; addMessage("✅ Sudah Selesai", 'user'); botReply(`Tugas selesai dan diarsipkan.`);
+                    }
+                } else {
+                    task.status = 'TUNGGU_SELESAI'; task.triggerTime = Date.now() + DELAY_24_JAM; 
+                    addMessage("❌ Belum Selesai", 'user'); botReply(`Baik, saya cek kembali besok.`);
+                }
+            }
+            else if (type === 'pengambilan') {
+                if (task.status !== 'MENUNGGU_JAWABAN_PENGAMBILAN') return;
+                if (action === 'sudah') {
+                    task.status = 'SELESAI'; addMessage("✅ Sudah Diambil", 'user'); botReply(`KTP telah diambil.`);
+                } else {
+                    task.status = 'TUNGGU_PENGAMBILAN'; task.triggerTime = Date.now() + DELAY_24_JAM;
+                    addMessage("❌ Belum Diambil", 'user'); botReply(`Baik, akan saya ingatkan kembali.`);
+                }
+            }
+            else if (type === 'penyerahan') {
+                if (task.status !== 'MENUNGGU_JAWABAN_PENYERAHAN') return;
+                if (action === 'sudah') {
+                    task.status = 'SELESAI'; addMessage("✅ Diserahkan", 'user'); botReply(`Berkas Akta Kematian diserahkan.`);
+                } else {
+                    task.status = 'TUNGGU_PENYERAHAN'; task.triggerTime = Date.now() + DELAY_24_JAM;
+                    addMessage("❌ Belum Diserahkan", 'user'); botReply(`Baik, akan saya ingatkan kembali.`);
+                }
+            }
+            saveTasksToStorage();
+        }
+
+        // ========================================================
+        // 🖨️ FUNGSI FILTER DATA & BATCH CETAK KTP LIST (FORMAT HEMAT KERTAS)
+        // ========================================================
+        function getStatusText(status) {
+            if (status.includes('PENGAJUAN')) return '⏳ Menunggu Diajukan';
+            if (status.includes('SELESAI') && status !== 'SELESAI') return '⚙️ Sedang Diproses / Dicetak';
+            if (status.includes('PENGAMBILAN')) return '🚶 Siap Diambil';
+            if (status.includes('PENYERAHAN')) return '📁 Menunggu Penyerahan Berkas';
+            return '✅ Selesai';
+        }
+
+        window.showCategoryData = function(category) {
+            addMessage(category, 'user');
+            let filtered = activeTasks.filter(t => t.docType === category);
+            let info = `📄 <b>Daftar Pengajuan ${category}:</b><br><br>`;
+            
+            let printableKTPs = [];
+
+            filtered.forEach((t, i) => {
+                info += `<b>${i+1}. ${t.name}</b>`;
+                if(t.nik) info += `<br>💳 NIK: ${t.nik}`;
+                info += `<br>📌 Status: ${getStatusText(t.status)}<br><br>`;
+                
+                if (t.docType === 'KTP' && (t.status === 'TUNGGU_PENGAMBILAN' || t.status === 'MENUNGGU_JAWABAN_PENGAMBILAN' || t.status === 'SELESAI')) {
+                    printableKTPs.push(t);
+                }
+            });
+
+            if (printableKTPs.length > 0) {
+                let ktpDataEncoded = encodeURIComponent(JSON.stringify(printableKTPs));
+                info += `<button class="action-btn green" onclick="openPrintModal('${ktpDataEncoded}')" style="width:100%; margin-top:5px; margin-bottom:10px;">🖨️ Cetak Daftar KTP (${printableKTPs.length})</button>`;
+            }
+            
+            botReply(info, false);
+        }
+
+        window.openPrintModal = function(encodedData) {
+            let ktps = JSON.parse(decodeURIComponent(encodedData));
+            let printArea = document.getElementById('printArea');
+            
+            // Header Utama Hanya Muncul Satu Kali
+            let htmlContent = `
+                <div style="border-bottom: 1px dashed #000; margin-bottom: 10px; padding-bottom: 5px;">
+                    <h3 style="margin: 0; font-size: 13px; font-weight: bold; letter-spacing: 1px;">[PENGAMBILAN KTP]</h3>
+                </div>
+            `;
+            
+            // Looping Daftar NAMA dan NIK (Format Rapat & Font Kecil)
+            ktps.forEach((ktp) => {
+                htmlContent += `
+                    <div style="margin-bottom: 10px; line-height: 1.2;">
+                        <div style="font-size: 12px; font-weight: bold; text-transform: uppercase;">${ktp.name}</div>
+                        <div style="font-size: 11px;">${ktp.nik || '-'}</div>
+                    </div>
+                `;
+            });
+            
+            printArea.innerHTML = htmlContent;
+            document.getElementById('printKtpModal').style.display = 'flex';
+        }
+        
+        window.closePrintModal = function() { document.getElementById('printKtpModal').style.display = 'none'; }
+
+        const daftarLayanan = ['kartu keluarga', 'kk', 'ktp', 'perubahan data', 'pindah keluar', 'pindah datang', 'akta kelahiran', 'akta lahir', 'akta kematian'];
+
+        function processBotLogic(input, originalText) {
+            // SETTING
+            if (input.includes('setting nama')) return botReply(`Ketik format berikut:<br><i>"Panggil saya [Nama Anda]"</i>`, false);
+            if (input.startsWith('panggil saya ')) {
+                userName = originalText.substring(13).trim(); 
+                if(userName) userName = userName.charAt(0).toUpperCase() + userName.slice(1);
+                localStorage.setItem('dukcapil_user_name', userName);
+                return botReply(`Siap! Mulai sekarang saya memanggil Anda <b>${userName}</b>.`);
+            }
+
+            // LIHAT DATA DENGAN KATEGORI
+            if (input.includes('lihat data') || input.includes('cek data')) {
+                if (activeTasks.length === 0) return botReply(`📭 Memori kosong ${userName}.`, false);
+                
+                let categories = [...new Set(activeTasks.map(t => t.docType))];
+                let msg = `Terdapat data pengajuan. Silakan pilih kategori yang ingin dilihat:<br><br>`;
+                categories.forEach(cat => {
+                    msg += `<button class="action-btn" onclick="showCategoryData('${cat}')">📁 ${cat}</button>`;
+                });
+                return botReply(msg, false);
+            }
+
+            if (input.includes('hapus data')) {
+                activeTasks = []; chatHistory = []; saveTasksToStorage(); saveChatToStorage();
+                loadChatHistory(); return botReply(`🗑️ Data berhasil direset.`);
+            }
+
+            // INPUT PENGAJUAN
+            if (input.includes('atas') && (input.includes('mengajukan') || input.includes('buat'))) {
+                let originalParts = originalText.split(new RegExp('atas', 'i'));
+                if(originalParts.length < 2) return botReply("Format kurang lengkap.", false);
+                
+                let kalimatAwal = originalParts[0].trim().toLowerCase(); 
+                let restOfSentence = originalParts[1].trim(); 
+                if(restOfSentence.toLowerCase().startsWith('nama ')) {
+                    restOfSentence = restOfSentence.substring(5).trim();
+                }
+
+                let name = restOfSentence;
+                let nik = "";
+
+                let withRegex = new RegExp('dengan', 'i');
+                if (withRegex.test(restOfSentence)) {
+                    let nameNikParts = restOfSentence.split(withRegex);
+                    name = nameNikParts[0].trim();
+                    nik = nameNikParts[1].trim();
+                }
+
+                let detectedDoc = "Dokumen"; 
+                for (let layanan of daftarLayanan) {
+                    if (kalimatAwal.includes(layanan)) {
+                        detectedDoc = layanan === 'kk' ? 'Kartu Keluarga' : layanan === 'akta lahir' ? 'Akta Kelahiran' : layanan === 'ktp' ? 'KTP' : layanan.replace(/\b\w/g, l => l.toUpperCase()); 
+                        break;
+                    }
+                }
+                activeTasks.push({ id: Date.now(), name: name, nik: nik, docType: detectedDoc, status: 'TUNGGU_PENGAJUAN', triggerTime: Date.now() + DELAY_24_JAM });
+                saveTasksToStorage();
+                
+                let responseText = `Noted! ${userName}, Pengajuan <b>${detectedDoc}</b> Atas <b>${name}</b>`;
+                if(nik) responseText += ` Dengan NIK <b>${nik}</b>`;
+                responseText += ` dicatat.`;
+                
+                return botReply(responseText);
+            }
+
+            botReply(`Maaf ${userName}, format tidak dikenali. Ketik <i>'Mengajukan [Dokumen] Atas [NAMA]'</i>`, false);
+        }
+
+        // ========================================================
+        // ⏰ TIMER BACKGROUND
+        // ========================================================
+        setInterval(() => {
+            const now = Date.now();
+            let stateChanged = false;
+
+            activeTasks.forEach(task => {
+                if (now >= task.triggerTime) {
+                    if (task.status === 'TUNGGU_PENGAJUAN') {
+                        task.status = 'MENUNGGU_JAWABAN_USER'; stateChanged = true;
+                        let msgText = `Permisi ${userName}, apakah Anda sudah memproses pengajuan ${task.docType} atas nama ${task.name}?`;
+                        addMessage(`🔔 <b>PENGINGAT</b> 🔔<br><br>${msgText}<br><br><button class="action-btn" onclick="handleButtonAction(${task.id}, 'pengajuan', 'sudah')">✅ Sudah</button><button class="action-btn red" onclick="handleButtonAction(${task.id}, 'pengajuan', 'belum')">❌ Belum</button>`, 'system');
+                        speakText(msgText); 
+                    } 
+                    else if (task.status === 'TUNGGU_SELESAI') {
+                        task.status = 'MENUNGGU_JAWABAN_SELESAI'; stateChanged = true;
+                        let msgText = `Waktunya cek dokumen ${userName}! Apakah ${task.docType} atas nama ${task.name} sudah selesai?`;
+                        addMessage(`🔔 <b>PENGINGAT</b> 🔔<br><br>${msgText}<br><br><button class="action-btn" onclick="handleButtonAction(${task.id}, 'selesai', 'sudah')">✅ Selesai</button><button class="action-btn red" onclick="handleButtonAction(${task.id}, 'selesai', 'belum')">❌ Belum</button>`, 'system');
+                        speakText(msgText); 
+                    }
+                    else if (task.status === 'TUNGGU_PENGAMBILAN') {
+                        task.status = 'MENUNGGU_JAWABAN_PENGAMBILAN'; stateChanged = true;
+                        let msgText = `Permisi ${userName}, untuk KTP atas nama ${task.name}, sudah diambil atau belum?`;
+                        addMessage(`🔔 <b>PENGINGAT KTP</b> 🔔<br><br>${msgText}<br><br><button class="action-btn" onclick="handleButtonAction(${task.id}, 'pengambilan', 'sudah')">✅ Sudah Diambil</button><button class="action-btn red" onclick="handleButtonAction(${task.id}, 'pengambilan', 'belum')">❌ Belum</button>`, 'system');
+                        speakText(msgText); 
+                    }
+                    else if (task.status === 'TUNGGU_PENYERAHAN') {
+                        task.status = 'MENUNGGU_JAWABAN_PENYERAHAN'; stateChanged = true;
+                        let msgText = `Permisi ${userName}, untuk Akta Kematian atas nama ${task.name}, sudah diserahkan berkasnya?`;
+                        addMessage(`🔔 <b>PENGINGAT AKTA</b> 🔔<br><br>${msgText}<br><br><button class="action-btn" onclick="handleButtonAction(${task.id}, 'penyerahan', 'sudah')">✅ Diserahkan</button><button class="action-btn red" onclick="handleButtonAction(${task.id}, 'penyerahan', 'belum')">❌ Belum</button>`, 'system');
+                        speakText(msgText); 
+                    }
+                }
+            });
+            if (stateChanged) saveTasksToStorage();
+        }, 1000);
+
+    </script>
+</body>
+</html>

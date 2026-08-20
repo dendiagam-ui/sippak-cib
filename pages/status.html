@@ -7,132 +7,193 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; }
-        body { background: #f1f5f9; color: #1e293b; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        body { background: #f8fafc; padding: 40px 20px; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
         
-        .container { background: #fff; width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 40px; text-align: center; }
+        .wadah-status { width: 100%; max-width: 550px; }
         
-        .header-icon { font-size: 45px; color: #2563eb; margin-bottom: 15px; }
-        h2 { font-size: 24px; font-weight: 800; margin-bottom: 5px; }
-        p.subtitle { color: #64748b; font-size: 14px; margin-bottom: 30px; }
-
-        .search-box { position: relative; margin-bottom: 25px; }
-        .search-box input { width: 100%; padding: 16px 20px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; font-weight: bold; outline: none; transition: 0.3s; text-align: center; }
-        .search-box input:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        /* BOX PENCARIAN */
+        .box-pencarian { background: #fff; padding: 40px 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; text-align: center; margin-bottom: 25px; }
+        .logo-icon { font-size: 40px; color: #2563eb; margin-bottom: 15px; }
+        .box-pencarian h2 { color: #0f172a; margin-bottom: 8px; font-weight: 900; font-size: 24px; }
+        .box-pencarian p { color: #64748b; font-size: 14px; margin-bottom: 30px; }
         
-        .btn-cari { background: #2563eb; color: white; border: none; padding: 15px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .btn-cari:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37,99,235,0.2); }
-
-        /* KARTU HASIL */
-        #hasilPencarian { display: none; margin-top: 30px; text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; animation: fadeIn 0.4s ease-out; }
-        .hasil-item { margin-bottom: 15px; }
-        .hasil-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-        .hasil-value { font-size: 16px; font-weight: 800; color: #1e293b; }
+        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
+        .form-group i { position: absolute; left: 16px; top: 16px; color: #94a3b8; font-size: 16px; }
+        .form-group input { width: 100%; padding: 14px 14px 14px 45px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; background: #f8fafc; transition: 0.3s; outline: none; font-weight: 600; }
+        .form-group input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .form-group input:focus + i { color: #2563eb; }
         
-        .badge-status { display: inline-block; padding: 8px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 5px; }
-        .badge-pending { background: #fefce8; color: #ca8a04; border: 1px solid #fef08a; }
-        .badge-proses { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-        .badge-sukses { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+        .btn-cari { background: #2563eb; color: white; padding: 15px; width: 100%; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+        .btn-cari:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
+        .btn-cari:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .btn-download { display: none; background: #10b981; color: white; padding: 14px; border-radius: 8px; font-size: 15px; font-weight: bold; text-align: center; text-decoration: none; margin-top: 20px; transition: 0.2s; }
-        .btn-download:hover { background: #059669; }
+        .link-kembali { display: inline-block; margin-top: 25px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.2s; }
+        .link-kembali:hover { color: #2563eb; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* KARTU HASIL PENCARIAN */
+        .kartu-hasil { background: #fff; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: left; transition: 0.3s; }
+        .kartu-hasil:hover { border-color: #bfdbfe; box-shadow: 0 10px 25px rgba(37,99,235,0.05); }
+        .kartu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+        .no-tiket { font-size: 18px; font-weight: 900; color: #2563eb; display: flex; align-items: center; gap: 8px; }
+        
+        .grid-rincian { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
+        .rincian-teks { font-size: 14px; color: #334155; display: flex; flex-direction: column; font-weight: 600; }
+        .rincian-teks strong { color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 700; }
+        
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-dikirim { background: #fef3c7; color: #d97706; }
+        .badge-terverifikasi { background: #e0e7ff; color: #4338ca; }
+        .badge-proses { background: #e0f2fe; color: #0284c7; }
+        .badge-selesai { background: #dcfce7; color: #16a34a; }
+        .badge-ditolak { background: #fee2e2; color: #dc2626; }
+
+        .catatan-petugas { background: #fffbeb; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #fde68a; font-size: 13.5px; color: #92400e; line-height: 1.5; }
+        
+        .pengaju-info { font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 6px; display: inline-block; margin-bottom: 20px; }
+        .pengaju-petugas { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .pengaju-mandiri { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+        /* TOMBOL DOWNLOAD */
+        .btn-download-hasil { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 15px; background: #10b981; color: #fff; text-decoration: none; font-size: 14px; font-weight: bold; padding: 12px; border-radius: 8px; transition: 0.3s; border: none; cursor: pointer; }
+        .btn-download-hasil:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+        
+        @media (max-width: 500px) {
+            .grid-rincian { grid-template-columns: 1fr; gap: 10px; }
+            .box-pencarian { padding: 30px 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header-icon"><i class="fas fa-search-location"></i></div>
-        <h2>Cek Status Permohonan</h2>
-        <p class="subtitle">Masukkan Kode/ID Pelacakan yang Anda dapatkan saat mendaftar.</p>
-
-        <form onsubmit="lacakStatus(event)">
-            <div class="search-box">
-                <input type="text" id="inpKode" placeholder="Contoh: a1b2c3d4-..." required autocomplete="off">
-            </div>
-            <button type="submit" class="btn-cari" id="btnCari"><i class="fas fa-search"></i> Lacak Sekarang</button>
-        </form>
-
-        <div id="hasilPencarian">
-            <div class="hasil-item">
-                <div class="hasil-label">Nama Pemohon</div>
-                <div class="hasil-value" id="resNama">-</div>
-            </div>
-            <div class="hasil-item">
-                <div class="hasil-label">Jenis Surat</div>
-                <div class="hasil-value" id="resJenis">-</div>
-            </div>
-            <div class="hasil-item" style="margin-bottom: 0;">
-                <div class="hasil-label">Status Saat Ini</div>
-                <div id="resStatusBadge" class="badge-status badge-pending">Menunggu Antrean</div>
-            </div>
-
-            <!-- Tombol Download Dinamis -->
-            <a href="#" target="_blank" class="btn-download" id="btnDownloadDokumen">
-                <i class="fas fa-file-download"></i> Unduh Dokumen Hasil
-            </a>
+    <div class="wadah-status">
+        <div class="box-pencarian">
+            <i class="fas fa-search logo-icon"></i>
+            <h2>Cek Status Dokumen</h2>
+            <p>Masukkan 16 Digit NIK Anda untuk melacak perkembangan permohonan dokumen.</p>
+            
+            <form onsubmit="cariStatus(event)">
+                <div class="form-group">
+                    <input type="number" id="inpCariNik" placeholder="Masukkan 16 Digit NIK..." required autocomplete="off">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <button type="submit" class="btn-cari" id="btnCari"><i class="fas fa-search"></i> Lacak Sekarang</button>
+            </form>
+            
+            <a href="../index.html" class="link-kembali"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
         </div>
+
+        <div id="wadahHasil"></div>
     </div>
 
-    <!-- SUPABASE SCRIPT -->
+    <!-- SCRIPT SUPABASE & LOGIKA -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const URL_DB = 'https://ufplggwklwopzhhwrdqk.supabase.co';
         const KEY_DB = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcGxnZ3drbHdvcHpoaHdyZHFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0Nzc1NDgsImV4cCI6MjEwMDA1MzU0OH0.ftwHcf3pkJkTJUDCYQJDiWVyRzfvbq10CoT6T7B0hEo';
         const supabaseClient = window.supabase.createClient(URL_DB, KEY_DB);
 
-        async function lacakStatus(e) {
-            e.preventDefault();
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nikURL = urlParams.get('nik');
+            if(nikURL) {
+                document.getElementById('inpCariNik').value = nikURL;
+                document.getElementById('btnCari').click();
+            }
+        });
+
+        async function cariStatus(event) {
+            event.preventDefault();
+            const nik = document.getElementById('inpCariNik').value;
             const btn = document.getElementById('btnCari');
-            const kode = document.getElementById('inpKode').value.trim();
-            const boxHasil = document.getElementById('hasilPencarian');
-            const btnDownload = document.getElementById('btnDownloadDokumen');
+            const wadahHasil = document.getElementById('wadahHasil');
             
-            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari...";
+            btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Mencari Data...";
             btn.disabled = true;
-            boxHasil.style.display = 'none';
-            btnDownload.style.display = 'none'; // Sembunyikan tombol download awal
 
             try {
-                // Cari berdasarkan ID di tabel permohonan
-                const { data, error } = await supabaseClient
-                    .from('permohonan')
-                    .select('*')
-                    .eq('id', kode)
-                    .single();
+                const { data, error } = await supabaseClient.from('permohonan').select('*').eq('nik', nik).order('created_at', { ascending: false });
+                if (error) throw error;
 
-                if (error || !data) {
-                    throw new Error("Kode pelacakan tidak ditemukan. Pastikan kode yang dimasukkan benar.");
+                if (data.length === 0) {
+                    wadahHasil.innerHTML = `
+                        <div style="text-align:center; background:#fee2e2; border: 1px solid #f87171; padding:25px; border-radius:12px;">
+                            <i class="fas fa-exclamation-circle" style="color:#ef4444; font-size:35px; margin-bottom:10px;"></i>
+                            <div style="color:#b91c1c; font-weight:bold; font-size:15px;">Tidak Ditemukan</div>
+                            <div style="color:#dc2626; font-size:13px; margin-top:5px;">Tidak ada riwayat permohonan yang aktif untuk NIK tersebut.</div>
+                        </div>`;
+                    return;
                 }
 
-                // Tampilkan Data
-                document.getElementById('resNama').innerText = data.nama_pemohon || data.nama_lengkap || '-';
-                document.getElementById('resJenis').innerText = data.jenis_surat || '-';
-                
-                // Styling Badge Status
-                const statusTeks = data.status || 'Menunggu Antrean';
-                const badge = document.getElementById('resStatusBadge');
-                badge.innerText = statusTeks;
-                badge.className = 'badge-status'; // Reset class
+                let htmlCard = '';
+                data.forEach(item => {
+                    let stat = item.status || 'Dikirim';
+                    let kelasBadge = 'badge-dikirim';
+                    if(stat === 'Terverifikasi') kelasBadge = 'badge-terverifikasi';
+                    else if(stat === 'Proses' || stat === 'Diproses') kelasBadge = 'badge-proses';
+                    else if(stat === 'Selesai' || stat === 'Selesai Diproses') kelasBadge = 'badge-selesai';
+                    else if(stat === 'Ditolak') kelasBadge = 'badge-ditolak';
 
-                if (statusTeks.toLowerCase().includes('selesai')) {
-                    badge.classList.add('badge-sukses');
+                    const tgl = new Date(item.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
                     
-                    // Cek jika dokumen_hasil tersedia, munculkan tombol download
-                    if (data.dokumen_hasil) {
-                        btnDownload.href = data.dokumen_hasil;
-                        btnDownload.style.display = 'block';
-                    }
-                } else if (statusTeks.toLowerCase().includes('proses')) {
-                    badge.classList.add('badge-proses');
-                } else {
-                    badge.classList.add('badge-pending');
-                }
+                    const namaPengaju = item.diajukan_oleh || 'Mandiri (Warga)';
+                    const kelasPengaju = namaPengaju !== 'Mandiri (Warga)' ? 'pengaju-petugas' : 'pengaju-mandiri';
+                    const iconPengaju = namaPengaju !== 'Mandiri (Warga)' ? 'fa-user-tie' : 'fa-user';
 
-                boxHasil.style.display = 'block';
+                    // -- LOGIKA FORCED DOWNLOAD --
+                    let linkDownloadFinal = '';
+                    if (item.dokumen_hasil) {
+                        // Ambil ekstensi asli dari URL (misal: pdf, jpg, dll)
+                        const ekstensi = item.dokumen_hasil.split('.').pop().toLowerCase().split('?')[0];
+                        // Buat nama file yang rapi menggunakan nama pemohon
+                        const namaPemohonAman = item.nama_pemohon.replace(/[^a-zA-Z0-9]/g, '_');
+                        const namaFileAman = `Dokumen_Hasil_${namaPemohonAman}.${ekstensi}`;
+                        
+                        // Menambahkan parameter ?download ke link Supabase agar file dipaksa unduh
+                        linkDownloadFinal = `${item.dokumen_hasil}?download=${namaFileAman}`;
+                    }
+
+                    htmlCard += `
+                        <div class="kartu-hasil">
+                            <div class="kartu-header">
+                                <span class="no-tiket"><i class="fas fa-ticket-alt" style="color: #94a3b8;"></i> ${item.nomor_tiket}</span>
+                                <span class="badge ${kelasBadge}">${stat}</span>
+                            </div>
+                            
+                            <div class="pengaju-info ${kelasPengaju}">
+                                <i class="fas ${iconPengaju}"></i> Diajukan Oleh: ${namaPengaju}
+                            </div>
+                            
+                            <div class="grid-rincian">
+                                <div class="rincian-teks"><strong>Jenis Layanan</strong> ${item.jenis_layanan}</div>
+                                <div class="rincian-teks"><strong>Tanggal Pengajuan</strong> ${tgl}</div>
+                            </div>
+                            
+                            <div class="rincian-teks" style="margin-top: 5px;"><strong>Nama Pemohon</strong> ${item.nama_pemohon}</div>
+                            
+                            ${item.catatan_petugas ? `
+                            <div class="catatan-petugas">
+                                <strong style="color: #b45309;"><i class="fas fa-comment-dots"></i> Catatan Petugas:</strong><br>
+                                ${item.catatan_petugas}
+                            </div>` : ''}
+
+                            ${(kelasBadge === 'badge-selesai' && item.dokumen_hasil) ? `
+                            <div style="border-top: 1px dashed #cbd5e1; margin-top: 15px; padding-top: 15px;">
+                                <div class="rincian-teks"><strong>Dokumen Hasil Selesai</strong></div>
+                                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Permohonan Anda telah selesai, silakan unduh dokumen hasil di bawah ini.</p>
+                                
+                                <!-- Tombol Download Langsung -->
+                                <a href="${linkDownloadFinal}" class="btn-download-hasil" download>
+                                    <i class="fas fa-download"></i> Unduh Dokumen Anda
+                                </a>
+                            </div>` : ''}
+                        </div>
+                    `;
+                });
+
+                wadahHasil.innerHTML = htmlCard;
 
             } catch (err) {
-                alert("⚠️ Peringatan: " + err.message);
+                alert("Gagal memuat data: " + err.message);
             } finally {
                 btn.innerHTML = "<i class='fas fa-search'></i> Lacak Sekarang";
                 btn.disabled = false;
