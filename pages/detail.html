@@ -108,7 +108,7 @@
         </header>
 
         <div class="content-area">
-            <div class="page-title"><a href="dashboard-master.html" class="btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a><h2>Detail Permohonan Warga</h2></div>
+            <div class="page-title"><a href="dashboard-master" class="btn-kembali"><i class="fas fa-arrow-left"></i> Kembali</a><h2>Detail Permohonan Warga</h2></div>
             <div class="grid-layout">
                 <div>
                     <div class="card" style="padding-bottom: 10px;">
@@ -300,7 +300,7 @@
                     document.getElementById('wadahSuperAdmin').style.display = 'flex';
                 }
 
-            } catch (err) { alert("Gagal menarik data: " + err.message); window.location.href = "dashboard-master.html"; } 
+            } catch (err) { alert("Gagal menarik data: " + err.message); window.location.href = "dashboard-master"; } 
             finally { document.getElementById('loadingOverlay').style.display = 'none'; }
         }
 
@@ -360,7 +360,7 @@
 
                 if (statusBaru !== 'Dikirim' && dataPermohonan.no_wa) {
                     let pesanWA = "";
-                    let linkPelacakan = window.location.origin + "/pages/status.html";
+                    let linkPelacakan = window.location.origin + "/pages/status";
                     
                     if (statusBaru === 'Terverifikasi' || statusBaru === 'Proses') {
                         pesanWA = `Halo Bapak/Ibu ${dataPermohonan.nama_pemohon},\n\nPermohonan Anda untuk layanan *${dataPermohonan.jenis_layanan}* (Tiket: *${dataPermohonan.nomor_tiket}*) saat ini masuk tahap *${statusBaru.toUpperCase()}*.\n\n*Catatan Petugas:*\n"${catatanBaru}"\n\nCek secara berkala melalui:\n${linkPelacakan}`;
@@ -454,7 +454,7 @@
                 if (errDB) throw errDB;
 
                 alert("🗑️ PEMBERSIHAN BERHASIL!");
-                window.location.href = "dashboard-master.html";
+                window.location.href = "dashboard-master";
             } catch(err) { alert("Gagal menghapus: " + err.message); document.getElementById('loadingOverlay').style.display = 'none'; }
         }
 
@@ -466,7 +466,7 @@
             const waktuLogin = localStorage.getItem('login_time');
             
             if(!roleSaatIni || !waktuLogin) { 
-                window.location.href = "login.html"; 
+                window.location.href = "login"; 
                 return; 
             } 
             
@@ -476,7 +476,7 @@
             if (waktuSekarang - parseInt(waktuLogin) > batasSesiMilis) {
                 alert("⏱️ Sesi login Anda telah habis (Lebih dari 6 Jam).\nSilakan login kembali demi keamanan.");
                 localStorage.clear();
-                window.location.href = "login.html";
+                window.location.href = "login";
                 return;
             }
             
@@ -485,10 +485,10 @@
             
             const menuList = document.getElementById('menuDinamis');
             menuList.innerHTML = `
-                <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
-                ${roleSaatIni === 'superadmin' ? '<li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>' : ''}
-                <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-                <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+                <li><a href="dashboard-master"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+                ${roleSaatIni === 'superadmin' ? '<li><a href="kelola-pengguna"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>' : ''}
+                <li><a href="surat-pernyataan"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                <li style="margin-top: 30px;"><a href="../index" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
             `;
             muatDataDetail();
         });

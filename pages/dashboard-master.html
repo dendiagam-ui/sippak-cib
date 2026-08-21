@@ -154,7 +154,7 @@
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <!-- Tombol Hapus Semua Selesai khusus Super Admin -->
                         <div id="wadahTombolHapusSelesai"></div>
-                        <a href="permohonan.html" class="btn-aksi" style="background: #10b981; margin:0;"><i class="fas fa-plus"></i> Input Baru</a>
+                        <a href="permohonan" class="btn-aksi" style="background: #10b981; margin:0;"><i class="fas fa-plus"></i> Input Baru</a>
                     </div>
                 </div>
                 <div style="overflow-x: auto;">
@@ -191,9 +191,9 @@
             const roleSaatIni = localStorage.getItem('user_role');
             const waktuLogin = localStorage.getItem('login_time');
             
-            if(!roleSaatIni || !waktuLogin) { window.location.href = "login.html"; return; } 
+            if(!roleSaatIni || !waktuLogin) { window.location.href = "login"; return; } 
             if (new Date().getTime() - parseInt(waktuLogin) > (6 * 60 * 60 * 1000)) {
-                alert("Sesi login Anda telah habis."); localStorage.clear(); window.location.href = "login.html"; return;
+                alert("Sesi login Anda telah habis."); localStorage.clear(); window.location.href = "login"; return;
             }
             
             userRoleGlobal = roleSaatIni;
@@ -209,22 +209,22 @@
                 `;
             }
 
-            // MENU DINAMIS
+            // MENU DINAMIS (Tanpa .html)
             const menuList = document.getElementById('menuDinamis');
             if (roleSaatIni === 'superadmin') {
                 menuList.innerHTML = `
-                    <li><a href="dashboard-master.html" class="active"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
-                    <li><a href="kelola-pengguna.html"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
-                    <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
-                    <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-                    <li><a href="setting-popup.html"><i class="fas fa-cogs"></i> Setting Popup</a></li>
+                    <li><a href="dashboard-master" class="active"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+                    <li><a href="kelola-pengguna"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+                    <li><a href="permohonan"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
+                    <li><a href="surat-pernyataan"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li><a href="setting-popup"><i class="fas fa-cogs"></i> Setting Popup</a></li>
                     <li style="margin-top: 30px;"><a href="#" onclick="logoutSistem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
                 `;
             } else {
                 menuList.innerHTML = `
-                    <li><a href="dashboard-master.html" class="active"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
-                    <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
-                    <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+                    <li><a href="dashboard-master" class="active"><i class="fas fa-desktop"></i> Antrean Permohonan</a></li>
+                    <li><a href="permohonan"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
+                    <li><a href="surat-pernyataan"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
                     <li style="margin-top: 30px;"><a href="#" onclick="logoutSistem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
                 `;
             }
@@ -268,14 +268,12 @@
                         let nama = item.nama_pemohon || item.nama_lengkap || 'Tanpa Nama';
                         let jenis = item.jenis_surat || 'Surat Pernyataan';
                         
-                        // TOMBOL AKSI: Tombol Detail selalu tampil untuk Super Admin & Petugas
-                        let actionHtml = `<a href="detail.html?id=${item.id}" class="btn-detail"><i class="fas fa-eye"></i> Detail</a>`;
+                        // TOMBOL AKSI (Tanpa .html)
+                        let actionHtml = `<a href="detail?id=${item.id}" class="btn-detail"><i class="fas fa-eye"></i> Detail</a>`;
                         
-                        // Jika sudah ada file hasil, tambahkan tombol Unduh Dokumen
                         if (item.file_hasil) {
                             actionHtml += `<a href="${item.file_hasil}" target="_blank" class="btn-lihat"><i class="fas fa-file-download"></i> Unduh</a>`;
                         } 
-                        // Jika belum ada file dan role adalah superadmin, tampilkan tombol Verifikasi (Upload)
                         else if (userRoleGlobal === 'superadmin' && statusTeks.toLowerCase().includes('menunggu')) {
                             actionHtml += `<button class="btn-aksi" onclick="bukaModalUpload('${item.id}', '${nama.replace(/'/g, "\\'")}')"><i class="fas fa-upload"></i> Verifikasi</button>`;
                         }
@@ -309,7 +307,6 @@
             }
 
             try {
-                // Menghapus data permohonan yang statusnya mengandung kata 'selesai'
                 const { error } = await supabaseClient
                     .from('permohonan')
                     .delete()
@@ -318,7 +315,7 @@
                 if (error) throw error;
 
                 alert("✅ Semua permohonan yang selesai berhasil dihapus dari database!");
-                muatAntrean(); // Refresh tabel
+                muatAntrean(); 
             } catch (err) {
                 alert("Gagal menghapus data: " + err.message);
                 console.error(err);
@@ -397,7 +394,7 @@
         async function logoutSistem() {
             const mySessionId = localStorage.getItem('active_session_id');
             if (mySessionId) await supabaseClient.from('sesi_login').delete().eq('id', mySessionId);
-            localStorage.clear(); window.location.href = "../index.html";
+            localStorage.clear(); window.location.href = "../index";
         }
 
         function toggleSidebar() { 

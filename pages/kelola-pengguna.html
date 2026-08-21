@@ -56,11 +56,11 @@
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header"><i class="fas fa-landmark"></i> SIPPAK-CIB</div>
         <ul class="menu-list" id="menuDinamis">
-            <li><a href="dashboard-master.html"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
-            <li><a href="kelola-pengguna.html" class="active"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
-            <li><a href="permohonan.html"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
-            <li><a href="surat-pernyataan.html"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
-            <li style="margin-top: 30px;"><a href="../index.html" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
+            <li><a href="dashboard-master"><i class="fas fa-desktop"></i> Dasbor Utama</a></li>
+            <li><a href="kelola-pengguna" class="active"><i class="fas fa-user-shield"></i> Kelola Staf</a></li>
+            <li><a href="permohonan"><i class="fas fa-pen-square"></i> Input Permohonan</a></li>
+            <li><a href="surat-pernyataan"><i class="fas fa-file-invoice"></i> Generate Surat</a></li>
+            <li style="margin-top: 30px;"><a href="../index" onclick="localStorage.clear()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</a></li>
         </ul>
     </nav>
 
@@ -156,7 +156,7 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             if(localStorage.getItem('user_role') !== 'superadmin') { 
-                window.location.href = "dashboard-master.html"; return; 
+                window.location.href = "dashboard-master"; return; 
             }
             document.getElementById('namaUser').innerText = localStorage.getItem('user_nama');
             
