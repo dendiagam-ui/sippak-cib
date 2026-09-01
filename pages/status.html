@@ -139,17 +139,17 @@
                     const kelasPengaju = namaPengaju !== 'Mandiri (Warga)' ? 'pengaju-petugas' : 'pengaju-mandiri';
                     const iconPengaju = namaPengaju !== 'Mandiri (Warga)' ? 'fa-user-tie' : 'fa-user';
 
-                    // -- LOGIKA FORCED DOWNLOAD --
+                    // -- LOGIKA FORCED DOWNLOAD DIPERBARUI --
+                    // Mengecek file dari detail.html (dokumen_hasil) ATAU dashboard (file_hasil)
+                    const fileTersedia = item.dokumen_hasil || item.file_hasil;
                     let linkDownloadFinal = '';
-                    if (item.dokumen_hasil) {
-                        // Ambil ekstensi asli dari URL (misal: pdf, jpg, dll)
-                        const ekstensi = item.dokumen_hasil.split('.').pop().toLowerCase().split('?')[0];
-                        // Buat nama file yang rapi menggunakan nama pemohon
-                        const namaPemohonAman = item.nama_pemohon.replace(/[^a-zA-Z0-9]/g, '_');
+                    
+                    if (fileTersedia) {
+                        const ekstensi = fileTersedia.split('.').pop().toLowerCase().split('?')[0];
+                        const namaPemohonAman = (item.nama_pemohon || 'Pemohon').replace(/[^a-zA-Z0-9]/g, '_');
                         const namaFileAman = `Dokumen_Hasil_${namaPemohonAman}.${ekstensi}`;
                         
-                        // Menambahkan parameter ?download ke link Supabase agar file dipaksa unduh
-                        linkDownloadFinal = `${item.dokumen_hasil}?download=${namaFileAman}`;
+                        linkDownloadFinal = `${fileTersedia}?download=${namaFileAman}`;
                     }
 
                     htmlCard += `
@@ -176,13 +176,13 @@
                                 ${item.catatan_petugas}
                             </div>` : ''}
 
-                            ${(kelasBadge === 'badge-selesai' && item.dokumen_hasil) ? `
+                            ${(kelasBadge === 'badge-selesai' && fileTersedia) ? `
                             <div style="border-top: 1px dashed #cbd5e1; margin-top: 15px; padding-top: 15px;">
                                 <div class="rincian-teks"><strong>Dokumen Hasil Selesai</strong></div>
                                 <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Permohonan Anda telah selesai, silakan unduh dokumen hasil di bawah ini.</p>
                                 
                                 <!-- Tombol Download Langsung -->
-                                <a href="${linkDownloadFinal}" class="btn-download-hasil" download>
+                                <a href="${linkDownloadFinal}" class="btn-download-hasil" target="_blank" download>
                                     <i class="fas fa-download"></i> Unduh Dokumen Anda
                                 </a>
                             </div>` : ''}
